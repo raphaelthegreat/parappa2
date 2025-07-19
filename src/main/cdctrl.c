@@ -896,7 +896,7 @@ void CdctrlXTRset(FILE_STR *fstr_pp, u_int usebuf) {
     WP2Ctrl(WP2_SEEK, seek_pos);
     printf("WP2_SEEK exit\n");
 
-    WP2Ctrl(WP2_SETCHANNEL, 1);
+    WP2Ctrl(WP2_SETCHANNEL, PR_CONCAT(0, 1));
     WP2Ctrl(WP2_PRELOADBACK, WP2_NONE);
     printf("WP2_PRELOAD exit\n");
 

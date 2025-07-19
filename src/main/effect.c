@@ -238,7 +238,7 @@ void UG_MozaikuDisp(MOZAIKU_STR *moz_pp, sceGsFrame *frame_pp, sceGifPacket *moz
 
     sceGifPkAddGsAD(mozPkSpr, SCE_GS_TEX0_1, SCE_GS_SET_TEX0(frame_pp->FBP << 5, frame_pp->FBW, 0, 10, 8, 0, 0, 0, 0, 0, 0, 0));
     sceGifPkAddGsAD(mozPkSpr, SCE_GS_TEX1_1, SCE_GS_SET_TEX1(0, 0, 0, 0, 0, 0, 0));
-    sceGifPkAddGsAD(mozPkSpr, SCE_GS_PRIM, 0x116);
+    sceGifPkAddGsAD(mozPkSpr, SCE_GS_PRIM, SCE_GS_SET_PRIM(6, 0, 1, 0, 0, 0, 1, 0, 0));
 
     sceGifPkAddGsAD(mozPkSpr, SCE_GS_UV, 0xe002800);
     sceGifPkAddGsAD(mozPkSpr, SCE_GS_XYZ2, SCE_GS_SET_XYZ2(GS_X_COORD(640), GS_Y_COORD(224), 0));

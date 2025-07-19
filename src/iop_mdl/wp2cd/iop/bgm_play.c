@@ -180,7 +180,7 @@ int TransBufSet(void) {
                 ee_cnt %= 16;
                 if (ee_cnt == 0) {
                     int ret = 0;
-                    while (ret == 0) {
+                    while (!ret) {
                         CpuSuspendIntr(&oldstat);
                         ret = sceSifSetDma(sifdmadata, 16);
                         if (ret != 0) {
@@ -200,7 +200,7 @@ int TransBufSet(void) {
 
     if (ee_cnt != 0) {
         int ret = 0;
-        while (ret == 0) {
+        while (!ret) {
             CpuSuspendIntr(&oldstat);
             ret = sceSifSetDma(sifdmadata, ee_cnt);
             if (ret != 0) {
@@ -683,7 +683,7 @@ int BgmStart(void) {
 
     while (1) {
         CpuSuspendIntr(&oldstat);
-        ret = sceSdBlockTrans(1, 0x10, (u_char*)sbuf.buf_pos[0], KB(44));
+        ret = sceSdBlockTrans(1, SD_TRANS_MODE_WRITE | SD_BLOCK_LOOP, (u_char*)sbuf.buf_pos[0], KB(44));
         CpuResumeIntr(oldstat);
         if (ret >= 0) {
             break;
@@ -706,7 +706,7 @@ void _BgmStop(void) {
     if ((BgmMode_tmp &= 0x1000) != 0) {
         while (1) {
             CpuSuspendIntr(&oldstat);
-            ret = sceSdBlockTrans(1, 0x2, NULL, 0);
+            ret = sceSdBlockTrans(1, SD_TRANS_MODE_STOP, NULL, 0);
             CpuResumeIntr(oldstat);
             if (ret >= 0) {
                 break;
@@ -732,7 +732,7 @@ void BgmStop(unsigned int vol) {
     if ((BgmMode_tmp &= 0x1000) != 0) {
         while (1) {
             CpuSuspendIntr(&oldstat);
-            ret = sceSdBlockTrans(1, 0x2, NULL, 0);
+            ret = sceSdBlockTrans(1, SD_TRANS_MODE_STOP, NULL, 0);
             CpuResumeIntr(oldstat);
             if (ret >= 0) {
                 break;
@@ -881,7 +881,7 @@ int BgmSeekFLoc(sceCdlFILE *fpLoc) {
     wavep2.pos = 0;
     wavep2.StartTrPos = 0;
     wavep2.TransPos = 0;
-    wavep2.readBackFlag = 0;
+    wavep2.readBackFlag = FALSE;
 
     BgmMode |= 0x800;
     return 1;
@@ -914,6 +914,9 @@ int BgmGetTime(void) {
     }
 
     if (BgmMode & 0x1000) {
+        /*
+         * Mask the IOP address.
+         */
         ret &= 0xffffff;
         if (ret >= sbuf.buf_pos[1]) {
             ret -= sbuf.buf_pos[1];
@@ -937,4 +940,93 @@ int BgmGetCdErrCode(void) {
     return CdErrCode;
 }
 
-IOP_INCLUDE_ASM("wp2cd/nonmatchings/iop/bgm_play", _BgmPlay);
+int _BgmPlay(int status) {
+    int which;
+    int remain;
+    int tmp_size;
+    int *addr;
+    int i;
+
+    while (1) {
+        if (gBgmIntr == 0) {
+            WaitSema(gSem);
+        }
+
+        if (bug_bug_bug_flag) {
+            printf("= SdTransIntr req:%d\n", bug_bug_bug_flag);
+        }
+        bug_bug_bug_flag = 0;
+
+        CpuSuspendIntr(&oldstat);
+        if (gBgmIntr == 0) {
+            CpuResumeIntr(oldstat);
+            continue;
+        }
+        CpuResumeIntr(oldstat);
+
+        if (gBgmIntr != 1) {
+            /* Empty */
+        }
+
+        gBgmIntr--;
+
+        ReadOutCnt += (sbuf.TrackSize / 2);
+
+        if (BgmVolumeSet == 1) {
+            BgmSetVolumeDirect(BgmVolume);
+            BgmVolumeSet = 0;
+        }
+
+        if (BgmPause == 1) {
+            BgmSetVolumeDirect(0);
+            _BgmStop();
+            BgmPause = 0;
+        }
+
+        if (!TransBufSet()) {
+            continue;
+        }
+
+        which = 1 - (wavep2.TransPos / (wavep2.TransMax / 2));
+        if (BgmMode & 0x8000) {
+            WaitSema(gSem);
+            BgmSetVolumeDirect(0);
+            _BgmStop();
+            continue;
+        }
+
+        tmp_size = (wavep2.TransMax * wavep2.Tr1Size) / 2;
+        remain = wavep2.size - wavep2.pos;
+        remain *= 2048;
+
+        if (remain > tmp_size) {
+            remain = tmp_size;
+        } else {
+            addr = (int*)((((which * tmp_size) * 4) + ReadBuff) + (remain * 4));
+
+            for (i = 0; i < ((u_int)(tmp_size - remain) / 4); i++) {
+                *addr++ = 0;
+            }
+            
+            BgmMode &= 0xfff;
+            BgmMode |= 0x8000;
+        }
+
+        if (bgmPlayReadMode == 0) {
+            if (Wp2CdStRead(remain / 2048, (u_int*)((which * tmp_size) + ReadBuff), 1, &CdErrCode) != (remain / 2048)) {
+                /* Empty */
+            }
+        } else {
+            readPC(fp_pc, (u_char*)((which * tmp_size) + ReadBuff), remain);
+            CdErrCode = 0;
+        }
+
+        if (CdErrCode != 0) {
+            /* Empty */
+        }
+        
+        wavep2.pos += (remain / 2048);
+    }
+
+    return 0;
+}
