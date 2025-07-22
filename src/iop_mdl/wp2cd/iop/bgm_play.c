@@ -22,17 +22,17 @@ void _BgmStop(void);
 int  _BgmPlay(int status);
 
 typedef struct { // 0x30
-    /* 0x00:0 */ unsigned int size : 32;
+    /* 0x00:0 */ unsigned int size : 32; /* File size (in sectors) */
     /* 0x04:0 */ unsigned int pos : 32;
     /* 0x08:0 */ unsigned int ofs : 32;
-    /* 0x0c:0 */ unsigned int Channel : 32;
-    /* 0x10 */ u_short ReqChan[2];
+    /* 0x0c:0 */ unsigned int Channel : 32; /* Number of channels */
+    /* 0x10 */ u_short ReqChan[2]; /* Channels reserved for audio [L&R channels] */
     /* 0x14 */ int TransPos;
     /* 0x18 */ int TransMax;
-    /* 0x1c */ int Tr1Size;
-    /* 0x20 */ int StartTrPos;
-    /* 0x24 */ int TransEEAdrs;
-    /* 0x28 */ int TransId;
+    /* 0x1c */ int Tr1Size; /* Total size of channels */
+    /* 0x20 */ int StartTrPos; /* (Unused) */
+    /* 0x24 */ int TransEEAdrs; /* Base addr. for EE transfers */
+    /* 0x28 */ int TransId; /* DMA queuing identifier. */
     /* 0x2c */ int readBackFlag;
 } WAVEP2;
 
@@ -234,7 +234,7 @@ static int IntFuncEnd(int ch, void *common) {
     return 0;
 }
 
-static int makeMyThread() {
+static int makeMyThread(void) {
     struct ThreadParam param;
     int thid;
 
@@ -248,7 +248,7 @@ static int makeMyThread() {
     return thid;
 }
 
-static int makeMyThread_Tr() {
+static int makeMyThread_Tr(void) {
     struct ThreadParam param;
     int thid;
 
@@ -262,7 +262,7 @@ static int makeMyThread_Tr() {
     return thid;
 }
 
-static int makeMySem() {
+static int makeMySem(void) {
     struct SemaParam sem;
 
     sem.initCount = 0;
@@ -669,7 +669,7 @@ int BgmReadBuffFull(void) {
         return 0;
     }
 
-    if (sceCdStStat() < 240) {
+    if (sceCdStStat() < SCTORS(KB(480))) {
         return 2;
     }
 
@@ -769,7 +769,7 @@ void BgmSetMode(u_int maxChan) {
     wavep2.TransPos = 0;
     wavep2.StartTrPos = 0;
 
-    /* Unnnecessary div+mult but required to match. */
+    /* Unnecessary div+mult but required to match. */
     wavep2.TransMax = ((ReadBuffSize / 512) / maxChan) / 2 * 2;
     wavep2.Tr1Size = maxChan * 512;
 
@@ -904,7 +904,7 @@ int BgmGetTime(void) {
     while (1) {
         gBgmIntrTime = 0;
 
-        ret = sceSdBlockTransStatus(1, 0);
+        ret = sceSdBlockTransStatus(1, SD_TRANS_STATUS_CHECK);
         now_cnt = ReadOutCnt;
 
         gBgmIntrTmp = gBgmIntr;
@@ -931,7 +931,7 @@ int BgmGetTime(void) {
     return (now_cnt + (ret / 1024));
 }
 
-int BgmGetTSample() {
+int BgmGetTSample(void) {
     int fsize = (wavep2.size * 2048);
     return fsize / wavep2.Tr1Size;
 }

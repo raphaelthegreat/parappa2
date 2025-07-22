@@ -1,15 +1,15 @@
 {
   "measures": {
-    "fuzzy_match_percent": 33.709106,
+    "fuzzy_match_percent": 34.160965,
     "total_code": "342584",
-    "matched_code": "113392",
-    "matched_code_percent": 33.099033,
+    "matched_code": "114940",
+    "matched_code_percent": 33.550896,
     "total_data": "222704",
     "matched_data": "122800",
     "matched_data_percent": 55.140453,
     "total_functions": 1432,
-    "matched_functions": 765,
-    "matched_functions_percent": 53.42179,
+    "matched_functions": 770,
+    "matched_functions_percent": 53.770947,
     "total_units": 70
   },
   "units": [
@@ -6035,16 +6035,16 @@
     {
       "name": "menu/menudata",
       "measures": {
-        "fuzzy_match_percent": 80.99352,
+        "fuzzy_match_percent": 93.520515,
         "total_code": "1852",
-        "matched_code": "1500",
-        "matched_code_percent": 80.99352,
+        "matched_code": "1732",
+        "matched_code_percent": 93.520515,
         "total_data": "8976",
         "matched_data": "8976",
         "matched_data_percent": 100.0,
         "total_functions": 29,
-        "matched_functions": 27,
-        "matched_functions_percent": 93.10345,
+        "matched_functions": 28,
+        "matched_functions_percent": 96.55172,
         "total_units": 1
       },
       "sections": [
@@ -6067,7 +6067,7 @@
         {
           "name": ".text",
           "size": "1896",
-          "fuzzy_match_percent": 80.99352,
+          "fuzzy_match_percent": 93.520515,
           "metadata": {}
         }
       ],
@@ -6193,6 +6193,7 @@
         {
           "name": "MenuVoicePlayVol",
           "size": "232",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "1040"
         },
@@ -6517,14 +6518,14 @@
     {
       "name": "menu/menusub",
       "measures": {
-        "fuzzy_match_percent": 4.882823,
+        "fuzzy_match_percent": 6.6717415,
         "total_code": "73564",
-        "matched_code": "3592",
-        "matched_code_percent": 4.8828235,
+        "matched_code": "4908",
+        "matched_code_percent": 6.6717415,
         "total_data": "624",
         "total_functions": 165,
-        "matched_functions": 23,
-        "matched_functions_percent": 13.939394,
+        "matched_functions": 27,
+        "matched_functions_percent": 16.363636,
         "total_units": 1
       },
       "sections": [
@@ -6547,7 +6548,7 @@
         {
           "name": ".text",
           "size": "73904",
-          "fuzzy_match_percent": 4.882823,
+          "fuzzy_match_percent": 6.6717415,
           "metadata": {}
         }
       ],
@@ -6766,6 +6767,7 @@
         {
           "name": "TsMENU_GetMapTimeState",
           "size": "392",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "4776"
         },
@@ -6835,6 +6837,7 @@
         {
           "name": "TsMenuMemcChk_Flow",
           "size": "100",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "8904"
         },
@@ -6847,6 +6850,7 @@
         {
           "name": "TsMenu_Draw",
           "size": "764",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "9120"
         },
@@ -7044,6 +7048,7 @@
         {
           "name": "TsMCAMes_GetSelect",
           "size": "60",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "31672"
         },
@@ -12699,16 +12704,16 @@
     {
       "id": "menu",
       "measures": {
-        "fuzzy_match_percent": 20.86076,
+        "fuzzy_match_percent": 22.208582,
         "total_code": "114852",
-        "matched_code": "22712",
-        "matched_code_percent": 19.775015,
+        "matched_code": "24260",
+        "matched_code_percent": 21.122837,
         "total_data": "11048",
         "matched_data": "8988",
         "matched_data_percent": 81.354095,
         "total_functions": 374,
-        "matched_functions": 171,
-        "matched_functions_percent": 45.721924,
+        "matched_functions": 176,
+        "matched_functions_percent": 47.058823,
         "total_units": 9
       }
     },

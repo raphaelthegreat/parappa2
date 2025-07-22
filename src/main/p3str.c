@@ -325,13 +325,13 @@ void p3StrDispDs(P3SRT_OD *p3o_pp, P3STR_SD *p3sd_pp, int subtime) {
 
     if (p3o_pp->od_type == OD_FADE) {
         fade_pp = (SD_FADE*)p3sd_pp->usrD;
-        fade_pp->subDadr = (u_int)fade_pp->subD;
+        fade_pp->subDadr = (u_int)&fade_pp->subD;
         DrawFadeDisp(fade_pp, subtime, 0, p3o_pp->use, p3o_pp->draw);
     }
 
     if (p3o_pp->od_type == OD_DISPIN) {
         dispin_pp = (SD_DISPIN*)p3sd_pp->usrD;
-        dispin_pp->subDadr = (u_int)dispin_pp->subD;
+        dispin_pp->subDadr = (u_int)&dispin_pp->subD;
         DrawMoveDispIn(dispin_pp, subtime, 0, p3o_pp->use, p3o_pp->draw);
     }
 

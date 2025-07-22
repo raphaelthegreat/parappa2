@@ -1416,13 +1416,18 @@ OptionList_Sw                       = 0x003997c4;
 PopMenu_Sw                          = 0x003997c8;
 SaveMenu_Sw                         = 0x003997cc;
 JukeMenu_Sw                         = 0x003997d0;
+nTim                                = 0x003997d4;
 D_00399800                          = 0x00399800; // type:asciz size:0x8
 HOSIObj                             = 0x00399824;
+MapTime                             = 0x00399828; // size:0x8
+
 state                               = 0x00399ac8;
 mesNo                               = 0x00399acc;
 _bMapCaptureReq                     = 0x00399b1c;
 pP3GameState                        = 0x00399b18;
 _MNwaitTime                         = 0x00399b20;
+CurMapOldFlg                        = 0x00399b24;
+CurMapBakFlg                        = 0x00399b2c;
 UserWork                            = 0x00399b34;
 pCStageRank                         = 0x00399b38;
 UserLst                             = 0x00399b3c;
@@ -1444,6 +1449,7 @@ MNS_JimakuBak                       = 0x01c7e4b8; // size:0x1154
 CurFileInfo                         = 0x01c7f628; // size:0x18
 MnPkt                               = 0x01c7f640; // size:0xa0
 MnLPkt                              = 0x01c7f6e0; // size:0xa0
+FPacket                             = 0x01c7f780; // size:0x10
 MCMesWork                           = 0x01c7f790; // size:0x34
 CmpMesWork                          = 0x01c7f7c8; // size:0x18
 ScFade                              = 0x01c810c8; // size:0x14
@@ -2097,12 +2103,12 @@ ResetContour__13PrModelObject                                                   
 RenderContour__14SpmComplexNodeP13PrModelObject                                     = 0x001540b0; // type:func
 
 // prlib/dma.cpp
-PrWaitDmaFinish__FUi                = 0x001543e8; // type:func
+PrWaitDmaFinish__FUi                                                                = 0x001543e8; // type:func
 
-chcr_table                          = 0x0038cd80; // size:0x28
+chcr_table                                                                          = 0x0038cd80; // size:0x28
 
 // nalib/navector.cpp
-_t8NaMATRIX3Zfi4i4$IDENT            = 0x0038ce20; // size:0x40
+_t8NaMATRIX3Zfi4i4$IDENT                                                            = 0x0038ce20; // size:0x40
 
 //
 //

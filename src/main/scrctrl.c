@@ -1935,7 +1935,7 @@ static int bonusGameCntPls(void) {
     return bng_str.bonus_cnt;
 }
 
-static void bonusPointSave() {
+static void bonusPointSave(void) {
     ingame_common_str.BonusScore = bng_str.ok_cnt - bng_str.ng_cnt;
     if (ingame_common_str.BonusScore < 0) {
         ingame_common_str.BonusScore = 0;

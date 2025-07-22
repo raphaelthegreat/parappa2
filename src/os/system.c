@@ -32,7 +32,7 @@ extern sceGsDrawEnv1 drawEnvSp;
 extern sceGsDrawEnv1 drawEnvZbuff;
 extern sceGsDrawEnv1 drawEnvEnd;
 
-int main() {
+int main(void) {
     mallocInit();
 
     while (1) {

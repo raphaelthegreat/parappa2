@@ -148,9 +148,9 @@
 /* bss 1c7b0b8 */ extern MN_SCENE MNS_RepCounter; /* static */
 /* bss 1c7c210 */ extern MN_SCENE MNS_StgCounter[2]; /* static */
 /* bss 1c7e4b8 */ extern MN_SCENE MNS_JimakuBak; /* static */
-// /* sbss 399b24 */ static int CurMapOldFlg;
+/* sbss 399b24 */ extern int CurMapOldFlg; /* static */
 // /* sbss 399b28 */ static int CurMapNo;
-// /* sbss 399b2c */ static int CurMapBakFlg;
+/* sbss 399b2c */ extern int CurMapBakFlg; /* static */
 // /* sbss 399b30 */ static int CurMapState;
 /* sbss 399b34 */ extern USER_DATA *UserWork; /* static */
 /* sbss 399b38 */ extern P3MC_STAGERANK *pCStageRank; /* static */
@@ -160,8 +160,8 @@
 /* bss 1c7f628 */ extern CURFILEINFO CurFileInfo; /* static */
 /* bss 1c7f640 */ extern TsUSERPKT MnPkt; /* static */
 /* bss 1c7f6e0 */ extern TsUSERPKT MnLPkt; /* static */
-// /* bss 1c7f780 */ static sceGifPacket FPacket;
-// /* sdata 399828 */ MAP_TIME MapTime;
+/* bss 1c7f780 */ extern sceGifPacket FPacket; /* static */
+/* sdata 399828 */ extern MAP_TIME MapTime;
 // /* sbss 399b44 */ static int UCheckLoadError;
 // /* sbss 399b48 */ static int UCheckSaveError;
 /* sbss 399b4c */ extern int subStatus; /* static */
@@ -208,7 +208,7 @@ static void TsClearMenuPad(int no);
 static int TSLOOP(int no, int max);
 static int TSLIMIT(int no, int min, int max);
 /* static */ int   TsMENU_GetMapNo(int *psize);
-/* static */ void  TsMENU_GetMapTimeState(int flg);
+static void TsMENU_GetMapTimeState(int flg);
 /* static */ void  TsSetScene_Map(MN_SCENE *pScene, int mapNo, int tflg, int bFocus);
 /* static */ void  TsSet_ParappaCapColor(void);
 /* static */ void  TsClearSet(P3GAMESTATE *pstate);
@@ -240,7 +240,7 @@ static void McInitFlow(void);
 /* static */ int   McUserSaveFlow(USER_DATA *puser);
 /* static */ int   McUserLoadFlow(int fileNo, int mode, int bBroken);
 static void TsMCAMes_Init(void);
-/* static */ int   TsMCAMes_GetSelect(void);
+static int  TsMCAMes_GetSelect(void);
 /* static */ int   TsMCAMes_IsON(void);
 /* static */ void  TsMCAMes_Flow(u_int tpad);
 /* static */ void  TsMCAMes_Draw(SPR_PKT pk, SPR_PRM *spr);
@@ -433,7 +433,85 @@ static int TSLIMIT(int no, int min, int max) {
 
 INCLUDE_ASM("menu/menusub", TsMENU_GetMapNo);
 
-INCLUDE_ASM("menu/menusub", TsMENU_GetMapTimeState);
+static inline int PrBcdInt(u_int n) {
+    return (((n / 16) * 10) + (n % 16));
+}
+
+static void TsMENU_GetMapTimeState(int flg) {
+    /* sdata 3997d4 */ extern int nTim;
+    int         err;
+    short       hour;
+    short       state;
+    MAP_TIME   *mptim;
+    sceCdCLOCK  clock;
+
+    mptim = &MapTime;
+
+    if (flg == 1) {
+        CurMapOldFlg = -1;
+        CurMapBakFlg = -1;
+        memset(mptim, 0, sizeof(*mptim));
+        nTim = flg;
+    } else if (flg == 3) {
+        nTim = 30;
+        return;
+    }
+
+    nTim--;
+    if (nTim > 0) {
+        return;
+    }
+    nTim = 30;
+
+    err = sceCdReadClock(&clock);
+    mptim->date_pad = rand() % 200;
+    if (err != 0 && clock.stat == 0) {
+        mptim->date_second = clock.second;
+        mptim->date_minute = clock.minute;
+        mptim->date_hour = clock.hour;
+        mptim->date_day = clock.day;
+        mptim->date_month = clock.month;
+        mptim->date_year = clock.year + 0x2000;
+        flg = 0;
+    } else {
+        mptim->date_second = 0x0;
+        mptim->date_minute = 0x0;
+        mptim->date_hour = 12; /* BUG: Value isn't valid BCD, */
+        mptim->date_day = 0x1; /*      though it still works. */
+        mptim->date_month = 0x1;
+        mptim->date_year = 0x2000;
+        flg = 1;
+    }
+
+    state = CurMapBakFlg;
+
+    if (!flg) {
+        hour = PrBcdInt(mptim->date_hour);
+
+        /* Dumb nested ifs but required to match. */
+        if (hour < 4) {
+            state = 2;
+        } else {
+            state = 0;
+            if (hour >= 7) {
+                state = 1;
+                if (hour >= 16) {
+                    if (hour <= 18) {
+                        state = 0;
+                    } else {
+                        state = 2;
+                    }
+                }
+            }
+        }
+    } else {
+        if (state <= -1) {
+            state = 1;
+        }
+    }
+
+    CurMapBakFlg = state;
+}
 
 INCLUDE_ASM("menu/menusub", TsSetScene_Map);
 
@@ -565,13 +643,12 @@ void TsMenu_Init(int iniflg, P3GAMESTATE *pstate) {
     TsSCFADE_Flow(1, 0);
     TsBGMInit();
 
-    _bMapCaptureReq = 0;
-
-    UserList_Sw = 0;
-    OptionList_Sw = 0;
-    PopMenu_Sw = 0;
-    SaveMenu_Sw = 0;
-    JukeMenu_Sw = 0;
+    _bMapCaptureReq = FALSE;
+    UserList_Sw     = FALSE;
+    OptionList_Sw   = FALSE;
+    PopMenu_Sw      = FALSE;
+    SaveMenu_Sw     = FALSE;
+    JukeMenu_Sw     = FALSE;
 
     TsSndFlow(1);
 
@@ -582,11 +659,112 @@ INCLUDE_ASM("menu/menusub", TsMenu_End);
 
 INCLUDE_ASM("menu/menusub", TsMenu_InitFlow);
 
-INCLUDE_ASM("menu/menusub", TsMenuMemcChk_Flow);
+int TsMenuMemcChk_Flow(void) {
+    u_int tpad, tpad2;
+    int   ret;
+
+    TsGetMenuPad(0, &tpad);
+    TsGetMenuPad(1, &tpad2);
+
+    TsMCAMes_Flow(tpad);
+    ret = TsMemCardCheck_Flow(0, tpad);
+
+    TsSCFADE_Flow(0, 0);
+    TsBGMPoll();
+
+    return ret;
+}
 
 INCLUDE_ASM("menu/menusub", TsMenu_Flow);
 
-INCLUDE_ASM("menu/menusub", TsMenu_Draw);
+void TsMenu_Draw(void) {
+    SPR_PRM    SprPrm;
+    u_long128 *pkt;
+    SPR_PRM   *spr;
+    SPR_PKT    pk;
+    int        flg;
+    int        i;
+
+    pk  = &pkt;
+    spr = &SprPrm;
+
+    MNScene_Draw(&MNS_StageMap);
+    MNScene_Draw(&MNS_StageMap2);
+    MNScene_Draw(&MNS_CityHall);
+
+    flg = TsCELBackDraw(&MnPkt, spr, MNS_OptCounter.isDisp, 0);
+    MNScene_Draw(&MNS_OptCounter);
+    flg |= TsCELBackDraw(&MnPkt, spr, MNS_RepCounter.isDisp, 1);
+    MNScene_Draw(&MNS_RepCounter);
+
+    for (i = 0; i < 2; i++) {
+        flg |= TsCELBackDraw(&MnPkt, spr, MNS_StgCounter[i].isDisp, 2);
+        MNScene_Draw(&MNS_StgCounter[i]);
+    }
+
+    if (!flg) {
+        TsCELBackEnd();
+    }
+
+    TsPatTexFnc(0);
+
+    MnPkt.ptop = MnPkt.pkt[MnPkt.idx].PaketTop | 0x20000000;
+    pkt = (u_long128*)MnPkt.ptop;
+
+    PkSprPkt_SetDefault(pk, spr, DrawGetDrawEnvP(DNUM_DRAW));
+
+    if (_bMapCaptureReq) {
+        TsMenu_CaptureVram(pk, spr);
+        _bMapCaptureReq = FALSE;
+    }
+    if (UserList_Sw) {
+        TsUserList_Draw(pk, spr);
+    }
+    if (OptionList_Sw) {
+        TsOption_Draw(pk, spr);
+    }
+
+    TsSCFADE_Draw(pk, spr, 2);
+
+    if (PopMenu_Sw) {
+        TsPopMenu_Draw(pk, spr);
+    }
+    if (SaveMenu_Sw) {
+        TsSaveMenu_Draw(pk, spr);
+    }
+    if (JukeMenu_Sw) {
+        TsJukeMenu_Draw(pk, spr);
+    }
+
+    MnPkt.ptop = (u_int)pkt;
+    sceGsSyncPath(0, 0);
+
+    TsDrawUPacket(&MnPkt);
+    sceGsSyncPath(0, 0);
+
+    MnPkt.ptop = MnPkt.pkt[MnPkt.idx].PaketTop | 0x20000000;
+    pkt = (u_long128*)MnPkt.ptop;
+
+    PkSprPkt_SetDefault(pk, spr, DrawGetDrawEnvP(DNUM_DRAW));
+    TsCMPMes_SetPos(0x140, 0xba);
+    TsCMPMes_Draw(pk, spr);
+    TsSCFADE_Draw(pk, spr, 1);
+    TsMCAMes_SetPos(0x140, 0x65);
+
+    TsMCAMes_Draw(pk, spr);
+    MnPkt.ptop = (u_int)pkt;
+    sceGsSyncPath(0, 0);
+
+    TsDrawUPacket(&MnPkt);
+    sceGsSyncPath(0, 0);
+
+    pkt = TsCmnPkOpen(&FPacket);
+
+    PkSprPkt_SetDefault(pk, spr, DrawGetDrawEnvP(DNUM_DRAW));
+    TsSCFADE_Draw(pk, spr, 0);
+
+    TsCmnPkClose(&FPacket, pkt, 0xf);
+}
 
 INCLUDE_ASM("menu/menusub", TsSetRankingName);
 
@@ -833,7 +1011,17 @@ static void TsMCAMes_Init(void) {
     MCMesWork.mesflg = -1;
 }
 
-INCLUDE_ASM("menu/menusub", TsMCAMes_GetSelect);
+static int TsMCAMes_GetSelect(void) {
+    MCMES_WORK *pmesw = &MCMesWork;
+
+    if (pmesw->mesflg < 0) {
+        return 1;
+    } else if (pmesw->mesflg & 0xff000000) {
+        return pmesw->selflg;
+    }
+
+    return 1;
+}
 
 INCLUDE_ASM("menu/menusub", TsMCAMes_IsON);
 

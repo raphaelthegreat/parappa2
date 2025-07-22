@@ -101,11 +101,11 @@ int MenuDataDiskSndReady(void) {
     return CdctrlWP2CheckBuffer();
 }
 
-void MenuDataDiskSndPlay() {
+void MenuDataDiskSndPlay(void) {
     CdctrlWP2Play();
 }
 
-void MenuDataDiskSndEnd() {
+void MenuDataDiskSndEnd(void) {
     CdctrlWp2FileEnd();
 }
 
@@ -145,32 +145,28 @@ int MenuVoiceBankSet(int bnkNo) {
     return 0;
 }
 
-#if 1
-INCLUDE_ASM("menu/menudata", MenuVoicePlayVol);
-#else
-void MenuVoicePlayVol(int chanId, int vsetIdx, int vol0)
-{
-    SNDTAP       *sndtap_pp;
-    MENU_SPU_ENUM trId;
-    int           bnkNo;
+void MenuVoicePlayVol(int chanId, int vsetIdx, int vol0) {
+    SNDTAP        *sndtap_pp;
+    MENU_SPU_ENUM  trId;
+    int            bnkNo;
 
-    if (VoiceSet[vsetIdx].bnkNo == 0)
-        bnkNo = 0;
-    else if (_BankChan1Req != VoiceSet[vsetIdx].bnkNo)
-        return;
-    else
-    {
-        bnkNo = 1;
-        if (_BankChan1Stat != 0 && MenuVoiceBankSet(_BankChan1Req) != 0)
+    bnkNo = VoiceSet[vsetIdx].bnkNo;
+    if (bnkNo != 0) {
+        if (_BankChan1Req != bnkNo) {
             return;
+        }
+        trId = MENU_SPU_CHAN1;
+        if (_BankChan1Stat != 0 && MenuVoiceBankSet(_BankChan1Req) != 0) {
+            return;
+        }
+    } else {
+        trId = MENU_SPU_CHAN;
     }
 
     sndtap_pp = VoiceSet[vsetIdx].pTap;
-
-    TapCt(bnkNo | 0xf0, chanId, (sndtap_pp->volume * vol0) >> 8);
-    TapCt(bnkNo | 0xd0, chanId, sndtap_pp->prg + sndtap_pp->key * 0x100);
+    TapCt(0xf0 | trId, chanId, (sndtap_pp->volume * vol0) >> 0x8);
+    TapCt(0xd0 | trId, chanId, sndtap_pp->prg + (sndtap_pp->key * 256));
 }
-#endif
 
 void MenuVoicePlay(int chanId, int vsetIdx) {
     MenuVoicePlayVol(chanId, vsetIdx, 0x100);
