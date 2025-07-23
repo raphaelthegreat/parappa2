@@ -8,6 +8,7 @@
 #include "menu/p3mc.h"
 
 #include "os/syssub.h"
+#include "os/system.h"
 #include "os/tim2.h"
 
 #include <prlib/prlib.h>
@@ -43,7 +44,7 @@
 // /* data 18b810 */ static u_char *TeachersName_Tbl[0];
 // /* sdata 39975c */ static u_char *UserName_RankingNoSave;
 // /* data 18b830 */ static char *_MONTH_STR[0];
-// /* data 18b880 */ static MAPBGM MapBgmTbl[0];
+/* data 18b880 */ extern MAPBGM MapBgmTbl[]; /* static */
 /* data 18b908 */ extern TSVOICE_TBL TsVoiceTbl[]; /* static */
 // /* data 18bac8 */ static u_short FussenWAIT0[0];
 // /* data 18bad8 */ static u_short FussenWAIT1[0];
@@ -112,7 +113,7 @@
 // /* data 18c6e8 */ static u_int HosiColor[0][8];
 // /* data 18c748 */ HOSI_TYPE hTypeTable[0];
 /* sdata 3997bc */ extern TSTEX_INF *tblTex; /* static */
-// /* data 18c8e0 */ static u_int RPPadBit[0];
+/* data 18c8e0 */ extern u_int RPPadBit[]; /* static */
 /* data 18c8f0 */ extern MCDATA_TBL McVoiceTbl[23]; /* static */
 /* data 18c9a8 */ extern MCDATA_TBL McFaceTbl[23]; /* static */
 /* sdata 3997c0 */ extern int UserList_Sw; /* static */
@@ -187,14 +188,14 @@ static void TSSNDPLAY(int n);
 /* static */ void  TSSND_SKIPPLAY(int n);
 static int TSSND_CHANISSTOP(int chan);
 /* static */ void  tsBGMONEPlay(int no);
-/* static */ void  tsBGMONEStop(int no);
-/* static */ void  tsBGMONEVol(int no, int vol);
+static void tsBGMONEStop(int no);
+static void tsBGMONEVol(int no, int vol);
 /* static */ void  tsBGMONETop(int no, int vol);
 /* static */ void  tsBGMONEflow(void);
 /* static */ void  tsBGMONEPause(int flg);
 /* static */ void  TsBGMInit(void);
 /* static */ void  TsBGMPlay(int no, int time);
-/* static */ void  TsBGMStop(int time);
+static void TsBGMStop(int time);
 /* static */ void  TsBGMMute(int time);
 /* static */ int   TsBGMLoadCheck(void);
 /* static */ void  TsBGMPause(int flg);
@@ -202,8 +203,8 @@ static int TSSND_CHANISSTOP(int chan);
 /* static */ void* TsCmnPkOpen(sceGifPacket *pgifpk);
 /* static */ void  TsCmnPkClose(sceGifPacket *pgifpk, void *pk, int pri);
 static void TsClearMenuPad(int no);
-/* static */ void  TsGetMenuPad(int no, u_int *getpad);
-/* static */ void  TsSndFlow(int flg);
+static void TsGetMenuPad(int no, u_int *getpad);
+static void TsSndFlow(int flg);
 /* static */ int   TSNumMov(int cn, int dn, int scale);
 static int TSLOOP(int no, int max);
 static int TSLIMIT(int no, int min, int max);
@@ -363,9 +364,25 @@ static int TSSND_CHANISSTOP(int chan) {
 
 INCLUDE_ASM("menu/menusub", tsBGMONEPlay);
 
-INCLUDE_ASM("menu/menusub", tsBGMONEStop);
+static void tsBGMONEStop(int no) {
+    BGMONE *wbgm = &TsBGMState.wbgm[no];
 
-INCLUDE_ASM("menu/menusub", tsBGMONEVol);
+    wbgm->pbgm = &MapBgmTbl[no];
+    wbgm->vol  = 0;
+    wbgm->tim  = 0;
+    MenuVoiceStop(MapBgmTbl[no].chan);
+
+    wbgm->pbgm = NULL;
+}
+
+static void tsBGMONEVol(int no, int vol) {
+    BGMONE *wbgm = &TsBGMState.wbgm[no];
+
+    if (wbgm->vol != vol) {
+        wbgm->vol = vol;
+        MenuVoiceSetVol(wbgm->pbgm->chan, wbgm->pbgm->tapNo, vol);
+    }
+}
 
 INCLUDE_ASM("menu/menusub", tsBGMONETop);
 
@@ -379,7 +396,37 @@ void TsBGMInit(void) {
 
 INCLUDE_ASM("menu/menusub", TsBGMPlay);
 
-INCLUDE_ASM("menu/menusub", TsBGMStop);
+static void TsBGMStop(int time) {
+    BGMSTATE *pbgm = &TsBGMState;
+    int       i;
+
+    if (pbgm->state != 0) {
+        pbgm->ttim0 = 0;
+        pbgm->ttim = 0;
+
+        if (time >= 1) {
+            pbgm->state = 3;
+            pbgm->vol = 0x100;
+
+            if (pbgm->ctim == 0) {
+                tsBGMONEVol(pbgm->sndno, 0x100);
+            }
+
+            do {} while (0);
+        } else {
+            pbgm->chgReq = 0;
+            pbgm->cstate = 0;
+            pbgm->ctim = 0;
+
+            pbgm->state = 0;
+            pbgm->vol = 0;
+
+            for (i = 0; i < 11; i++) {
+                tsBGMONEStop(i);
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("menu/menusub", TsBGMMute);
 
@@ -409,9 +456,130 @@ static void TsClearMenuPad(int no) {
     memset(&menuPadState[no][0], 0, sizeof(TSREPPAD) * 4);
 }
 
-INCLUDE_ASM("menu/menusub", TsGetMenuPad);
+static void TsGetMenuPad(int no, u_int *getpad) {
+    PADD     *pPad;
+    u_int     one, shot;
+    TSREPPAD *pRpPad;
+    u_int    *pPadBit;
+    u_int     padMsk;
+    u_int     i;
 
-INCLUDE_ASM("menu/menusub", TsSndFlow);
+    pPadBit = RPPadBit;
+    if (no >= 2) {
+        return;
+    }
+
+    *getpad = 0;
+
+    pRpPad = &menuPadState[no][0];
+    padMsk = 0;
+    pPad = &pad[no];
+
+    one = pPad->mone;
+    shot = pPad->mshot;
+
+    for (i = 0; i < 4; i++, pRpPad++, pPadBit++) {
+        padMsk |= *pPadBit;
+        if (one & *pPadBit) {
+            pRpPad->time = 0;
+            pRpPad->state = 1;
+            *getpad |= *pPadBit;
+        } else if (shot & *pPadBit) {
+            pRpPad->time++;
+            if (pRpPad->time >= 19) {
+                if (pRpPad->time % 5) {
+                    pRpPad->state = 2;
+                } else {
+                    pRpPad->state = 3;
+                    *getpad |= *pPadBit;
+                }
+            }
+        } else {
+            pRpPad->state = 0;
+            pRpPad->time = 0;
+        }
+    }
+
+    *getpad |= (one & ~padMsk);
+}
+
+static void TsSndFlow(int flg) {
+    int          i;
+    TSVOICE_TBL *ptap;
+    TSSND_CHAN  *pchan;
+    u_short     *pSeq, *pCur;
+
+    if (flg == 1) {
+        memset(&TsSndChan, 0, sizeof(TsSndChan));
+        return;
+    }
+
+    pchan = TsSndChan;
+
+    for (i = 0; i < 15; i++, pchan++) {
+        ptap = pchan->pTap;
+        if (ptap != NULL) {
+            pchan->tim++;
+
+            if (!pchan->isOn) {
+                if (ptap->ontim < pchan->tim) {
+                    if (!pchan->bMsk) {
+                        MenuVoicePlay(i, ptap->vsetNo);
+                    }
+
+                    pchan->isOn = 1;
+                    if (ptap->offtim == 0) {
+                        memset(pchan, 0, sizeof(*pchan));
+                    }
+                }
+
+                if (!pchan->isOn) {
+                    continue;
+                }
+            }
+
+            if (ptap->offtim != 0 && pchan->tim >= ptap->offtim) {
+                MenuVoiceStop(i);
+                memset(pchan, 0, sizeof(*pchan));
+            }
+        } else {
+            pSeq = pchan->pSeq;
+            if (pSeq != NULL) {
+                pchan->tim++;
+                pCur = &pSeq[pchan->sqIdx * 2];
+    
+                if (!pchan->isOn) {
+                    pchan->isOn = 1;
+                } else {
+                    if (pchan->tim < pCur[1]) {
+                        continue;
+                    }
+                    pchan->tim -= pCur[1];
+                    pchan->sqIdx++;
+                    pCur = &pSeq[pchan->sqIdx * 2];
+                }
+    
+                switch (pCur[0]) {
+                case 0xffff:
+                    break;
+                case 0xfffe:
+                    pchan->sqIdx = 0;
+                    pCur = pSeq;
+                    break;
+                case 0xfffd:
+                    pchan->sqIdx = 0;
+                    MenuVoiceStop(i);
+                    memset(pchan, 0, sizeof(*pchan));
+                    continue;
+                }
+                
+                if (!pchan->bMsk && !(pCur[0] & 0xf000)) {
+                    MenuVoicePlay(i, pCur[0]);
+                }
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("menu/menusub", TSNumMov);
 
@@ -655,7 +823,39 @@ void TsMenu_Init(int iniflg, P3GAMESTATE *pstate) {
     TsMENU_GetMapTimeState(1);
 }
 
-INCLUDE_ASM("menu/menusub", TsMenu_End);
+void TsMenu_End(void) {
+    int i;
+
+    TsBGMStop(0);
+
+    TsCELBackEnd();
+    TsEndUPacket(&MnLPkt);
+    TsEndUPacket(&MnPkt);
+
+    MNScene_End(&MNS_JimakuBak);
+    MNScene_End(&MNS_RepCounter);
+    MNScene_End(&MNS_OptCounter);
+
+    for (i = 0; i < 2; i++) {
+        MNScene_End(&MNS_StgCounter[i]);
+    }
+
+    MNScene_End(&MNS_StageMap2);
+    MNScene_End(&MNS_StageMap);
+    MNScene_End(&MNS_CityHall);
+
+    if (tblTex != NULL) {
+        free(tblTex);
+    }
+
+    if (UserDispWork != NULL) {
+        free(UserDispWork);
+    }
+
+    if (UserLst != NULL) {
+        free(UserLst);
+    }
+}
 
 INCLUDE_ASM("menu/menusub", TsMenu_InitFlow);
 
@@ -708,7 +908,7 @@ void TsMenu_Draw(void) {
 
     TsPatTexFnc(0);
 
-    MnPkt.ptop = MnPkt.pkt[MnPkt.idx].PaketTop | 0x20000000;
+    MnPkt.ptop = PR_UNCACHED(MnPkt.pkt[MnPkt.idx].PaketTop);
     pkt = (u_long128*)MnPkt.ptop;
 
     PkSprPkt_SetDefault(pk, spr, DrawGetDrawEnvP(DNUM_DRAW));
@@ -742,7 +942,7 @@ void TsMenu_Draw(void) {
     TsDrawUPacket(&MnPkt);
     sceGsSyncPath(0, 0);
 
-    MnPkt.ptop = MnPkt.pkt[MnPkt.idx].PaketTop | 0x20000000;
+    MnPkt.ptop = PR_UNCACHED(MnPkt.pkt[MnPkt.idx].PaketTop);
     pkt = (u_long128*)MnPkt.ptop;
 
     PkSprPkt_SetDefault(pk, spr, DrawGetDrawEnvP(DNUM_DRAW));
@@ -1277,7 +1477,39 @@ int _PkMCMsgGetLine(int id) {
 
 INCLUDE_ASM("menu/menusub", _PkSubMsgPut);
 
-INCLUDE_ASM("menu/menusub", TsMenu_CleanVram);
+void TsMenu_CleanVram(int nFrm) {
+    SPR_PRM        SprPrm;
+    u_long128     *pkt;
+    SPR_PKT        pk;
+    sceGsDrawEnv1 *pdenv;
+
+    pk = &pkt;
+
+    pdenv = DrawGetDrawEnvP(nFrm);
+    if (pdenv != NULL) {
+        MnLPkt.ptop = PR_UNCACHED(MnLPkt.pkt[MnLPkt.idx].PaketTop);
+        pkt = (u_long128*)MnLPkt.ptop;
+
+        PkSprPkt_SetDefault(pk, &SprPrm, pdenv);
+        PkSprPkt_SetDrawEnv(pk, &SprPrm, pdenv);
+        PkZBUFMask_Add(pk, FALSE);
+
+        SprPrm.zdepth = 0;
+        SprPrm.rgba0 = 0x80000000;
+    
+        SetSprScreenXYWH(&SprPrm);
+        PkCRect_Add(pk, &SprPrm, 0);
+
+        PkSprPkt_SetDrawEnv(pk, &SprPrm, DrawGetDrawEnvP(DNUM_DRAW));
+        PkZBUFMask_Add(pk, TRUE);
+
+        MnLPkt.ptop = (u_int)pkt;
+        sceGsSyncPath(0, 0);
+
+        TsDrawUPacket(&MnLPkt);
+        sceGsSyncPath(0, 0);
+    }
+}
 
 void TsMenu_CaptureVram(SPR_PKT pk, SPR_PRM *spr) {
     PkSprPkt_SetDrawEnv(pk, spr, DrawGetDrawEnvP(DNUM_VRAM2));

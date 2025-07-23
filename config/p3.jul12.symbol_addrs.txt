@@ -1402,12 +1402,13 @@ TsCELBackDraw                       = 0x00137790; // type:func
 _TsCELBackObjDraw                   = 0x00137930; // type:func
 TsHosiPut                           = 0x00137df0; // type:func
 
+MapBgmTbl                           = 0x0018b880; // size:0x84
 TsVoiceTbl                          = 0x0018b908; // size:0x1c0
 VSNDSEQ_Tbl                         = 0x0018baf8; // size:0x18
+TexTable                            = 0x0018bb10; // size:0x1a0
+RPPadBit                            = 0x0018c8e0; // size:0x10
 McVoiceTbl                          = 0x0018c8f0; // size:0xb8
 McFaceTbl                           = 0x0018c9a8; // size:0xb8
-
-TexTable                            = 0x0018bb10; // size:0x1a0
 MNS_StageMap                        = 0x0018cc38; // size:0x1154
 
 tblTex                              = 0x003997bc;

@@ -15,6 +15,9 @@ extern P3LOG_VAL P3Log_Val;
 static int bFirst;
 static int VsLev;
 
+static void menuDraw(void *x);
+static void menuDrawReq(void);
+static void menuDrawQuit(void);
 static void P3LogInit(P3LOG_VAL *plog);
 
 static void menuDraw(void *x) {
@@ -34,7 +37,7 @@ static void menuDrawQuit(void) {
 }
 
 int MenuMemCardCheck(void) {
-    bFirst = 1;
+    bFirst = TRUE;
     VsLev = 0;
 
     P3LogInit(&P3Log_Val);

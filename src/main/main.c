@@ -678,12 +678,12 @@ static void uramenFileSearchTask(void *x) {
     stDatFirstFileSearch();
     printf("file search out\n");
 
-    uramen_end_flag = 0;
+    uramen_end_flag = FALSE;
     MtcExit();
 }
 
 static void uramenFileSearchSet(void) {
-    uramen_end_flag = 1;
+    uramen_end_flag = TRUE;
     MtcExec(uramenFileSearchTask, MTC_TASK_03);
 }
 

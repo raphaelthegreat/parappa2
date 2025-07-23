@@ -120,7 +120,7 @@ void TsDrawUPacket(TsUSERPKT *up) {
     sceDmaAddEnd(&tp, 0, NULL);
 
     up->idx  = 1 - up->idx;
-    up->btop = up->ptop = up->pkt[up->idx].PaketTop | 0x20000000;
+    up->btop = up->ptop = PR_UNCACHED(up->pkt[up->idx].PaketTop);
 
     PktChan = sceDmaGetChan(SCE_DMA_GIF);
     FlushCache(0);
@@ -806,148 +806,119 @@ INCLUDE_ASM("menu/pksprite", PkPolyF3_Add);
 INCLUDE_ASM("menu/pksprite", PkPolyF4_Add);
 void PkPolyF4_Add(/* t3 11 */ SPR_PKT pk, /* a1 5 */ SPR_PRM *ppspr, /* a2 6 */ int flg);
 
-#if 1
-INCLUDE_ASM("menu/pksprite", PkPolyFT4_Add);
-void PkPolyFT4_Add(/* t3 11 */ SPR_PKT pk, /* a1 5 */ SPR_PRM *ppspr, /* a2 6 */ int flg);
-#else
-void PkPolyFT4_Add(/* t3 11 */ SPR_PKT pk, /* a1 5 */ SPR_PRM *ppspr, /* a2 6 */ int flg)
-{
-    /* a3 7 */ SprTagTFR *sp = (SprTagTFR*)*pk;
+void PkPolyFT4_Add(SPR_PKT pk, SPR_PRM *ppspr, int flg) {
+    SprTagTFR *sp = (SprTagTFR*)*pk;
 
-    *(u_long*)&sp->GifCord[0] = 0xa400000000008001;
-    *(u_long*)&sp->GifCord[2] = 0x4343434310;
+    ((u_long*)&sp->GifCord)[0] = SCE_GIF_SET_TAG(1, SCE_GS_TRUE, 0, 0, SCE_GIF_REGLIST, 10);
+    ((u_long*)&sp->GifCord)[1] =
+        (u_long)(SCE_GS_PRIM ) << (0 * 4) |
+        (u_long)(SCE_GS_RGBAQ) << (1 * 4) |
+        (u_long)(SCE_GS_UV   ) << (2 * 4) |
+        (u_long)(SCE_GS_XYZF2) << (3 * 4) |
+        (u_long)(SCE_GS_UV   ) << (4 * 4) |
+        (u_long)(SCE_GS_XYZF2) << (5 * 4) |
+        (u_long)(SCE_GS_UV   ) << (6 * 4) |
+        (u_long)(SCE_GS_XYZF2) << (7 * 4) |
+        (u_long)(SCE_GS_UV   ) << (8 * 4) |
+        (u_long)(SCE_GS_XYZF2) << (9 * 4);
 
-    sp->prim = 0x154;
+    sp->prim = SCE_GS_SET_PRIM(SCE_GS_PRIM_TRISTRIP, 0, SCE_GS_TRUE, SCE_GS_FALSE, SCE_GS_TRUE,
+                               SCE_GS_FALSE, 1, 0, 0);
     sp->rgba = ppspr->rgba0;
 
-    asm __volatile__
-    ("
-        # t0 -> $8
-        # t1 -> $9
-        # t2 -> $10
+    asm volatile(
+        "lq     $9,  0x20(%0) \n\t" /* ppspr->ux */
+    :: "r"(ppspr) : "$9");
 
-        lq     $9, 0x20(%0)     # ppspr->ux => $t1 ($9)
-        lq     $8, 0x20(%0)     # ppspr->ux => $t0 ($8)
-        li     $10, -8
-        daddu  $9,  $0,  $8
-        pcpyld $8,  $8,  $0
-        paddw  $9,  $8,  $9
-        psllw  $9,  $9,  0x4
+    #if 0
+        sp->uv0 = SCE_GS_SET_UV((ppspr->ux << 4) + 0x8, (ppspr->uy << 4) + 0x8);
+        sp->uv1 = SCE_GS_SET_UV((ppspr->ux << 4) - 0x8, (ppspr->uy << 4) + 0x8);
+        sp->uv2 = SCE_GS_SET_UV((ppspr->ux << 4) + 0x8, (ppspr->uy << 4) - 0x8);
+        sp->uv3 = SCE_GS_SET_UV((ppspr->ux << 4) - 0x8, (ppspr->uy << 4) - 0x8);
+    #else
+    asm volatile(
+        "lq     $8,  0x20(%0) \n\t" /* $8 = ppspr->ux/uy/uw/uh (128bit load) */
+        "li     $10, -8       \n\t" /* $10 = 0xfffffffffffffff8 */
+        "daddu  $9,  $0,  $8  \n\t" /* $9 = (u64)$8 */
+        "pcpyld $8,  $8,  $0  \n\t" /* $8 = ((((u64)$8)<<64)|(u64)(0)) */
+        "paddw  $9,  $8,  $9  \n\t" /* $9[0...3] += $8[0...3] */
+        "psllw  $9,  $9,  0x4 \n\t" /* $9[0...3] =  $9[0...3] << 4 */
+        "li     $8,  0x8      \n\t" /* $8 = 0x8 */
+        "pextlw $8,  $10, $8  \n\t" /* $8[0] = $8[0], $8[1] = $10[0],
+                                       $8[2] = $8[1], $8[3] = $10[1] */
+        "pextlw $8,  $8,  $8  \n\t" /* $8[0] = $8[0], $8[1] = $8[0],
+                                       $8[2] = $8[1], $8[3] = $8[1]
+                                       (reg stores done at the same time) */
+        "paddw  $8,  $9,  $8  \n\t" /* $8[0...3] += $9[0...3] */
+        "ppach  $9,  $0,  $8  \n\t" /* $9[0] = ($8[0]&0xffff)|(($8[1]&0xffff)<<16),
+                                       $9[1] = ($8[2]&0xffff)|(($8[3]&0xffff)<<16),
+                                       $9[2...3] = 0 */
+        "sd     $9,  0x20(%1) \n\t" /* sp->uv0 = (u64)$9 */
+        "pexew  $10, $8       \n\t" /* $10[0...2] = $8[2...0],
+                                       $10[3] = $8[3] */
+        "ppach  $8,  $0,  $10 \n\t" /* $8[0] = ($10[0]&0xffff)|(($10[1]&0xffff)<<16),
+                                       $8[1] = ($10[2]&0xffff)|(($10[3]&0xffff)<<16),
+                                       $8[2...3] = 0 */
+        "sd     $8,  0x30(%1) \n\t" /* sp->uv1 = (u64)$8 */
+        "prot3w $10, $8       \n\t" /* $10[0] = $8[1], $10[1] = $8[2], $10[2] = $8[0],
+                                       $10[3] = $8[3] */
+        "sd     $10, 0x40(%1) \n\t" /* sp->uv2 = (u64)$10 */
+        "prot3w $10, $9       \n\t" /* $10[0] = $9[1], $10[1] = $9[2], $10[2] = $9[0],
+                                       $10[3] = $9[3] */
+        "sd     $10, 0x50(%1) \n\t" /* sp->uv3 = (u64)$10 */
+    :: "r"(ppspr), "r"(sp) : "$8", "$9", "$10");
+    #endif
 
-        li     $8,  0x8         # t0 = 8
-        pextlw $8,  $10, $8
-        pextlw $8,  $8,  $8
-        paddw  $8,  $9,  $8
-        ppach  $9,  $0,  $8
-        sd     $9,  0x20(%1)    # sp->uv0
+    asm volatile(
+        "lqc2       $vf01, 0x50(%0)     \n\t"
+        "lqc2       $vf02, 0x60(%0)     \n\t"
+        "lqc2       $vf04, 0x10(%0)     \n\t"
+        "vmr32.xyzw $vf03, $vf04        \n\t"
+        "vmr32.xyzw $vf03, $vf03        \n\t"
+        "vadd.xy    $vf03, $vf00, $vf04 \n\t"
+    :: "r"(ppspr));
 
-        pexew  $10, $8
-        ppach  $8,  $0, $10
-        sd     $8,  0x30(%1)    # sp->uv1
-
-        prot3w $10, $8
-        sd     $10, 0x40(%1)    # sp->uv2
-
-        prot3w $10, $9
-        sd     $10, 0x50(%1)    # sp->uv3
-    " :: "r"(ppspr), "r"(sp));
-
-    asm __volatile__
-    ("
-        lqc2        vf01, 0x50(%0)
-        lqc2        vf02, 0x60(%0)
-        lqc2        vf04, 0x10(%0)
-
-        vmr32.xyzw  vf03, vf04
-        vmr32.xyzw  vf03, vf03
-        vadd.xy     vf03, vf00, vf04
-    " :: "r"(ppspr));
-
-    if (flg & 2 && ppspr->zoom.isOn)
-    {
-        asm __volatile__
-        ("
-            lq       $8, 0x0(%0)
-
-            qmtc2    $8, vf05
-            pcpyud   $8, $8, $8
-
-            qmtc2    $8, vf08
-            vadda.xy ACC,  vf01, vf0
-            vmadd.xy vf01, vf04, vf08
-            vmul.zw  vf01, vf01, vf05
-            vmul.zw  vf04, vf04, vf08
-            vsub.xy  vf01, vf01, vf05
-            vadda.xy ACC,  vf05, vf00
-            vmadd.xy vf01, vf01, vf08
-        " :: "r"(&ppspr->zoom));
+    if ((flg & 0x2) && ppspr->zoom.isOn) {
+        asm volatile(
+            "lqc2       $vf04, 0x0(%0)      \n\t"
+            "vmr32.xyzw $vf05, $vf04        \n\t"
+            "lqc2       $vf06, 0x0(%0)      \n\t"
+            "vmr32.xyzw $vf05, $vf05        \n\t"
+            "vadd.xy    $vf04, $vf00, $vf05 \n\t"
+            "vadd.xy    $vf05, $vf00, $vf06 \n\t"
+            "vsub.xyzw  $vf01, $vf01, $vf05 \n\t"
+            "vsub.xyzw  $vf02, $vf02, $vf05 \n\t"
+            "vmul.xyzw  $vf01, $vf01, $vf04 \n\t"
+            "vmul.xyzw  $vf02, $vf02, $vf04 \n\t"
+            "vadd.xyzw  $vf01, $vf01, $vf05 \n\t"
+            "vadd.xyzw  $vf02, $vf02, $vf05 \n\t"
+        :: "r"(&ppspr->zoom));
     }
 
-    asm __volatile__
-    ("
-        vadd.xy      vf01, vf01, vf04
-        vadd.xy      vf08, vf01, vf02
-        vmr32.xyzw   vf02, vf02
-        vmr32.xyzw   vf04, vf04
-        vmr32.xyzw   vf05, vf01
-        vmr32.xyzw   vf02, vf02
-        vmr32.xyzw   vf04, vf04
-        vmr32.xyzw   vf05, vf05
+    asm volatile(
+        "vadd.xyzw   $vf01, $vf01, $vf03 \n\t"
+        "lw          $9,    0x0(%0)      \n\t" /* $9 = ppspr->zdepth */
+        "vftoi4.xyzw $vf01, $vf01        \n\t"
+        "vadd.xyzw   $vf02, $vf02, $vf03 \n\t"
+        "qmfc2       $8,    $vf01        \n\t"
+        "ppach       $8,    $0,    $8    \n\t"
+        "pextlw      $10,   $9,    $8    \n\t"
+        "sd          $10,   0x28(%1)     \n\t"
+        "dsrl32      $8,    $8,    0x0   \n\t"
+        "pextlw      $10,   $9,    $8    \n\t"
+        "sd          $10,   0x38(%1)     \n\t"
+        "vftoi4.xyzw $vf02, $vf02        \n\t"
+        "qmfc2       $8,    $vf02        \n\t"
+        "ppach       $8,    $0,    $8    \n\t"
+        "pextlw      $10,   $9,    $8    \n\t"
+        "sd          $10,   0x48(%1)     \n\t"
+        "dsrl32      $8,    $8,    0x0   \n\t"
+        "pextlw      $10,   $9,    $8    \n\t"
+        "sd          $10,   0x58(%1)     \n\t"
+    :: "r"(&ppspr->zdepth), "r"(sp) : "$8", "$9", "$10");
 
-        # t4 -> $12
-        lw           $12,  0x0(%0)
-        vmul.xy      vf06, vf06, vf02
-        vmul.xy      vf07, vf07, vf02
-        vsub.xy      vf09, vf00, vf04
-        vsub.y       vf10, vf00, vf04
-        vsub.x       vf10, vf05, vf04
-        vsub.x       vf11, vf00, vf04
-        vsub.y       vf11, vf05, vf04
-        vsub.xy      vf12, vf05, vf04
-        vmulax.xyzw  ACC,  vf06, vf09
-        vmadday.xyzw ACC,  vf07, vf09
-        vmaddw.xyzw  vf09, vf08, vf00
-        vmulax.xyzw  ACC,  vf06, vf10
-        vmadday.xyzw ACC,  vf07, vf10
-        vmaddw.xyzw  vf10, vf08, vf00
-        vftoi4.xyzw  vf09, vf09
-        vmulax.xyzw  ACC,  vf06, vf11
-        vmadday.xyzw ACC,  vf07, vf11
-        vmaddw.xyzw  vf11, vf08, vf00
-        vftoi4.xyzw  vf10, vf10
-
-        qmtc2        $8,   vf09
-        vmulax.xyzw  ACC,  vf06, vf12
-        vmadday.xyzw ACC,  vf07, vf12
-        vmaddw.xyzw  vf12, vf08, vf00
-        vftoi4.xyzw  vf11, vf11
-
-        qmfc2        $9,   vf10
-        ppach        $8,  $0,  $8
-        pextlw       $8,  $12, $8
-        sd           $8,  0x28(%1)
-
-        vftoi4.xyzw  vf12, vf12
-
-        ppach        $8,  $0,  $9
-        pextlw       $8,  $12, $8
-        sd           $8,  0x38(%1)
-
-        qmfc2        $10, vf11
-        ppach        $8,  $0,  $10
-        pextlw       $8,  $12, $8
-        sd           $8,  0x48(%1)
-
-        qmfc2        $11, vf12
-        ppach        $8, $0,  $11
-        pextlw       $8, $12, $8
-        sd           $8, 0x58(%1)
-    " :: "r"(ppspr->zdepth), "r"(sp));
-
-    // **pk = *(u_long128*)&sp->GifCord;
-    *pk = sp->GifCord;
+    ((SprTagTFR*)*pk) = sp + 1;
 }
-#endif
 
 PKMESH* PkMesh_Create(int w, int h) {
     PKMESH *pmesh = malloc(sizeof(PKMESH));

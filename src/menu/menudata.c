@@ -178,7 +178,6 @@ void MenuVoiceStop(int chanId) {
 
 void MenuVoiceSetVol(int chanId, int vsetIdx, int vol0) {
     SNDTAP *sndtap_pp = VoiceSet[vsetIdx].pTap;
-
     TapCt(0x130, chanId, (sndtap_pp->volume * vol0) >> 8);
 }
 
