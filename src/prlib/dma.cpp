@@ -48,10 +48,3 @@ void PrWaitDmaFinish(u_int dmaChannel) {
         *D_PCR = pcrOld;
     }
 }
-
-/* nalib/navector.h */
-INCLUDE_ASM("prlib/dma", func_001544A8);
-
-INCLUDE_ASM("prlib/dma", func_00154558);
-
-INCLUDE_ASM("prlib/dma", func_00154580);

@@ -1,15 +1,15 @@
 {
   "measures": {
-    "fuzzy_match_percent": 35.19195,
-    "total_code": "342584",
+    "fuzzy_match_percent": 35.222797,
+    "total_code": "342284",
     "matched_code": "118472",
-    "matched_code_percent": 34.581886,
+    "matched_code_percent": 34.612194,
     "total_data": "222724",
     "matched_data": "122820",
     "matched_data_percent": 55.14448,
-    "total_functions": 1432,
+    "total_functions": 1429,
     "matched_functions": 793,
-    "matched_functions_percent": 55.377094,
+    "matched_functions_percent": 55.493355,
     "total_units": 70
   },
   "units": [
@@ -12629,16 +12629,16 @@
     {
       "name": "prlib/dma",
       "measures": {
-        "fuzzy_match_percent": 39.02439,
-        "total_code": "492",
+        "fuzzy_match_percent": 100.0,
+        "total_code": "192",
         "matched_code": "192",
-        "matched_code_percent": 39.024387,
+        "matched_code_percent": 100.0,
         "total_data": "48",
         "matched_data": "48",
         "matched_data_percent": 100.0,
-        "total_functions": 4,
+        "total_functions": 1,
         "matched_functions": 1,
-        "matched_functions_percent": 25.0,
+        "matched_functions_percent": 100.0,
         "total_units": 1
       },
       "sections": [
@@ -12655,8 +12655,8 @@
         },
         {
           "name": ".text",
-          "size": "496",
-          "fuzzy_match_percent": 39.02439,
+          "size": "192",
+          "fuzzy_match_percent": 100.0,
           "metadata": {}
         }
       ],
@@ -12669,24 +12669,6 @@
             "demangled_name": "PrWaitDmaFinish(unsigned int)"
           },
           "address": "0"
-        },
-        {
-          "name": "func_001544A8",
-          "size": "172",
-          "metadata": {},
-          "address": "192"
-        },
-        {
-          "name": "func_00154558",
-          "size": "40",
-          "metadata": {},
-          "address": "368"
-        },
-        {
-          "name": "func_00154580",
-          "size": "88",
-          "metadata": {},
-          "address": "408"
         }
       ],
       "metadata": {
@@ -12779,16 +12761,16 @@
     {
       "id": "prlib",
       "measures": {
-        "fuzzy_match_percent": 14.89537,
-        "total_code": "82576",
+        "fuzzy_match_percent": 14.949681,
+        "total_code": "82276",
         "matched_code": "12300",
-        "matched_code_percent": 14.89537,
+        "matched_code_percent": 14.949681,
         "total_data": "3140",
         "matched_data": "2396",
         "matched_data_percent": 76.30573,
-        "total_functions": 363,
+        "total_functions": 360,
         "matched_functions": 90,
-        "matched_functions_percent": 24.793388,
+        "matched_functions_percent": 25.0,
         "total_units": 33
       }
     }
