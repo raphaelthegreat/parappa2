@@ -58,13 +58,13 @@ segments:
         # .data
         - [0x3b30, .data, iop/bgm_entr]
         - [0x3b40, .data, iop/bgm_com]
-        - [0x3b50, data, iop/bgm_play]
+        - [0x3b50, .data, iop/bgm_play]
 
-        - { start: 0x3ba0, type: sbss, vram: 0x00003b00, name: iop/bgm_play }
+        - { start: 0x3ba0, type: bss,   vram: 0x00003b00, name: iop/bgm_play }
 
-        - { start: 0x3ba0, type: bss,  vram: 0x00003b20, name: iop/bgm_play }
-        - { start: 0x3ba0, type: .bss, vram: 0x00003c30, name: iop/bgm_com  }
-        - { start: 0x3ba0, type: bss,  vram: 0x00003c70, name: iop/bgm_play }
+        - { start: 0x3ba0, type: bss,   vram: 0x00003b20, name: iop/bgm_play }
+        - { start: 0x3ba0, type: .bss,  vram: 0x00003c30, name: iop/bgm_com  }
+        - { start: 0x3ba0, type: bss,   vram: 0x00003c70, name: iop/bgm_play }
 
     - [0x3ba0, databin] # .mdebug
     - [0x101bc, databin] # .shstrtab

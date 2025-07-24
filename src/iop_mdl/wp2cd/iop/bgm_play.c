@@ -50,21 +50,22 @@ typedef struct { // 0x10
     /* 0x10 */ u_char dat[0];
 } P3STR_TRH;
 
-/* data 20 */ extern /* static */ int bug_bug_bug_flag;
-/* data 24 */ extern /* static */ int fp_pc;
-/* data 28 */ extern SBUF sbuf;
-/* data 38 */ extern int gThid;
-/* data 3c */ extern int gSem;
-/* data 40 */ extern int gThid_Tr;
-/* data 44 */ extern int gSem_Tr;
-/* data 48 */ extern int gBgmIntr;
-/* data 4c */ extern int gBgmIntrTime;
-/* data 50 */ extern int ReadBuff;
-/* data 54 */ extern u_int ReadOutCnt;
-/* data 58 */ extern u_int ReadOddEven;
-/* data 5c */ extern int BgmVolumeSet;
-/* data 60 */ extern int BgmPause;
-/* data 64 */ extern int BgmMode;
+static int bug_bug_bug_flag = FALSE;
+static int fp_pc = -1;
+SBUF sbuf = {};
+int gThid = 0;
+int gSem = 0;
+int gThid_Tr = 0;
+int gSem_Tr = 0;
+int gBgmIntr = 0;
+int gBgmIntrTime = 0;
+int ReadBuff = 0;
+u_int ReadOutCnt = 0;
+u_int ReadOddEven = 0;
+int BgmVolumeSet = 0;
+int BgmPause = 0;
+int BgmMode = 0;
+
 /* bss 14 */  extern int oldstat;
 /* bss 1b0 */ extern unsigned char ring_buf[524288];
 /* bss 0 */   extern /* static */ int bgmPlayReadMode;
