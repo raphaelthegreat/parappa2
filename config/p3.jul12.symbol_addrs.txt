@@ -1752,6 +1752,8 @@ _GLOBAL_$I$prRenderStuff                                                        
 
 prRenderStuff                                                                       = 0x0038c480;
 
+warned_tmp_renderstuff                                                              = 0x003998c8;
+
 // prlib/prlib.cpp
 PrSetFrameRate                                                                      = 0x00141658; // type:func
 PrGetFrameRate                                                                      = 0x00141678; // type:func
@@ -2302,6 +2304,7 @@ fptodp                              = 0x0016ccc8; // type:func
 
 // ee/gcc/src/gcc/cp/new2.cc
 __builtin_delete                    = 0x0016dde8; // type:func
+__builtin_vec_new                   = 0x0016e000; // type:func
 
 // ee/gcc/src/newlib/libc/stdlib/malign.c
 memalign                            = 0x0016f7e8; // type:func
@@ -2321,6 +2324,9 @@ mallinfo                            = 0x00170608; // type:func
 
 // ee/gcc/src/newlib/libc/stdio/printf.c
 printf                              = 0x00170700; // type:func
+
+// ee/gcc/src/newlib/libc/stdlib/qsort.c
+qsort                               = 0x00170750; // type:func
 
 // ee/gcc/src/newlib/libc/stdlib/rand.c
 rand                                = 0x00171188; // type:func

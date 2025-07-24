@@ -1,15 +1,15 @@
 {
   "measures": {
-    "fuzzy_match_percent": 34.779793,
+    "fuzzy_match_percent": 35.070522,
     "total_code": "342584",
-    "matched_code": "117060",
-    "matched_code_percent": 34.169724,
+    "matched_code": "118056",
+    "matched_code_percent": 34.460453,
     "total_data": "222724",
     "matched_data": "122820",
     "matched_data_percent": 55.14448,
     "total_functions": 1432,
-    "matched_functions": 781,
-    "matched_functions_percent": 54.53911,
+    "matched_functions": 792,
+    "matched_functions_percent": 55.307262,
     "total_units": 70
   },
   "units": [
@@ -9235,14 +9235,14 @@
     {
       "name": "prlib/renderstuff",
       "measures": {
-        "fuzzy_match_percent": 7.514451,
+        "fuzzy_match_percent": 79.47977,
         "total_code": "1384",
-        "matched_code": "104",
-        "matched_code_percent": 7.5144506,
+        "matched_code": "1100",
+        "matched_code_percent": 79.47977,
         "matched_data_percent": 100.0,
         "total_functions": 16,
-        "matched_functions": 1,
-        "matched_functions_percent": 6.25,
+        "matched_functions": 12,
+        "matched_functions_percent": 75.0,
         "complete_data_percent": 100.0,
         "total_units": 1
       },
@@ -9260,7 +9260,7 @@
         {
           "name": ".text",
           "size": "1408",
-          "fuzzy_match_percent": 7.514451,
+          "fuzzy_match_percent": 79.47977,
           "metadata": {}
         }
       ],
@@ -9268,12 +9268,14 @@
         {
           "name": "__13PrRenderStuff",
           "size": "72",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "0"
         },
         {
           "name": "_$_13PrRenderStuff",
           "size": "88",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "72"
         },
@@ -9287,6 +9289,7 @@
         {
           "name": "Cleanup__13PrRenderStuff",
           "size": "60",
+          "fuzzy_match_percent": 100.0,
           "metadata": {
             "demangled_name": "PrRenderStuff::Cleanup"
           },
@@ -9295,12 +9298,14 @@
         {
           "name": "GetZbufBits__C13PrRenderStuff",
           "size": "88",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "328"
         },
         {
           "name": "ResetStatistics__13PrRenderStuff",
           "size": "64",
+          "fuzzy_match_percent": 100.0,
           "metadata": {
             "demangled_name": "PrRenderStuff::ResetStatistics"
           },
@@ -9309,12 +9314,14 @@
         {
           "name": "StartRender__13PrRenderStuffP13PrSceneObject",
           "size": "52",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "480"
         },
         {
           "name": "WaitRender__13PrRenderStuff",
           "size": "196",
+          "fuzzy_match_percent": 100.0,
           "metadata": {
             "demangled_name": "PrRenderStuff::WaitRender"
           },
@@ -9323,24 +9330,28 @@
         {
           "name": "AllocateTransmitDmaArray__13PrRenderStuffUi",
           "size": "124",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "736"
         },
         {
           "name": "AppendTransmitDmaTag__13PrRenderStuffPC10_sceDmaTagUif",
           "size": "124",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "864"
         },
         {
           "name": "CompareFunction__13PrRenderStuffPCvT1",
           "size": "88",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "992"
         },
         {
           "name": "SortTransmitDmaArray__13PrRenderStuff",
           "size": "40",
+          "fuzzy_match_percent": 100.0,
           "metadata": {
             "demangled_name": "PrRenderStuff::SortTransmitDmaArray"
           },
@@ -12767,16 +12778,16 @@
     {
       "id": "prlib",
       "measures": {
-        "fuzzy_match_percent": 13.689207,
+        "fuzzy_match_percent": 14.89537,
         "total_code": "82576",
-        "matched_code": "11304",
-        "matched_code_percent": 13.689208,
+        "matched_code": "12300",
+        "matched_code_percent": 14.89537,
         "total_data": "3140",
         "matched_data": "2396",
         "matched_data_percent": 76.30573,
         "total_functions": 363,
-        "matched_functions": 79,
-        "matched_functions_percent": 21.763084,
+        "matched_functions": 90,
+        "matched_functions_percent": 24.793388,
         "total_units": 33
       }
     }
