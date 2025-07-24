@@ -71,7 +71,7 @@ void PrDmaQueue::Start() {
 }
 
 void PrDmaQueue::Append(void* tag) {
-    extern bool warned;
+    static bool warned = false;
 
     if (mPos == mSize) {
         if (!warned) {

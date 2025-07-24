@@ -26,7 +26,29 @@ SECTIONS_TO_REALIGN_PER_TOOL: dict[str, dict[str, int]] = {
 
 SPECIFIC_ALIGNMENTS: dict[str, dict[str, int]] = {
     # .sdata
-    "29A8BC.sdata.s.o": { # prlib/model.cpp
+    "sprite.sdata.s.o": {
+        ".sdata": 0x4,
+    },
+
+    "model.sdata.s.o": {
+        ".sdata": 0x4,
+    },
+    "database.sdata.s.o": {
+        ".sdata": 0x4,
+    },
+    "renderee.sdata.s.o": {
+        ".sdata": 0x4,
+    },
+    "spadata.sdata.s.o": {
+        ".sdata": 0x4,
+    },
+    "vram.sdata.s.o": {
+        ".sdata": 0x4,
+    },
+    "mendererawful.sdata.s.o": {
+        ".sdata": 0x4,
+    },
+    "contour.sdata.s.o": {
         ".sdata": 0x4,
     },
 

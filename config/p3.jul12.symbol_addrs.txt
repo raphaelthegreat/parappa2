@@ -1923,6 +1923,9 @@ PrWaitMfifo__Fv                                                                 
 PrSendMfifo__FPC10_sceDmaTag                                                        = 0x001484d0; // type:func
 PrMfifoUnsentDataSize__Fv                                                           = 0x00148568; // type:func
 
+prSpramData                                                                         = 0x003998f4; // allow_duplicated:true
+mfifoProcessing                                                                     = 0x003998f8;
+
 mfifoBase                                                                           = 0x01c90000; // size:0x10000
 
 // prlib/spadata.cpp
@@ -2066,7 +2069,7 @@ Start__10PrDmaQueue                                                             
 Append__10PrDmaQueuePv                                                              = 0x001525f0; // type:func
 Wait__10PrDmaQueue                                                                  = 0x00152690; // type:func
 
-warned                                                                              = 0x003999b4;
+warned                                                                              = 0x003999b4; // allow_duplicated:true
 
 // prlib/utility.cpp
 PrGetBitSize__FUi                                                                   = 0x00152750; // type:func
@@ -2088,7 +2091,7 @@ Tim2LoadImage                                                                   
 Tim2LoadClut                                                                        = 0x00153430; // type:func
 Tim2LoadTexture__FiUiiiiPUI80                                                       = 0x001536d0; // type:func
 
-mmsize                                                                              = 0x003999b8;
+mmsize                                                                              = 0x003999b8; // size:0x8
 
 // prlib/animation.cpp
 Initialize__13SpaFileHeader                                                         = 0x00153840; // type:func
@@ -2232,7 +2235,21 @@ sceSifLoadModule                    = 0x00160a60; // type:func
 // libvu0.c
 sceVu0SubVector                     = 0x001618b0; // type:func
 sceVu0UnitMatrix                    = 0x001619a0; // type:func
+_sceVu0ecossin                      = 0x001619c8; // type:func
+_ecossin_01                         = 0x00161a30; // type:label
+_ecossin_02                         = 0x00161a34; // type:label
+sceVu0RotMatrixZ                    = 0x00161a40; // type:func
+_RotMatrixZ_01                      = 0x00161a68; // type:label
+_RotMatrixZ_02                      = 0x00161a70; // type:label
+_loopRotMatrixZ                     = 0x00161ab4; // type:label
+sceVu0RotMatrixX                    = 0x00161ae8; // type:func
+_RotMatrixX_01                      = 0x00161b10; // type:label
+_RotMatrixX_02                      = 0x00161b18; // type:label
+_loopRotMatrixX                     = 0x00161b60; // type:label
 sceVu0RotMatrixY                    = 0x00161b90; // type:func
+_RotMatrixY_01                      = 0x00161bb8; // type:label
+_RotMatrixY_02                      = 0x00161bc0; // type:label
+_loopRotMatrixY                     = 0x00161c08; // type:label
 
 // eecdvd.c
 sceCdSearchFile                     = 0x001629b0; // type:func

@@ -73,7 +73,11 @@ int Tim2GetMipMapPictureSize(TIM2_PICTUREHEADER *ph, int mipmap, int *pWidth, in
 PR_EXTERN
 TIM2_MIPMAPHEADER* Tim2GetMipMapHeader(TIM2_PICTUREHEADER *ph, int *pSize) {
     TIM2_MIPMAPHEADER *pMmHdr;
-    extern char mmsize[8];
+    static const char mmsize[] = {
+        48, 48,
+        80, 80, 80,
+        96, 96, 96,
+    };
     
     if (ph->MipMapTextures > 1) {
         pMmHdr = (TIM2_MIPMAPHEADER*)((char*)ph + sizeof(TIM2_PICTUREHEADER));

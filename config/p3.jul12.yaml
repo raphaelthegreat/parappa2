@@ -320,17 +320,21 @@ segments:
         # .sdata
         - [0x29a300, sdata]
         - [0x29a308, .sdata, dbug/vramsave]
+
         - [0x29a310, .sdata, os/mtc]
         - [0x29a318, .sdata, os/syssub]
         - [0x29a330, sdata, os/system]
         - [0x29a350, .sdata, os/tim2]
+
         - [0x29a360, .sdata, main/cdctrl]
         - [0x29a378, sdata, main/stdat]
-        - [0x29a438, sdata] # main/scrctrl
-        #- [0x29a504, sdata] # main/sprite
-        #- [0x29a514, sdata] # main/subt
-        #- [0x29a518, sdata] # main/drawctrl
-
+        - [0x29a438, sdata, main/scrctrl]
+        - [0x29a504, sdata, main/sprite]
+        - [0x29a508, sdata, main/subt]
+        - [0x29a518, sdata, main/drawctrl]
+        - [0x29a558, sdata, main/mbar]
+        - [0x29a588, sdata, main/etc]
+        - [0x29a598, sdata, main/wipe]
         - [0x29a5d0, sdata, main/main]
         - [0x29a6e0, .sdata, main/p3str]
 
@@ -341,19 +345,33 @@ segments:
         - [0x29a890, sdata, menu/menufont]
         - [0x29a8a0, sdata, menu/pksprite]
 
-        #- [0x29a8b8, sdata]
         - [0x29a8b8, .sdata, prlib/gifreg]
-        - [0x29a8bc, sdata]
-        #- [0x29a8bc, sdata, prlib/model]
-        #- [0x29a8c4, sdata, prlib/database]
-        #- [0x29a8c8, sdata, prlib/renderstuff]
+        - [0x29a8bc, sdata, prlib/model]
+        - [0x29a8c4, sdata, prlib/database]
+        - [0x29a8c8, sdata, prlib/renderstuff]
         - [0x29a8cc, .sdata, prlib/prlib]
-        - [0x29a8e0, sdata] # prlib/render
+        - [0x29a8e0, sdata, prlib/render]
+        - [0x29a8ec, sdata, prlib/renderee]
+        - [0x29a8f0, sdata, prlib/transition]
+        - [0x29a8f4, .sdata, prlib/mfifo]
+        - [0x29a8fc, sdata, prlib/spadata]
+        - [0x29a918, sdata, prlib/scene]
+        - [0x29a920, sdata, prlib/cluster]
+        - [0x29a928, sdata, prlib/shape]
+        - [0x29a930, sdata, prlib/billboard]
+        - [0x29a938, sdata, prlib/depthfield]
+        - [0x29a93c, sdata, prlib/vram]
         - [0x29a940, sdata, prlib/random]
-        - [0x29a948, sdata]
-        #- [0x29a8ec, sdata]
-        
-        # - [0x29a9d8, rodatabin] # .sbss / .bss
+        - [0x29a948, sdata, prlib/menderer]
+        - [0x29a9a0, sdata, prlib/menderercreate]
+        - [0x29a9ac, sdata, prlib/mendererawful]
+        - [0x29a9b0, sdata, prlib/mendereralpha]
+        - [0x29a9b4, .sdata, prlib/dmaqueue]
+        - [0x29a9b8, .sdata, prlib/tim2]
+        - [0x29a9c0, sdata, prlib/camera]
+        - [0x29a9c4, sdata, prlib/contour]
+
+        - [0x29a9d0, sdata, nalib/navector]
         
         # .sbss / .bss
         - { start: 0x29aa00, type: sbss,  vram: 0x00399a00, name: dbug/dbgmsg          }
@@ -440,8 +458,8 @@ segments:
         - { start: 0x29aa1c, type: bss,   vram: 0x01c84c40, name: prlib/wave           }
         - { start: 0x29aa1c, type: bss,   vram: 0x01c884c0, name: prlib/camera         }
 
-        # - { start: 0x29aa1c, type: bss,  vram: 0x01c88500, name: sdk/scelib  }
-        # - { start: 0x29aa1c, type: bss,  vram: 0x01c8df00, name: sdk/newlib  }
+        - { start: 0x29aa1c, type: bss,  vram: 0x01c88500, name: sdk/scelib  }
+        - { start: 0x29aa1c, type: bss,  vram: 0x01c8df00, name: sdk/newlib  }
         
     - [0x29aa00, databin] # pad
     - [0x29b000, databin] # .mfifo
