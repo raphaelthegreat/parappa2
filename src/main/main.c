@@ -739,22 +739,16 @@ INCLUDE_ASM("main/main", selPlayDispSetPlayOne);
 INCLUDE_ASM("main/main", gamePlayDisp);
 int gamePlayDisp(void);
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("main/main", titleDisp);
-#else
-void titleDisp(/* s1 17 */ int firstf)
-{
-    /* s0 16 */ STDAT_DAT *stdat_dat_pp;
-    /* v0 2 */ int fsize;
-    /* s0 16 */ int decp;
-    /* s2 18 */ int loop;
-    /* s3 19 */ int deramode;
+void titleDisp(int firstf) {
+    STDAT_DAT *stdat_dat_pp;
+    int        fsize, decp;
+    int        loop;
+    int        deramode;
 
     deramode = 0;
     loop = 0;
 
-    while (1)
-    {
+    while (1) {
         UsrMemClear();
         SpuBankSet();
 
@@ -762,36 +756,31 @@ void titleDisp(/* s1 17 */ int firstf)
         GlobalLobcalCopy();
 
         stdat_dat_pp = stdat_rec[19].stdat_dat_pp;
-        fsize = (CdctrlGetFileSize(&stdat_dat_pp->intfile) + 2047) / 2048;
-        decp = UsrMemEndAlloc(fsize / 2048);
-
-        CdctrlReadOne(&stdat_dat_pp->intfile, decp, 0);
+        fsize = CdctrlGetFileSize(&stdat_dat_pp->intfile);
+        CdctrlReadOne(&stdat_dat_pp->intfile, UsrMemEndAlloc(((fsize + 2047) / 2048) * 2048), 0);
         CdctrlReadWait();
 
-        if (loop == 0)
-        {
+        if (loop == 0) {
             selPlayDisp(0, 0, firstf);
             WipeInReqSame();
-            SetBackColor(255, 255, 255);
+            SetBackColor(0xff, 0xff, 0xff);
         }
-
         MtcWait(2);
 
+        decp = UsrMemAllocEndNext();
         UsrMemClearTop();
         UsrMemEndFree();
-        CdctrlMemIntgDecode(UsrMemAllocEndNext(), UsrMemAllocNext());
+        CdctrlMemIntgDecode(decp, UsrMemAllocNext());
 
         game_status.demo_flagG = DEMOF_OFF;
         GlobalLobcalCopy();
 
-        if (selPlayDispTitleDisp(19, deramode, loop))
-        {
+        if (selPlayDispTitleDisp(19, deramode, loop)) {
             SetBackColor(0, 0, 0);
             break;
         }
 
         firstf = 0;
-
         SetBackColor(0, 0, 0);
         deramode ^= 1;
 
@@ -802,13 +791,12 @@ void titleDisp(/* s1 17 */ int firstf)
         UsrMemClear();
 
         game_status.demo_flagG = DEMOF_DEMO;
-        loop = gamePlayDisp();
 
+        loop = gamePlayDisp();
         WipeInReq();
         MtcWait(2);
     }
 }
-#endif
 
 INCLUDE_RODATA("main/main", D_00393AD0);
 

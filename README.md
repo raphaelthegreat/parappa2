@@ -10,6 +10,8 @@ We are currently targeting the July 12th NTSC-J prototype, but we aim to target 
 For any questions, we have a home at the [PS1/PS2 Decompilation Discord server](https://discord.gg/VwCPdfbxgm) and the [PaRappa the Rapper Modding Community Discord server](https://discord.gg/xpvVnYd).
 
 ### Progress
+*For a more detailed view of the progress, please check our [decomp(dot)dev page](https://decomp.dev/parappadev/parappa2).*
+
 #### EE main core
 | Folder | Progress | Description
 |------------|----------|------------
