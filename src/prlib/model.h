@@ -3,16 +3,21 @@
 
 #include "common.h"
 
-#include <eetypes.h>
 
 #include "prlib/microprogram.h"
 
 #include <nalib/navector.h>
+#include <nalib/namatrix.h>
+
+#include <eetypes.h>
+#include <libdma.h>
 
 struct SpmFileHeader;
+class PrModelObject;
 
-struct SpmNodeUnk {
-    PR_PADDING(unk0, 0x60);
+struct PrVuNodeHeaderDmaPacket {
+    sceDmaTag mTag;
+    PR_PADDING(unk10, 0x50);
     PrMICRO_PROGRAM_MODULE unk60;
     PR_PADDING(unk64, 0x130);
     int unk194;
@@ -20,7 +25,10 @@ struct SpmNodeUnk {
 
 struct SpmNode {
 public:
-    PR_PADDING(unk0, 0x150);
+    PR_PADDING(unk0, 0x40);
+    NaMATRIX<float, 4, 4> unk40;
+    PR_PADDING(unk80, 0xc0);
+    NaVECTOR<float, 4> unk140;
     int unk150;
     int unk154;
     SpmFileHeader* unk158;
@@ -28,20 +36,25 @@ public:
     SpmNode* unk160;
     SpmNode* unk164;
     PR_PADDING(unk168, 0x4);
-    SpmNodeUnk* unk16C[2];
+    PrVuNodeHeaderDmaPacket* unk16C[2];
     PR_PADDING(unk174, 0x8);
-    int unk17C;
-    PR_PADDING(unk180, 0x17);
-    int unk198;
+    PrVuNodeHeaderDmaPacket* unk17C;
+    PR_PADDING(unk180, 0x8);
+    u_int unk188;
+    PR_PADDING(unk18C, 0xc);
+    int* unk198;
     PR_PADDING(unk19C, 0x4);
-    int unk1A0;
-    SpmNodeUnk* unk1A4;
+    int* unk1A0;
+    PrVuNodeHeaderDmaPacket* unk1A4;
     PR_PADDING(unk1A8, 0xc);
-    int unk1B4;
-    int unk1B8;
+    int* unk1B4;
+    int* unk1B8;
 
 public:
     void ChangePointer(SpmFileHeader* arg0, SpmNode* arg1);
+
+    void ModifySimpleDmaPacket(PrVuNodeHeaderDmaPacket* packet);
+    void RenderContext1Node(PrModelObject* model);
 };
 
 struct SpmFileHeader {
@@ -49,7 +62,7 @@ public:
     PR_PADDING(unk0, 0x6);
     u_short unk6;
     PR_PADDING(unk8, 0x5c);
-    int unk64;
+    int* unk64;
     u_int unk68;
     PR_PADDING(unk6C, 0x8);
     SpmNode** unk74;
@@ -57,12 +70,18 @@ public:
 public:
     void ChangePointer();
 
-    void* CalculatePointer(void* offset) {
+    template <typename T>
+    T* CalculatePointer(T* offset) {
         if (!offset) {
             return NULL;
         }
-        return reinterpret_cast<void*>(reinterpret_cast<int>(this) + reinterpret_cast<int>(offset));
+        return reinterpret_cast<T*>(reinterpret_cast<int>(this) + reinterpret_cast<int>(offset));
     }
+};
+
+struct SpmComplexNode {
+public:
+    void RenderContour(PrModelObject* model);
 };
 
 class PrModelObject {

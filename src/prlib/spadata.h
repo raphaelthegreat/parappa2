@@ -12,7 +12,8 @@ public:
     u_int SearchSegment(float arg0) const;
 
 protected:
-    PR_PADDING(unk0, 0x2);
+    u_char unk0;
+    u_char unk1;
     u_short unk2;
     u_int unk4;
     mutable u_int unk8;
@@ -23,6 +24,9 @@ template <typename T>
 class SpaTrack : public SpaTrackBase {
 public:
     T* GetValue(float arg0) const;
+
+    T* GetSprineValue(u_int seg, float arg1) const;
+    T* GetLinearValue(u_int seg, float arg1) const;
 
 private:
     T* unk10;

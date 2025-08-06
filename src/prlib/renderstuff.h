@@ -41,7 +41,7 @@ public:
 public:
     void AppendDmaTag(const sceDmaTag* tag);
 
-private:
+public:
     PrDmaQueue mDmaQueue;
     u_int unk10;
     int unk14;

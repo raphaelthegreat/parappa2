@@ -45,7 +45,8 @@ EE_COMMON_INCLUDES = "-Iinclude -Isrc -Iinclude/rtl/common -Iinclude/rtl/ee -Iin
 IOP_COMMON_INCLUDES = "-Iinclude -Isrc/iop_mdl/wp2cd/iop -Iinclude/rtl/common -Iinclude/rtl/iop -Iinclude/rtl/iop_gcc -Iinclude/rtl/iop_gcc/gcc-lib"
 
 EE_COMPILER_FLAGS = "-O2 -G8 -g"
-EE_COMPILER_FLAGS_CXX = "-O2 -G8 -g -x c++ -fno-exceptions -fno-strict-aliasing"
+# We need to get rid of symbols on the C++ code to have a match.
+EE_COMPILER_FLAGS_CXX = "-O2 -G8 -x c++ -fno-exceptions -fno-strict-aliasing"
 
 IOP_COMPILER_FLAGS = f"-B {TOOLS_DIR}/cc/iop-gcc281/lib/gcc-lib/mipsel-scei-elfl/2.8.1/ -O0 -G0 -g"
 

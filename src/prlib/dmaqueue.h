@@ -10,17 +10,12 @@
 #define PR_DECACHE(addr) (void*)((u_int)(addr) & 0x0fffffff)
 
 struct PrDmaList {
-    int unk0;
-    int unk4;
-    int unk8;
-    int unkC;
+    int stall_qw[4];
 
-    sceDmaTag unk10;
-    sceDmaTag unk20;
-    sceDmaTag unk30;
-
-    char unk40[64];
-};
+    sceDmaTag stall_tag;
+    sceDmaTag call_tag;
+    sceDmaTag next_tag;
+} PR_ALIGNED(128);
 
 class PrDmaQueue {
 public:
@@ -31,10 +26,6 @@ public:
     void Start();
     void Append(void* tag);
     void Wait();
-
-    u_int GetNextListAddr(PrDmaList* queue) {
-        return (u_int)PR_DECACHE(queue + 1);
-    }
 
 private:
     PrDmaList* mQueue;

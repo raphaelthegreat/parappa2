@@ -147,22 +147,22 @@ void initSystem(void) {
     sceGsSyncPath(0, 0);
     sceGsSwapDBuffDc(&DBufDc, outbuf_idx);
 
-    drawEnvP[0] = &DBufDc.draw11;
-    drawEnvP[1] = &DBufDc.draw01;
+    drawEnvP[USE_BUF_DRAW0] = &DBufDc.draw11;
+    drawEnvP[USE_BUF_DRAW1] = &DBufDc.draw01;
 
     drawEnvSp = DBufDc.draw01;
-    drawEnvSp.frame1.FBP = 0xd2;
-    drawEnvP[2] = &drawEnvSp;
+    drawEnvSp.frame1.FBP = FBP_VRAM_DRAW2;
+    drawEnvP[USE_BUF_DRAW2] = &drawEnvSp;
     sceGsSetHalfOffset(&drawEnvSp, 2048, 2048, 0);
 
     drawEnvZbuff = DBufDc.draw01;
-    drawEnvZbuff.frame1.FBP = 0x8c;
-    drawEnvP[3] = &drawEnvZbuff;
+    drawEnvZbuff.frame1.FBP = FBP_VRAM_ZBUF;
+    drawEnvP[USE_BUF_ZBUFF] = &drawEnvZbuff;
     sceGsSetHalfOffset(&drawEnvZbuff, 2048, 2048, 0);
 
     drawEnvEnd = DBufDc.draw01;
-    drawEnvEnd.frame1.FBP = 0x140;
-    drawEnvP[4] = &drawEnvEnd;
+    drawEnvEnd.frame1.FBP = FBP_VRAM_END;
+    drawEnvP[USE_BUF_END] = &drawEnvEnd;
     sceGsSetHalfOffset(&drawEnvEnd, 2048, 2048, 0);
 
     CmnGifInit(GifPkCommon, PR_ARRAYSIZE(GifPkCommon));
@@ -247,11 +247,13 @@ void systemCtrlMain(void *xx) {
     }
 }
 
+#define DUMMY_PAGE (0x1000) /* 4KB dummy page */
+
 static int FullAllocAndFree(void) {
     int stack_sizeX = _stack_size_addr;
     int endX = _end_addr;
 
-    int heap_size = 0x01ffefe0 - ((endX + 0x1000) + stack_sizeX);
+    int heap_size = 0x01ffefe0 - ((endX + DUMMY_PAGE) + stack_sizeX);
 
     free(malloc(heap_size));
     return heap_size;

@@ -11,11 +11,11 @@ void SpmFileHeader::ChangePointer() {
         return;
     }
 
-    this->unk64 = (int)CalculatePointer((void*)this->unk64);
-    this->unk74 = (SpmNode**)CalculatePointer((void*)this->unk74);
+    this->unk64 = this->CalculatePointer<int>(this->unk64);
+    this->unk74 = this->CalculatePointer<SpmNode*>(this->unk74);
 
     for (int i = 0; i < this->unk68; i++) {
-        this->unk74[i] = (SpmNode*)CalculatePointer((void*)this->unk74[i]);
+        this->unk74[i] = this->CalculatePointer<SpmNode>(this->unk74[i]);
     }
 
     /* Change node pointers starting from the first. */
@@ -27,15 +27,15 @@ void SpmNode::ChangePointer(SpmFileHeader* arg0, SpmNode* arg1) {
     this->unk158 = arg0;
     this->unk164 = arg1;
 
-    this->unk15C = (SpmNode*)arg0->CalculatePointer((void*)this->unk15C);
-    this->unk160 = (SpmNode*)arg0->CalculatePointer((void*)this->unk160);
+    this->unk15C = arg0->CalculatePointer<SpmNode>(this->unk15C);
+    this->unk160 = arg0->CalculatePointer<SpmNode>(this->unk160);
 
-    this->unk16C[0] = (SpmNodeUnk*)arg0->CalculatePointer((void*)this->unk16C[0]);
-    this->unk16C[1] = (SpmNodeUnk*)arg0->CalculatePointer((void*)this->unk16C[1]);
+    this->unk16C[0] = arg0->CalculatePointer<PrVuNodeHeaderDmaPacket>(this->unk16C[0]);
+    this->unk16C[1] = arg0->CalculatePointer<PrVuNodeHeaderDmaPacket>(this->unk16C[1]);
 
-    this->unk17C = (int)this->unk16C[0];
-    if (this->unk16C[0] == 0) {
-        this->unk17C = (int)this->unk16C[1];
+    this->unk17C = this->unk16C[0];
+    if (this->unk16C[0] == NULL) {
+        this->unk17C = this->unk16C[1];
     }
 
     for (u_int i = 0; i < 2; i++) {
@@ -45,17 +45,17 @@ void SpmNode::ChangePointer(SpmFileHeader* arg0, SpmNode* arg1) {
     }
 
     if (this->unk154 & 0xff0) {
-        this->unk198 = (int)arg0->CalculatePointer((void*)this->unk198);
+        this->unk198 = arg0->CalculatePointer<int>(this->unk198);
         if (this->unk154 & 0x10) {
-            this->unk1B4 = (int)arg0->CalculatePointer((void*)this->unk1B4);
-            this->unk1B8 = (int)arg0->CalculatePointer((void*)this->unk1B8);
+            this->unk1B4 = arg0->CalculatePointer<int>(this->unk1B4);
+            this->unk1B8 = arg0->CalculatePointer<int>(this->unk1B8);
         } else if (this->unk154 & 0x20) {
-            this->unk1B4 = (int)arg0->CalculatePointer((void*)this->unk1B4);
+            this->unk1B4 = arg0->CalculatePointer<int>(this->unk1B4);
         }
 
-        this->unk1A0 = (int)arg0->CalculatePointer((void*)this->unk1A0);
-        this->unk1A4 = (SpmNodeUnk*)arg0->CalculatePointer((void*)this->unk1A4);
-        SpmNodeUnk* s0 = this->unk1A4;
+        this->unk1A0 = arg0->CalculatePointer<int>(this->unk1A0);
+        this->unk1A4 = arg0->CalculatePointer<PrVuNodeHeaderDmaPacket>(this->unk1A4);
+        PrVuNodeHeaderDmaPacket* s0 = this->unk1A4;
         if (s0 != NULL) {
             s0->unk194 = SCE_VIF1_SET_MSCAL(PrGetMicroProgramAddress(eVumpContour), 0);
         }

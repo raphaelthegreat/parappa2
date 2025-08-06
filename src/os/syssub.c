@@ -670,25 +670,25 @@ sceGsDrawEnv1* DrawGetDrawEnvP(DNUM_ENUM dnum) {
 
     switch (dnum) {
     case DNUM_SHOW:
-        ret = (outbuf_idx != 0);
+        ret = (outbuf_idx != 0); /* USE_BUF_DRAW0/USE_BUF_DRAW1 */
         break;
     case DNUM_DRAW:
-        ret = (outbuf_idx == 0);
+        ret = (outbuf_idx == 0); /* USE_BUF_DRAW0/USE_BUF_DRAW1 */
         break;
     case DNUM_VRAM0:
-        ret = 0;
+        ret = USE_BUF_DRAW0;
         break;
     case DNUM_VRAM1:
-        ret = 1;
+        ret = USE_BUF_DRAW1;
         break;
     case DNUM_VRAM2:
-        ret = 2;
+        ret = USE_BUF_DRAW2;
         break;
     case DNUM_ZBUFF:
-        ret = 3;
+        ret = USE_BUF_ZBUFF;
         break;
     case DNUM_END:
-        ret = 4;
+        ret = USE_BUF_END;
         break;
     default:
         return NULL;
@@ -702,25 +702,25 @@ sceGsFrame* DrawGetFrameP(DNUM_ENUM dnum) {
 
     switch (dnum) {
     case DNUM_SHOW:
-        ret = (outbuf_idx != 0);
+        ret = (outbuf_idx != 0); /* USE_BUF_DRAW0/USE_BUF_DRAW1 */
         break;
     case DNUM_DRAW:
-        ret = (outbuf_idx == 0);
+        ret = (outbuf_idx == 0); /* USE_BUF_DRAW0/USE_BUF_DRAW1 */
         break;
     case DNUM_VRAM0:
-        ret = 0;
+        ret = USE_BUF_DRAW0;
         break;
     case DNUM_VRAM1:
-        ret = 1;
+        ret = USE_BUF_DRAW1;
         break;
     case DNUM_VRAM2:
-        ret = 2;
+        ret = USE_BUF_DRAW2;
         break;
     case DNUM_ZBUFF:
-        ret = 3;
+        ret = USE_BUF_ZBUFF;
         break;
     case DNUM_END:
-        ret = 4;
+        ret = USE_BUF_END;
         break;
     default:
         return NULL;
@@ -730,36 +730,35 @@ sceGsFrame* DrawGetFrameP(DNUM_ENUM dnum) {
 }
 
 int DrawGetFbpPos(DNUM_ENUM dnum) {
-    int ret = 0;
+    int ret = FBP_VRAM_DRAW0;
 
-    // TODO(poly): figure out what these values mean
     switch (dnum)  {
     case DNUM_SHOW:
-        ret = 70;
+        ret = FBP_VRAM_DRAW1;
         if (outbuf_idx == 0) {
-            ret = 0;
+            ret = FBP_VRAM_DRAW0;
         }
         break;
     case DNUM_DRAW:
-        ret = 70;
+        ret = FBP_VRAM_DRAW1;
         if (outbuf_idx != 0) {
-            ret = 0;
+            ret = FBP_VRAM_DRAW0;
         }
         break;
     case DNUM_VRAM0:
-        ret = 0;
+        ret = FBP_VRAM_DRAW0;
         break;
     case DNUM_VRAM1:
-        ret = 70;
+        ret = FBP_VRAM_DRAW1;
         break;
     case DNUM_VRAM2:
-        ret = 210;
+        ret = FBP_VRAM_DRAW2;
         break;
     case DNUM_ZBUFF:
-        ret = 140;
+        ret = FBP_VRAM_ZBUF;
         break;
     case DNUM_END:
-        ret = 320;
+        ret = FBP_VRAM_END;
         break;
     }
 
@@ -767,36 +766,35 @@ int DrawGetFbpPos(DNUM_ENUM dnum) {
 }
 
 int DrawGetTbpPos(DNUM_ENUM dnum) {
-    int ret = 0;
+    int ret = TBP_VRAM_DRAW0;
 
-    // TODO(poly): figure out what these values mean
     switch (dnum) {
     case DNUM_SHOW:
-        ret = 2240;
+        ret = TBP_VRAM_DRAW1;
         if (outbuf_idx == 0) {
-            ret = 0;
+            ret = TBP_VRAM_DRAW0;
         }
         break;
     case DNUM_DRAW:
-        ret = 2240;
+        ret = TBP_VRAM_DRAW1;
         if (outbuf_idx != 0) {
-            ret = 0;
+            ret = TBP_VRAM_DRAW0;
         }
         break;
     case DNUM_VRAM0:
-        ret = 0;
+        ret = TBP_VRAM_DRAW0;
         break;
     case DNUM_VRAM1:
-        ret = 2240;
+        ret = TBP_VRAM_DRAW1;
         break;
     case DNUM_VRAM2:
-        ret = 6720;
+        ret = TBP_VRAM_DRAW2;
         break;
     case DNUM_ZBUFF:
-        ret = 4480;
+        ret = TBP_VRAM_ZBUF;
         break;
     case DNUM_END:
-        ret = 10240;
+        ret = TBP_VRAM_END;
         break;
     }
 

@@ -8,7 +8,7 @@
 
 PrDmaQueue::PrDmaQueue(u_int size) {
     mSize  = size;
-    mQueue = (PrDmaList*)memalign(128, (size + 1) * 128);
+    mQueue = (PrDmaList*)memalign(128, (size + 1) * sizeof(PrDmaList));
 
     Initialize();
     FlushCache(WRITEBACK_DCACHE);
@@ -29,44 +29,64 @@ void PrDmaQueue::Initialize() {
     for (int i = 0; i <= mSize; i++) {
         PrDmaList* queue = &mQueue[i];
 
-        queue->unk0 = 0;
-        queue->unk4 = 0;
-        queue->unk8 = 0;
-        queue->unkC = 0;
+        /*
+         * Set up a REFS DMAtag that will
+         * stall the queue until there is
+         * data appended to the CALL DMAtag.
+         */
+        queue->stall_qw[0] = 0;
+        queue->stall_qw[1] = 0;
+        queue->stall_qw[2] = 0;
+        queue->stall_qw[3] = 0;
         
-        queue->unk10.qwc = 1;
-        queue->unk10.mark = 0;
-        queue->unk10.id = 0x40; /* DMArefs */
-        queue->unk10.next = (sceDmaTag*)queue;
-        queue->unk10.p[0] = 0;
-        queue->unk10.p[1] = 0;
+        queue->stall_tag.qwc = 1;
+        queue->stall_tag.mark = 0;
+        queue->stall_tag.id = 0x40; /* DMArefs */
+        queue->stall_tag.next = (sceDmaTag*)&queue->stall_qw;
+        queue->stall_tag.p[0] = 0;
+        queue->stall_tag.p[1] = 0;
         
-        queue->unk20.qwc = 0;
-        queue->unk20.mark = 0;
-        queue->unk20.id = 0x50; /* DMAcall */
-        queue->unk20.p[0] = 0;
-        queue->unk20.p[1] = 0;
+        /*
+         * Set up a CALL DMAtag to
+         * jump to the appended tag.
+         *
+         * For the last tag, use a RET DMAtag
+         * to return to the queue and continue.
+         */
+        queue->call_tag.qwc = 0;
+        queue->call_tag.mark = 0;
+        queue->call_tag.id = 0x50; /* DMAcall */
+        queue->call_tag.p[0] = 0;
+        queue->call_tag.p[1] = 0;
         
-        queue->unk30.qwc = 0;
-        queue->unk30.mark = 0;
-        queue->unk30.id = 0x20; /* DMAnext */
-        queue->unk30.next = &queue[1].unk10;
-        queue->unk30.p[0] = 0;
-        queue->unk30.p[1] = 0;
+        /*
+         * Jump to the next list in the queue.
+         */
+        queue->next_tag.qwc = 0;
+        queue->next_tag.mark = 0;
+        queue->next_tag.id = 0x20; /* DMAnext */
+        queue->next_tag.next = &queue[1].stall_tag;
+        queue->next_tag.p[0] = 0;
+        queue->next_tag.p[1] = 0;
     }
 }
 
 void PrDmaQueue::Start() {
-    mPos = false;
+    mPos = 0;
     PrWaitDmaFinish(SCE_DMA_VIF1);
 
-    *D_CTRL |= 0x40; /* Perform stall control on VIF1 ch. */
-    *D_STADR = (u_int)PR_DECACHE(mQueue);
+    /*
+     * Enable stall control on VIF1 ch.
+     * and set the stall address to the
+     * start of the queue.
+     */
+    *D_CTRL |= 0x40;
+    *D_STADR = (u_int)PR_DECACHE(&mQueue[0].stall_qw);
 
     sceDmaChan* chan = sceDmaGetChan(SCE_DMA_VIF1);
     chan->chcr.TTE = 1;
 
-    sceDmaSend(chan, PR_DECACHE(&mQueue[0].unk10));
+    sceDmaSend(chan, PR_DECACHE(&mQueue[0].stall_tag));
     mStarted = true;
 }
 
@@ -86,25 +106,41 @@ void PrDmaQueue::Append(void* tag) {
         Start();
     }
 
-    mQueue[mPos].unk20.next = (sceDmaTag*)tag;
+    /*
+     * Append the DMAtag to
+     * the queue's call tag.
+     */
+    mQueue[mPos].call_tag.next = (sceDmaTag*)tag;
     asm("sync.l");
 
+    /*
+     * Update the stall address to
+     * the next list in the queue.
+     *
+     * This will resume the VIF1 transfer
+     * and continue until it reaches the
+     * next stall address.
+     */
     mPos++;
     PrDmaList* queue = &mQueue[mPos - 1];
-    *D_STADR = GetNextListAddr(queue);
+    *D_STADR = (u_int)PR_DECACHE(queue + 1);
 }
 
 void PrDmaQueue::Wait() {
-    mQueue[mPos].unk20.id = 0x70; /* DMAend */
-    mQueue[mPos].unk20.next = NULL;
+    mQueue[mPos].call_tag.id = 0x70; /* DMAend */
+    mQueue[mPos].call_tag.next = NULL;
     asm("sync.l");
 
     PrDmaList* queue = &mQueue[mPos - 1];
-    *D_STADR = GetNextListAddr(queue + 1);
+    *D_STADR = (u_int)PR_DECACHE(queue + 2);
 
     PrWaitDmaFinish(SCE_DMA_VIF1);
     *D_CTRL &= ~0xc0; /* Disable stall control. */
 
-    mQueue[mPos].unk20.id = 0x50;
+    /*
+     * Restore the original tag type
+     * after stopping the queue.
+     */
+    mQueue[mPos].call_tag.id = 0x50; /* DMAcall */
     mStarted = false;
 }

@@ -24,7 +24,7 @@ extern u_int MendererDrawMeshEntryPoint;
 /* Divides address by 8 to be used on MSCAL */
 #define VU_ADDR(x, base) (((int)x - (int)base) >> 3)
 
-static void CalculateEntryPoint(void) {
+static void CalculateEntryPoint() {
     MicroProgramEntryPoint[eVumpNormal]   = VU_ADDR(vump_normal, vump_top);
     MicroProgramEntryPoint[eVumpBothface] = VU_ADDR(vump_bothface, vump_top);
     MicroProgramEntryPoint[eVumpContour]  = VU_ADDR(vump_contour, vump_top);

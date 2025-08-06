@@ -26,7 +26,7 @@ void PrDmaStripForSetGifRegister::Freeze(u_char id, const void* addr) {
     mGifTag.pad16 = 0;
     mGifTag.id = 0;
     mGifTag.PRE = false;
-    mGifTag.PRIM = SCE_GS_SET_PRIM(0, 0, 0, 0, 0, 0, 0, 0, 0);
+    mGifTag.PRIM = 0;
     mGifTag.FLG = SCE_GIF_PACKED;
     mGifTag.NREG = 1;
     mGifTag.REGS0 = SCE_GIF_PACKED_AD;

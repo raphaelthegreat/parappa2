@@ -5,6 +5,9 @@
 
 #include <math.h>
 
+template <>
+NaVECTOR<float, 4>* SpaTrack<NaVECTOR<float, 4> >::GetSprineValue(u_int seg, float arg1) const;
+
 u_int SpaTrackBase::SearchSegment(float arg0) const {
     if (this->unk4 == 1) {
         return (u_int)-1;
@@ -220,7 +223,42 @@ int SpaNodeAnimation::Optimize() {
 
 INCLUDE_ASM("prlib/spadata", GetLinearValue__Ct8SpaTrack1Zt8NaVECTOR2Zfi4Uif);
 
-INCLUDE_ASM("prlib/spadata", GetValue__Ct8SpaTrack1Zt8NaVECTOR2Zfi4f);
+template <>
+NaVECTOR<float, 4>* SpaTrack<NaVECTOR<float, 4> >::GetValue(float arg0) const {
+    if (this->unk2 & 0x1) {
+        float f13 = this->unkC[this->unk4 - 1];
+        if (arg0 < 0.0f || arg0 >= f13) {
+            arg0 = fmodf(arg0, f13);
+        }
+    }
+
+    u_int seg = this->SearchSegment(arg0);
+
+    if (seg == (u_int)-1) {
+        return (NaVECTOR<float, 4>*)&this->unk10;
+    }
+
+    if (seg == this->unk4) {
+        if (this->unk0 == 0) {
+            return (NaVECTOR<float, 4>*)&this->unk10 + ((seg - 1) * 3);
+        } else {
+            return (NaVECTOR<float, 4>*)this + seg;
+        }
+    }
+
+    switch (this->unk0) {
+    case 0:
+        return this->GetSprineValue(seg, arg0);
+    case 1:
+        return this->GetLinearValue(seg, arg0);
+    case 2:
+        return (NaVECTOR<float, 4>*)&this->unk10 + seg;
+    default:
+        break;
+    }
+
+    return NULL;
+}
 
 /* nalib/navector.h */
 INCLUDE_ASM("prlib/spadata", func_00149168);
@@ -249,5 +287,83 @@ INCLUDE_ASM("prlib/spadata", func_0014ACE8);
 
 INCLUDE_ASM("prlib/spadata", func_0014AFE0);
 
-/* prlib/spadata.cpp */
-INCLUDE_ASM("prlib/spadata", GetSprineValue__Ct8SpaTrack1Zt8NaVECTOR2Zfi4Uif);
+template <>
+NaVECTOR<float, 4>* SpaTrack<NaVECTOR<float, 4> >::GetSprineValue(u_int seg, float arg1) const {
+    float f2 = this->unkC[seg + 1] - this->unkC[seg];
+    NaVECTOR<float, 4>* a0 = (NaVECTOR<float, 4>*)&this->unk10 + (seg * 3);
+    if (f2 == 0.0f) {
+        return a0;
+    }
+
+    float f0 = (arg1 - this->unkC[seg]) / f2;
+
+    /*
+     * See PrGetModelPrimitivePosition/PrGetModelScreenPosition
+     * on prlib.cpp
+     */
+    extern NaVECTOR<float, 4> return_buffer;
+    extern int tmp_0_1744;
+    if (tmp_0_1744 == 0) {
+        tmp_0_1744 = 1;
+    }
+
+    #if 0
+        vf04.xyzw = a0[0];
+        vf05.xyzw = a0[3];
+        vf01.xyzw = vf04.xyzw - vf05.xyzw;
+        
+        vf06.xyzw = a0[2];
+        vf07.xyzw = a0[4];
+        vf02.xyzw = vf06.xyzw + vf07.xyzw;
+        
+        vf08.x    = f2;
+        ACC.xyzw  = vf01.xyzw + vf01.xyzw;
+        vf03.xyzw = ACC.xyzw + (vf02.xyzw * vf08.x);
+        
+        vf09.x    = f0;
+        ACC.xyzw  = vf06.xyzw + vf06.xyzw;
+        vf02.xyzw = ACC.xyzw + (vf07.xyzw * vf00.w);
+        ACC.w     = vf00.w + vf00.w;
+        vf08.w    = ACC.w + (vf00.w * vf00.w);
+        ACC.xyzw  = vf03.xyzw * vf09.x;
+        ACC.xyzw  = ACC.xyzw - (vf02.xyzw * vf08.x);
+        vf10.x    = vf09.x * vf08.x;
+        vf02.x    = vf09.x * vf09.x;
+        vf03.xyzw = ACC.xyzw - (vf01.xyzw * vf08.w);
+        ACC.xyzw  = vf04.xyzw + vf00.x;
+        ACC.xyzw  = ACC.xyzw + (vf06.xyzw * vf10.x);
+        vf01.xyzw = ACC.xyzw + (vf03.xyzw * vf02.x);
+        return_buffer = vf01.xyzw;
+    #else
+    asm volatile(
+        "lqc2     $vf04,  0x00(%1)       \n\t"
+        "lqc2     $vf05,  0x30(%1)       \n\t"
+        "vsub     $vf01,  $vf04,  $vf05  \n\t"
+        
+        "lqc2     $vf06,  0x20(%1)       \n\t"
+        "lqc2     $vf07,  0x40(%1)       \n\t"
+        "vadd     $vf02,  $vf06,  $vf07  \n\t"
+        
+        "qmtc2    %2,     $vf08          \n\t"
+        "vadda    ACC,    $vf01,  $vf01  \n\t"
+        "vmaddx   $vf03,  $vf02,  $vf08  \n\t"
+        
+        "qmtc2    %3,     $vf09          \n\t"
+        "vadda    ACC,    $vf06,  $vf06  \n\t"
+        "vmaddw   $vf02,  $vf07,  $vf00  \n\t"
+        "vadda.w  ACC,    $vf00,  $vf00  \n\t"
+        "vmadd.w  $vf08,  $vf00,  $vf00  \n\t"
+        "vmulax   ACC,    $vf03,  $vf09  \n\t"
+        "vmsubax  ACC,    $vf02,  $vf08  \n\t"
+        "vmul.x   $vf10,  $vf09,  $vf08  \n\t"
+        "vmul.x   $vf02,  $vf09,  $vf09  \n\t"
+        "vmsubw   $vf03,  $vf01,  $vf08  \n\t"
+        "vaddax   ACC,    $vf04,  $vf00  \n\t"
+        "vmaddax  ACC,    $vf06,  $vf10  \n\t"
+        "vmaddx   $vf01,  $vf03,  $vf02  \n\t"
+        "sqc2     $vf01,  0(%0)          \n\t"
+    : : "r"(&return_buffer), "r"(a0), "r"(f2), "r"(f0));
+    #endif
+
+    return &return_buffer;
+}

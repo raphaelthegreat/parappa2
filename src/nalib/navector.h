@@ -4,6 +4,9 @@
 template <typename T, int t0>
 class NaVECTOR {
 public:
+    NaVECTOR() {}
+
+public:
     T operator[](int arg0) const {
         return v[arg0];
     }

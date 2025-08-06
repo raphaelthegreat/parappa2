@@ -106,6 +106,33 @@ typedef struct { // 0x50
     /* 0x48 */ long trxdiraddr;
 } sceGsMoveImage;
 
+typedef enum {
+    USE_VRAM_DRAW0 = 0,
+    USE_VRAM_DRAW1 = 143360,
+    USE_VRAM_ZBUF = 286720,
+    USE_VRAM_DRAW2 = 430080,
+    USE_VRAM_END = 655360,
+    FBP_VRAM_DRAW0 = 0,
+    FBP_VRAM_DRAW1 = 70,
+    FBP_VRAM_ZBUF = 140,
+    FBP_VRAM_DRAW2 = 210,
+    FBP_VRAM_END = 320,
+    TBP_VRAM_DRAW0 = 0,
+    TBP_VRAM_DRAW1 = 2240,
+    TBP_VRAM_ZBUF = 4480,
+    TBP_VRAM_DRAW2 = 6720,
+    TBP_VRAM_END = 10240
+} USE_VRAM_ENUM;
+
+typedef enum {
+    USE_BUF_DRAW0 = 0,
+    USE_BUF_DRAW1 = 1,
+    USE_BUF_DRAW2 = 2,
+    USE_BUF_ZBUFF = 3,
+    USE_BUF_END = 4,
+    USE_BUF_DRAW_MAX = 5
+} USE_BUF_ENUM;
+
 void WorkClear(void *clr_adrs, int size);
 
 void GPadInit(void);

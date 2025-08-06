@@ -233,8 +233,8 @@ void SubtMenuCtrlInit(void *adrs) {
 }
 
 void SubtMenuCtrlPrint(u_char *msg_pp, int xp, int yp, int lang) {
-    xp += 1728;
-    yp += 1936;
+    xp += GS_X_COORD(0) >> 4;
+    yp += GS_Y_COORD(0) >> 4;
 
     SubtClear();
     SubtMsgPrint(msg_pp, xp, yp, lang == LANG_JAPANESE, 0);

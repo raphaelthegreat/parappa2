@@ -1750,7 +1750,7 @@ MergeRender__13PrRenderStuff                                                    
 _GLOBAL_$D$prRenderStuff                                                            = 0x00141630; // type:func
 _GLOBAL_$I$prRenderStuff                                                            = 0x00141640; // type:func
 
-prRenderStuff                                                                       = 0x0038c480;
+prRenderStuff                                                                       = 0x0038c480; // size:0x58
 
 warned_tmp_renderstuff                                                              = 0x003998c8;
 
@@ -1948,6 +1948,10 @@ GetSprineValue__Ct8SpaTrack1Zt8NaMATRIX3Zfi4i4Uif                               
 GetLinearValue__Ct8SpaTrack1Zt8NaMATRIX3Zfi4i4Uif                                   = 0x0014a668; // type:func
 GetValue__Ct8SpaTrack1Zt8NaMATRIX3Zfi4i4f                                           = 0x0014aab0; // type:func
 GetSprineValue__Ct8SpaTrack1Zt8NaVECTOR2Zfi4Uif                                     = 0x0014b0b0; // type:func
+
+tmp_0_1744                                                                          = 0x003998fc;
+
+return_buffer                                                                       = 0x01c83260; // size:0x10
 
 // prlib/scene.cpp
 __13PrSceneObjectP13sceGsDrawEnv1PCcUi                                              = 0x0014b188; // type:func
