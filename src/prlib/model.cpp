@@ -1,4 +1,6 @@
-#include "common.h"
+#include "model.h"
+
+#include <nalib/navector.h>
 
 INCLUDE_ASM("prlib/model", PrSetPostureWorkArea);
 
@@ -18,7 +20,45 @@ INCLUDE_ASM("prlib/model", LinkPositionAnimation__13PrModelObjectP13SpaFileHeade
 
 INCLUDE_ASM("prlib/model", CleanupPositionAnimation__13PrModelObject);
 
-INCLUDE_ASM("prlib/model", UnionBoundaryBox__13PrModelObjectPt8NaVECTOR2Zfi4T1);
+NaVECTOR<float, 4>* PrModelObject::UnionBoundaryBox(NaVECTOR<float, 4>* arg0, NaVECTOR<float, 4>* arg1) {
+    asm volatile(
+        "lqc2       $vf13,   0x0(%0)       \n\t"
+        "lqc2       $vf14,  0x10(%0)       \n\t"
+        "lqc2       $vf15,  0x20(%0)       \n\t"
+        "lqc2       $vf16,  0x30(%0)       \n\t"
+    : : "r"(&this->unk10));
+
+    SpmFileHeader* spm = this->m_spm_image;
+    asm volatile(
+        "lqc2       $vf17,  0x0(%0)        \n\t"
+        "vmulax     ACC,    $vf13,  $vf17  \n\t"
+        "vmadday    ACC,    $vf14,  $vf17  \n\t"
+        "vmaddaz    ACC,    $vf15,  $vf17  \n\t"
+        "vmaddw     $vf17,  $vf16,  $vf17  \n\t"
+    : : "r"(&spm->unk30));
+
+    asm volatile(
+        "lqc2       $vf04,  0x0(%0)        \n\t"
+        "vmini.xyz  $vf04,  $vf04,  $vf17  \n\t"
+        "sqc2       $vf04,  0x0(%0)        \n\t"
+    : : "r"(arg0));
+
+    asm volatile(
+        "lqc2       $vf17,  0x0(%0)        \n\t"
+        "vmulax     ACC,    $vf13,  $vf17  \n\t"
+        "vmadday    ACC,    $vf14,  $vf17  \n\t"
+        "vmaddaz    ACC,    $vf15,  $vf17  \n\t"
+        "vmaddw     $vf17,  $vf16,  $vf17  \n\t"
+    : : "r"(&spm->unk40));
+
+    asm volatile(
+        "lqc2       $vf04,  0x0(%0)        \n\t"
+        "vmax.xyz   $vf04,  $vf04,  $vf17  \n\t"
+        "sqc2       $vf04,  0x0(%0)        \n\t"
+    : : "r"(arg1));
+
+    return &spm->unk30;
+}
 
 INCLUDE_ASM("prlib/model", GetPrimitivePosition__13PrModelObjectPt8NaVECTOR2Zfi4);
 

@@ -3,6 +3,7 @@
 #include <eetypes.h>
 #include <eestruct.h>
 
+#include "prlib/camera.h"
 #include "prlib/microprogram.h"
 #include "prlib/model.h"
 
@@ -72,4 +73,44 @@ INCLUDE_ASM("prlib/setpointer", ChangePointer__13SpaFileHeader);
 
 INCLUDE_ASM("prlib/setpointer", ChangePointer__16SpaNodeAnimationP13SpaFileHeader);
 
-INCLUDE_ASM("prlib/setpointer", ChangePointer__13SpcFileHeader);
+void SpcFileHeader::ChangePointer() {
+    if (this->flags & 0x1) {
+        return;
+    }
+
+    this->unk74 = this->CalculatePointer<int>(this->unk74);
+    
+    this->unk88 = this->CalculatePointer<SpaTrack<NaVECTOR<float, 4> > >(this->unk88);
+    if (this->unk88 != NULL) {
+        this->unk88->ChangePointer();
+    }
+
+    this->unk8C = this->CalculatePointer<SpaTrack<NaVECTOR<float, 4> > >(this->unk8C);
+    if (this->unk8C != NULL) {
+        this->unk8C->ChangePointer();
+    }
+
+    this->unk90 = this->CalculatePointer<SpaTrack<float> >(this->unk90);
+    if (this->unk90 != NULL) {
+        this->unk90->ChangePointer();
+    }
+
+    this->unk94 = this->CalculatePointer<SpaTrack<float> >(this->unk94);
+    if (this->unk94 != NULL) {
+        this->unk94->ChangePointer();
+    }
+
+    if (this->flags & 0x8) {
+        this->unk9C = this->CalculatePointer<SpaTrack<float> >(this->unk9C);
+        if (this->unk9C != NULL) {
+            this->unk9C->ChangePointer();
+        }
+
+        this->unkA0 = this->CalculatePointer<SpaTrack<float> >(this->unkA0);
+        if (this->unkA0 != NULL) {
+            this->unkA0->ChangePointer();
+        }
+    }
+
+    this->flags |= 1;
+}

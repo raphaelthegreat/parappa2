@@ -11,6 +11,18 @@ class SpaTrackBase {
 public:
     u_int SearchSegment(float arg0) const;
 
+public:
+    void ChangePointer(u_int arg0, u_int arg1) {
+        int ptr;
+        if (this->unk0 == 0) {
+            ptr = (int)(this + 1) + (this->unk4 * arg0);
+            this->unkC = (float*)ptr;
+        } else {
+            ptr = (int)(this + 1) + (this->unk4 * arg1);
+            this->unkC = (float*)ptr;
+        }
+    }
+
 protected:
     u_char unk0;
     u_char unk1;
@@ -27,6 +39,11 @@ public:
 
     T* GetSprineValue(u_int seg, float arg1) const;
     T* GetLinearValue(u_int seg, float arg1) const;
+
+public:
+    void ChangePointer() {
+        SpaTrackBase::ChangePointer(sizeof(T)*3, sizeof(T));
+    }
 
 private:
     T* unk10;

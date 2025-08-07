@@ -3,7 +3,6 @@
 
 #include "common.h"
 
-
 #include "prlib/microprogram.h"
 
 #include <nalib/navector.h>
@@ -61,7 +60,10 @@ struct SpmFileHeader {
 public:
     PR_PADDING(unk0, 0x6);
     u_short unk6;
-    PR_PADDING(unk8, 0x5c);
+    PR_PADDING(unk8, 0x28);
+    NaVECTOR<float, 4> unk30;
+    NaVECTOR<float, 4> unk40;
+    PR_PADDING(unk50, 0x14);
     int* unk64;
     u_int unk68;
     PR_PADDING(unk6C, 0x8);
@@ -86,8 +88,16 @@ public:
 
 class PrModelObject {
 public:
+    NaVECTOR<float, 4>* UnionBoundaryBox(NaVECTOR<float, 4>* arg0, NaVECTOR<float, 4>* arg1);
+
     void GetPrimitivePosition(NaVECTOR<float, 4>* arg0);
     void GetScreenPosition(NaVECTOR<float, 4>* arg0);
+
+private:
+    PR_PADDING(unk0, 0x10);
+    NaMATRIX<float, 4, 4> unk10;
+    PR_PADDING(unk50, 0x8);
+    SpmFileHeader* m_spm_image;
 };
 
 #endif /* PRLIB_MODEL_H */

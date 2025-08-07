@@ -1,15 +1,15 @@
 {
   "measures": {
-    "fuzzy_match_percent": 35.37238,
+    "fuzzy_match_percent": 35.52781,
     "total_code": "342284",
-    "matched_code": "118984",
-    "matched_code_percent": 34.761776,
+    "matched_code": "119516",
+    "matched_code_percent": 34.917202,
     "total_data": "222724",
     "matched_data": "122820",
     "matched_data_percent": 55.14448,
     "total_functions": 1429,
-    "matched_functions": 795,
-    "matched_functions_percent": 55.633312,
+    "matched_functions": 797,
+    "matched_functions_percent": 55.77327,
     "total_units": 70
   },
   "units": [
@@ -9005,9 +9005,14 @@
     {
       "name": "prlib/model",
       "measures": {
+        "fuzzy_match_percent": 6.596306,
         "total_code": "1516",
+        "matched_code": "100",
+        "matched_code_percent": 6.596306,
         "matched_data_percent": 100.0,
         "total_functions": 13,
+        "matched_functions": 1,
+        "matched_functions_percent": 7.692308,
         "complete_data_percent": 100.0,
         "total_units": 1
       },
@@ -9025,6 +9030,7 @@
         {
           "name": ".text",
           "size": "1528",
+          "fuzzy_match_percent": 6.596306,
           "metadata": {}
         }
       ],
@@ -9094,6 +9100,7 @@
         {
           "name": "UnionBoundaryBox__13PrModelObjectPt8NaVECTOR2Zfi4T1",
           "size": "100",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "1000"
         },
@@ -9943,14 +9950,14 @@
     {
       "name": "prlib/setpointer",
       "measures": {
-        "fuzzy_match_percent": 31.144068,
+        "fuzzy_match_percent": 54.025425,
         "total_code": "1888",
-        "matched_code": "588",
-        "matched_code_percent": 31.144068,
+        "matched_code": "1020",
+        "matched_code_percent": 54.025425,
         "total_data": "32",
         "total_functions": 5,
-        "matched_functions": 2,
-        "matched_functions_percent": 40.0,
+        "matched_functions": 3,
+        "matched_functions_percent": 60.000004,
         "total_units": 1
       },
       "sections": [
@@ -9973,7 +9980,7 @@
         {
           "name": ".text",
           "size": "1896",
-          "fuzzy_match_percent": 31.144068,
+          "fuzzy_match_percent": 54.025425,
           "metadata": {}
         }
       ],
@@ -10011,6 +10018,7 @@
         {
           "name": "ChangePointer__13SpcFileHeader",
           "size": "432",
+          "fuzzy_match_percent": 100.0,
           "metadata": {
             "demangled_name": "SpcFileHeader::ChangePointer"
           },
@@ -12763,16 +12771,16 @@
     {
       "id": "prlib",
       "measures": {
-        "fuzzy_match_percent": 15.571978,
+        "fuzzy_match_percent": 16.218582,
         "total_code": "82276",
-        "matched_code": "12812",
-        "matched_code_percent": 15.571978,
+        "matched_code": "13344",
+        "matched_code_percent": 16.218582,
         "total_data": "3140",
         "matched_data": "2396",
         "matched_data_percent": 76.30573,
         "total_functions": 360,
-        "matched_functions": 92,
-        "matched_functions_percent": 25.555557,
+        "matched_functions": 94,
+        "matched_functions_percent": 26.11111,
         "total_units": 33
       }
     }
