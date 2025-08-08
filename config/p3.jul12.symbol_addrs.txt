@@ -818,19 +818,53 @@ MbarDemoCharDisp                    = 0x0011bc18; // type:func
 
 // TODO: match .data to get rid of temporary name
 tim2spr_tbl_tmp1                    = 0x00186288; // size:0x7e0 can_reference:false
+tmpColor                            = 0x00186a68; // size:0x40
 niko_chan_str_hook                  = 0x00186aa8; // size:0x50 can_reference:false
 niko_chan_str_vs                    = 0x00186af8; // size:0x30 can_reference:false
 mbhook_str                          = 0x00186b28; // size:0x10 can_reference:false
+hook_fr_dat                         = 0x00186b38; // size:0x40
+scr_tenmetu_col                     = 0x00186b78; // size:0xc
+metcol_str                          = 0x00186b88; // size:0x24
+mba_char_data                       = 0x00186bb0; // size:0x1c8
+colp                                = 0x00186d78; // size:0x18
+marSetPrgTbl                        = 0x00186d90; // size:0x10
+guimap                              = 0x00186da0; // size:0x140
+guimap_single                       = 0x00186ee0; // size:0x10
+guimap_vs                           = 0x00186ef0; // size:0x10
+guimap_sr                           = 0x00186f00; // size:0x8
+guimap_hk                           = 0x00186f08; // size:0x8
 
 niko_chan_str_pp                    = 0x00399558;
 niko_chan_str_cnt                   = 0x0039955c;
+hook_use_flag                       = 0x00399560;
+exam_disp_cursor_timer              = 0x00399564;
+scoreTentouFlag                     = 0x00399568;
+otehonAniCnt                        = 0x0039956c;
+othon_frame                         = 0x00399570;
+vs_mouse_disp_flag                  = 0x00399574;
+mbar_pos_y_ofs                      = 0x00399578;
 
+SCR_TENMETU_ENUM                    = 0x00399584;
+
+exam_global_ply_current             = 0x00399a80;
 mbar_ctrl_time                      = 0x00399a84;
 mbar_ctrl_stage                     = 0x00399a88;
 mbar_ctrl_stage_selT                = 0x00399a8c;
+guime_hdl                           = 0x00399a90;
+guime_camera_hdl                    = 0x00399a94;
 
+exam_global_ply                     = 0x01c70030; // size:0x10
+exam_global_ply_current_ply         = 0x01c70040; // size:0x10
+metFrameCnt                         = 0x01c70050; // size:0xc
+metFrameCntLight                    = 0x01c70060; // size:0xc
+scr_tenmetu_col_dat                 = 0x01c70070; // size:0xc
 conditionFramCnt                    = 0x01c70080; // size:0x10
+vsScoreMove                         = 0x01c70090; // size:0x10
+vsScoreAni                          = 0x01c700a0; // size:0x10
+vs_scr_ctrl                         = 0x01c700b0; // size:0x60
 mbar_req_str                        = 0x01c70110; // size:0xb4
+
+mbar_gif                            = 0x01c701c8; // size:0x10
 
 // main/pack.c
 PackGetDecodeSize                   = 0x0011bcc8; // type:func

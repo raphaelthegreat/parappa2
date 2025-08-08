@@ -1,15 +1,15 @@
 {
   "measures": {
-    "fuzzy_match_percent": 35.615456,
+    "fuzzy_match_percent": 35.73816,
     "total_code": "342284",
-    "matched_code": "119816",
-    "matched_code_percent": 35.004852,
+    "matched_code": "120236",
+    "matched_code_percent": 35.127556,
     "total_data": "222724",
     "matched_data": "122820",
     "matched_data_percent": 55.14448,
     "total_functions": 1429,
-    "matched_functions": 798,
-    "matched_functions_percent": 55.843246,
+    "matched_functions": 803,
+    "matched_functions_percent": 56.193142,
     "total_units": 70
   },
   "units": [
@@ -3897,14 +3897,14 @@
     {
       "name": "main/mbar",
       "measures": {
-        "fuzzy_match_percent": 15.280361,
+        "fuzzy_match_percent": 18.070688,
         "total_code": "15052",
-        "matched_code": "2300",
-        "matched_code_percent": 15.280361,
+        "matched_code": "2720",
+        "matched_code_percent": 18.070688,
         "total_data": "224",
         "total_functions": 82,
-        "matched_functions": 24,
-        "matched_functions_percent": 29.268291,
+        "matched_functions": 29,
+        "matched_functions_percent": 35.365852,
         "total_units": 1
       },
       "sections": [
@@ -3927,7 +3927,7 @@
         {
           "name": ".text",
           "size": "15208",
-          "fuzzy_match_percent": 15.280361,
+          "fuzzy_match_percent": 18.070688,
           "metadata": {}
         }
       ],
@@ -4075,6 +4075,7 @@
         {
           "name": "vsAnimationInit",
           "size": "68",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "2736"
         },
@@ -4105,6 +4106,7 @@
         {
           "name": "metColorInit",
           "size": "80",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "3224"
         },
@@ -4117,6 +4119,7 @@
         {
           "name": "metFrameInit",
           "size": "136",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "3776"
         },
@@ -4130,6 +4133,7 @@
         {
           "name": "ExamDispInit",
           "size": "104",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "3976"
         },
@@ -4148,6 +4152,7 @@
         {
           "name": "ExamDispReset",
           "size": "32",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "4184"
         },
@@ -12726,16 +12731,16 @@
     {
       "id": "main",
       "measures": {
-        "fuzzy_match_percent": 48.378696,
+        "fuzzy_match_percent": 48.717308,
         "total_code": "124036",
-        "matched_code": "59164",
-        "matched_code_percent": 47.699055,
+        "matched_code": "59584",
+        "matched_code_percent": 48.037666,
         "total_data": "42772",
         "matched_data": "37492",
         "matched_data_percent": 87.65547,
         "total_functions": 570,
-        "matched_functions": 395,
-        "matched_functions_percent": 69.29824,
+        "matched_functions": 400,
+        "matched_functions_percent": 70.17544,
         "total_units": 17
       }
     },

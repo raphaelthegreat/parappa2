@@ -112,6 +112,19 @@ typedef struct { // 0x8
     /* 0x4 */ NIKO_ENUM niko_enum;
 } NIKO_CHAN_STR;
 
+typedef struct { // 0x18
+    /* 0x00 */ long motoScr;
+    /* 0x08 */ long sakiScr;
+    /* 0x10 */ int animation_time;
+    /* 0x14 */ VS_MV_TYPE vt;
+} VS_SCR_CTRL;
+
+typedef struct { // 0xc
+    /* 0x0 */ int df_num;
+    /* 0x4 */ int ng_num;
+    /* 0x8 */ int ok_num;
+} METCOL_STR;
+
 typedef struct { // 0x24
     /* 0x00 */ MBAR_REQ_ENUM mbar_req_enum;
     /* 0x04 */ TAPSET *tapset_pp;
@@ -151,6 +164,14 @@ typedef struct { // 0x28
     /* 0x26 */ u_char b;
     /* 0x27 */ u_char a;
 } MBARR_CHR2;
+
+/* FIXME(poly): Should probably be part of scrctrl.c? */
+typedef enum {
+    EXAMTYPE_NORMAL = 0,
+    EXAMTYPE_ORIGINAL = 1,
+    EXAMTYPE_HANE = 2,
+    EXAMTYPE_MAX = 3
+} EXAM_TYPE;
 
 void examCharSet(EX_CHAR_DISP *ecd_pp, sceGifPacket *gifpk_pp);
 

@@ -1,29 +1,92 @@
 #include "main/mbar.h"
 
+#include "main/cmnfile.h"
 #include "os/syssub.h"
+#include "os/tim2.h"
 
 #include <stdio.h>
 
-/* .data */
-extern TIM2_DAT tim2spr_tbl_tmp1[];
-extern NIKO_CHAN_STR niko_chan_str_hook[];
-extern NIKO_CHAN_STR niko_chan_str_vs[];
+/* data 186288 */ extern TIM2_DAT tim2spr_tbl_tmp1[0]; /* static, tim2spr_tbl */
+// /* data 186a68 */ static u_int tmpColor[0];
+/* data 186aa8 */ extern NIKO_CHAN_STR niko_chan_str_hook[]; /* static */
+/* data 186af8 */ extern NIKO_CHAN_STR niko_chan_str_vs[]; /* static */
+/* sdata 399558 */ extern NIKO_CHAN_STR *niko_chan_str_pp; /* static */
+/* sdata 39955c */ extern int niko_chan_str_cnt; /* static */
+// /* sdata 399560 */ static int hook_use_flag;
+// /* data 186b28 */ static MBHOOK_STR mbhook_str[2];
+// /* data 186b38 */ static u_int hook_fr_dat[0];
+/* sdata 399564 */ extern int exam_disp_cursor_timer; /* static */
+/* sdata 399568 */ extern int scoreTentouFlag; /* static */
+/* data 186b78 */ extern u_char scr_tenmetu_col[4][3]; /* static */
+/* sdata 39956c */ extern int otehonAniCnt; /* static */
+/* sdata 399570 */ extern int othon_frame; /* static */
+// /* sdata 399574 */ static int vs_mouse_disp_flag;
+/* data 186b88 */ extern METCOL_STR metcol_str[3]; /* static */
+// /* data 186bb0 */ static MBA_CHAR_DATA mba_char_data[0];
+// /* sdata 399578 */ static int mbar_pos_y_ofs;
+// /* data 186d78 */ static u_char colp[0][3];
+// /* data 186d90 */ static void (*marSetPrgTbl[0])(/* parameters unknown */);
+// /* data 186da0 */ static GUIMAP guimap[0];
+// /* data 186ee0 */ static int guimap_single[0];
+// /* data 186ef0 */ static int guimap_vs[0];
+// /* data 186f00 */ static int guimap_sr[0];
+// /* data 186f08 */ static int guimap_hk[0];
+/* bss 1c70030 */ extern GLOBAL_PLY *exam_global_ply[4]; /* static */
+// /* sbss 399a80 */ static GLOBAL_PLY *exam_global_ply_current;
+/* bss 1c70040 */ extern int exam_global_ply_current_ply[4]; /* static */
+/* bss 1c70050 */ extern int metFrameCnt[3]; /* static */
+/* bss 1c70060 */ extern int metFrameCntLight[3]; /* static */
+#if 0
+/* sdata 399584 */ enum SCR_TENMETU_ENUM {
+    SCR_TENMETU_NORMAL = 0,
+    SCR_TENMETU_PL = 1,
+    SCR_TENMETU_MI = 2,
+    SCR_TENMETU_BLACK = 3,
+    SCR_TENMETU_MAX = 4
+};
+#endif
+/* bss 1c70070 */ extern u_char scr_tenmetu_col_dat[4][3]; /* static */
+/* bss 1c70080 */ extern int conditionFramCnt[4]; /* static */
+/* bss 1c70090 */ extern int vsScoreMove[4]; /* static */
+/* bss 1c700a0 */ extern int vsScoreAni[4]; /* static */
+/* bss 1c700b0 */ extern VS_SCR_CTRL vs_scr_ctrl[4]; /* static */
+/* bss 1c70110 */ extern MBAR_REQ_STR mbar_req_str[5]; /* static */
+/* sbss 399a84 */ extern int mbar_ctrl_time; /* static */
+/* sbss 399a88 */ extern int mbar_ctrl_stage; /* static */
+/* sbss 399a8c */ extern int mbar_ctrl_stage_selT; /* static */
+// /* bss 1c701c8 */ static sceGifPacket mbar_gif;
+// /* sbss 399a90 */ static PR_SCENEHANDLE guime_hdl;
+// /* sbss 399a94 */ static PR_CAMERAHANDLE guime_camera_hdl;
 
-/* .sdata */
-extern NIKO_CHAN_STR *niko_chan_str_pp;
-extern int niko_chan_str_cnt;
-
-/* .data */
-extern TIM2_DAT tim2spr_tbl_tmp1[];
-
-/* .bss */
-extern int conditionFramCnt[4];
-extern MBAR_REQ_STR mbar_req_str[5];
-
-/* .sbss */
-extern int mbar_ctrl_time;
-extern int mbar_ctrl_stage;
-extern int mbar_ctrl_stage_selT;
+static void   clrColorBuffer(int id);
+static void   NikoReset(void);
+static void   MbarNikoDisp(sceGifPacket *gifpk_pp);
+static void   MbarHookPoll(void);
+static int    vsScr2Move(long scr);
+static void   vsAnimationPoll(void);
+static void   metColorInit(void);
+static void   metColorSet(EXAM_TYPE exam_type, float per);
+static void   ExamDispOn(void);
+static u_long hex2dec(u_long data);
+static u_long hex2decPlMi(long data);
+static void   examScoreSet(sceGifPacket *ex_gif_pp);
+static void   examLevelDisp(sceGifPacket *ex_gif_pp);
+static void   MbarCl1CharSet(int col_num, int moto_num);
+static void   MbarCharSetSub(void);
+static int    MbarGetDispPosX(int tick);
+static int    MbarGetDispPosY(int tick);
+static int    MbarGetTimeArea(MBAR_REQ_STR *mr_pp);
+static int    MbarGetTimeArea2(MBAR_REQ_STR *mr_pp);
+static int    MbarGetStartTime(MBAR_REQ_STR *mr_pp);
+static int    MbarGetEndTime(MBAR_REQ_STR *mr_pp);
+static int    MbarGetStartTap(MBAR_REQ_STR *mr_pp);
+static void   MbarOthSet(MBAR_REQ_STR *mr_pp);
+static void   MbarCurSet(MBAR_REQ_STR *mr_pp);
+static int    MbarTapSubt(MBAR_REQ_STR *mr_pp);
+static void   MbarPosOffsetSet(MBAR_REQ_STR *mr_pp);
+static void   mbar_othon_frame_set(MBAR_REQ_STR *mr_pp);
+static void   guidisp_init_pr(void);
+static void   guidisp_draw_quit(int drapP);
 
 INCLUDE_ASM("main/mbar", examCharSet);
 
@@ -223,7 +286,16 @@ INCLUDE_ASM("main/mbar", MbarHookUseNG);
 
 INCLUDE_ASM("main/mbar", MbarHookPoll);
 
-INCLUDE_ASM("main/mbar", vsAnimationInit);
+void vsAnimationInit(void) {
+    int i;
+
+    for (i = 0; i < 4; i++) {
+        vsScoreMove[i] = 0;
+        vsScoreAni[i] = 0;
+    }
+
+    WorkClear(vs_scr_ctrl, sizeof(vs_scr_ctrl));
+}
 
 INCLUDE_ASM("main/mbar", vsAnimationReq);
 
@@ -233,11 +305,33 @@ INCLUDE_ASM("main/mbar", vsScr2Move);
 
 INCLUDE_ASM("main/mbar", vsAnimationPoll);
 
-INCLUDE_ASM("main/mbar", metColorInit);
+static void metColorInit(void) {
+    int i;
+
+    for (i = 0; i < PR_ARRAYSIZE(metcol_str); i++) {
+        Tim2Trans(cmnfGetFileAdrs(metcol_str[i].df_num));
+    }
+}
 
 INCLUDE_ASM("main/mbar", metColorSet);
 
-INCLUDE_ASM("main/mbar", metFrameInit);
+void metFrameInit(void) {
+    int i;
+
+    for (i = 0; i < 3; i++) {
+        metFrameCnt[i] = 0x8c;
+        metFrameCntLight[i] = 0;
+    }
+
+    scoreTentouFlag = 0;
+
+    for (i = 0; i < 4; i++) {
+        scr_tenmetu_col_dat[i][0] = scr_tenmetu_col[0][0];
+        scr_tenmetu_col_dat[i][1] = scr_tenmetu_col[0][1];
+        scr_tenmetu_col_dat[i][2] = scr_tenmetu_col[0][2];
+        exam_global_ply_current_ply[i] = 0;
+    }
+}
 
 void conditionFrameInit(void) {
     int i;
@@ -247,13 +341,38 @@ void conditionFrameInit(void) {
     }
 }
 
-INCLUDE_ASM("main/mbar", ExamDispInit);
+void ExamDispInit(void) {
+    int i;
+
+    for (i = 0; i < PR_ARRAYSIZE(exam_global_ply); i++) {
+        exam_global_ply[i] = NULL;
+    }
+
+    exam_disp_cursor_timer = -1;
+
+    metFrameInit();
+
+    metColorInit();
+
+    conditionFrameInit();
+
+    otehonAniCnt = 0;
+    othon_frame = 0;
+
+    ExamDispReset();
+
+    vsAnimationInit();
+}
 
 INCLUDE_ASM("main/mbar", ExamDispPlySet);
 
 INCLUDE_ASM("main/mbar", ExamDispReq);
 
-INCLUDE_ASM("main/mbar", ExamDispReset);
+void ExamDispReset(void) {
+    exam_disp_cursor_timer = -1;
+    metFrameInit();
+    metColorInit();
+}
 
 float examScore2Level(long score) {
     float ret_lvl = score / 140.0f;

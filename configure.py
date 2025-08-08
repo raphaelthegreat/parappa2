@@ -81,6 +81,10 @@ INSTRUCTION_PART = r"(\b(bc1t|bne|bnel|beq|beql|bqez|bnez|bnezl|beqzl|bgez|bgezl
 OPCODE_PATTERN = re.compile(f"{COMMENT_PART}  {INSTRUCTION_PART}")
 
 SLOOP_PROBLEMATIC_FUNCS = [
+    # mbar.c
+    "examNumDisp.s",
+
+    # menusub.c
     "TsRestoreSaveData.s",
     "TsGetRankingList.s",
     "TsOption_Draw.s",
@@ -122,6 +126,7 @@ def patch_branch_instructions(folder: str, func: str = None) -> None:
 
 def apply_short_loop_fix():
     # patch_branch_instructions("asm/nonmatchings/main/scrctrl")
+    patch_branch_instructions("asm/nonmatchings/main/mbar")
     patch_branch_instructions("asm/nonmatchings/menu/menusub")
     patch_branch_instructions("asm/nonmatchings/prlib/render")
     patch_branch_instructions("asm/nonmatchings/prlib/shape")

@@ -416,16 +416,16 @@ typedef struct { // 0x338
 } GLOBAL_DATA;
 
 typedef enum {
-	P3_STAGE_0,
-	P3_STAGE_1,
-	P3_STAGE_2,
-	P3_STAGE_3,
-	P3_STAGE_4,
-	P3_STAGE_5,
-	P3_STAGE_6,
-	P3_STAGE_7,
-	P3_STAGE_8,
-	P3_STAGE_MAX,
+    P3_STAGE_0,
+    P3_STAGE_1,
+    P3_STAGE_2,
+    P3_STAGE_3,
+    P3_STAGE_4,
+    P3_STAGE_5,
+    P3_STAGE_6,
+    P3_STAGE_7,
+    P3_STAGE_8,
+    P3_STAGE_MAX,
 } P3_STAGE_ENUM;
 
 typedef enum {
