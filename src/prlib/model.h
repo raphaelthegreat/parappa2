@@ -88,7 +88,7 @@ public:
 
 class PrModelObject {
 public:
-    NaVECTOR<float, 4>* UnionBoundaryBox(NaVECTOR<float, 4>* arg0, NaVECTOR<float, 4>* arg1);
+    void UnionBoundaryBox(NaVECTOR<float, 4>* arg0, NaVECTOR<float, 4>* arg1);
 
     void GetPrimitivePosition(NaVECTOR<float, 4>* arg0);
     void GetScreenPosition(NaVECTOR<float, 4>* arg0);
@@ -97,7 +97,7 @@ private:
     PR_PADDING(unk0, 0x10);
     NaMATRIX<float, 4, 4> unk10;
     PR_PADDING(unk50, 0x8);
-    SpmFileHeader* m_spm_image;
+    SpmFileHeader* mSpmImage;
 };
 
 #endif /* PRLIB_MODEL_H */

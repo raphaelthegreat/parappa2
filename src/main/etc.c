@@ -35,7 +35,7 @@ void GlobalInit(void) {
     game_status.roundG           = TRND_R1;
 
     game_status.play_table_modeG = PLAY_TABLE_NORMAL;
-    game_status.play_stageG      = 1;
+    game_status.play_stageG      = P3_STAGE_1;
     game_status.demo_flagG       = DEMOF_OFF;
 
     game_status.language_type    = LANG_JAPANESE;
@@ -128,60 +128,55 @@ int GlobalMendererUseCheck(void) {
     return ret;
 }
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("main/etc", GlobalLobcalCopy);
-#else
 void GlobalLobcalCopy(void) {
-    /* a1 5 */ int demo_rnd;
+    int demo_rnd;
 
-    if (game_status.demo_flagG == DEMOF_OFF) {
-        global_data.play_modeL = game_status.play_modeG;
-        global_data.play_typeL = game_status.play_typeG;
-        global_data.roundL = game_status.roundG;
-        global_data.play_stageL = game_status.play_stageG;
-        global_data.demo_flagL = DEMOF_OFF;
-
+    switch (game_status.demo_flagG) {
+    case DEMOF_OFF:
+        global_data.play_modeL       = game_status.play_modeG;
+        global_data.play_typeL       = game_status.play_typeG;
+        global_data.roundL           = game_status.roundG;
+        global_data.play_stageL      = game_status.play_stageG;
         global_data.play_table_modeL = game_status.play_table_modeG;
-        global_data.level_vs_enumL = game_status.level_vs_enumG;
         
-    } else if (game_status.demo_flagG == DEMOF_DEMO) {
-        #if 0
-        PVar1 = clearStageCheck();
-        PVar3 = P3_STAGE_5;
-        if (4 < (int)PVar1)
-        {
-            PVar3 = PVar1;
-        }
-        PVar1 = P3_STAGE_8;
-        if ((int)PVar3 < 9)
-        {
-            PVar1 = PVar3;
-        }
-        #endif
+        global_data.demo_flagL       = DEMOF_OFF;
+        global_data.tapLevelCtrl     = LM_AUTO;
+
+        global_data.level_vs_enumL   = game_status.level_vs_enumG;
+        break;
+    case DEMOF_DEMO:
         demo_rnd = clearStageCheck();
-        if (demo_rnd > 4)
+        if (demo_rnd < 5) {
+            demo_rnd = 5;
+        }
+        if (demo_rnd > 8) {
+            demo_rnd = 8;
+        }
 
-        global_data.play_modeL = PLAY_MODE_SINGLE;
-        global_data.play_typeL = game_status.play_typeG;
-        global_data.roundL = game_status.roundG;
-        global_data.play_stageL = randMakeMax(demo_rnd) + 1;
-        global_data.demo_flagL = DEMOF_DEMO;
-
+        global_data.play_modeL       = PLAY_MODE_SINGLE;
+        global_data.play_typeL       = game_status.play_typeG;
+        global_data.roundL           = game_status.roundG;
+        global_data.play_stageL      = randMakeMax(demo_rnd) + 1;
         global_data.play_table_modeL = PLAY_TABLE_NORMAL;
-    } else {
-        global_data.play_modeL = mc_rep_str.play_modeS;
-        global_data.play_typeL = mc_rep_str.play_typeS;
-        global_data.roundL = mc_rep_str.roundS;
-        global_data.play_stageL = mc_rep_str.play_stageS;
-        global_data.demo_flagL = DEMOF_REPLAY;
 
+        global_data.demo_flagL       = DEMOF_DEMO;
+        global_data.tapLevelCtrl     = LM_AUTO;
+        break;
+    case DEMOF_REPLAY:
+    default:
+        global_data.play_modeL       = mc_rep_str.play_modeS;
+        global_data.play_typeL       = mc_rep_str.play_typeS;
+        global_data.roundL           = mc_rep_str.roundS;
+        global_data.play_stageL      = mc_rep_str.play_stageS;
+        
+        global_data.demo_flagL       = DEMOF_REPLAY;
         global_data.play_table_modeL = mc_rep_str.play_table_modeS;
+        global_data.tapLevelCtrl     = LM_AUTO;
+        
         global_data.level_vs_enumL   = mc_rep_str.level_vs_enumS;
+        break;
     }
-
-    global_data.tapLevelCtrl = LM_AUTO;
 }
-#endif
 
 INCLUDE_ASM("main/etc", GlobalPlySet);
 
