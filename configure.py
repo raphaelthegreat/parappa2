@@ -84,6 +84,9 @@ SLOOP_PROBLEMATIC_FUNCS = [
     # mbar.c
     "examNumDisp.s",
 
+    # etc.c
+    "Pcode2Pindex.s"
+
     # menusub.c
     "TsRestoreSaveData.s",
     "TsGetRankingList.s",
@@ -127,6 +130,7 @@ def patch_branch_instructions(folder: str, func: str = None) -> None:
 def apply_short_loop_fix():
     # patch_branch_instructions("asm/nonmatchings/main/scrctrl")
     patch_branch_instructions("asm/nonmatchings/main/mbar")
+    patch_branch_instructions("asm/nonmatchings/main/etc")
     patch_branch_instructions("asm/nonmatchings/menu/menusub")
     patch_branch_instructions("asm/nonmatchings/prlib/render")
     patch_branch_instructions("asm/nonmatchings/prlib/shape")

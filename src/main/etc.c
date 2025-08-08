@@ -1,5 +1,7 @@
 #include "main/etc.h"
 
+#include "main/mbar.h"
+
 #include "os/system.h"
 
 #include "iop_mdl/tapctrl_rpc.h"
@@ -178,7 +180,202 @@ void GlobalLobcalCopy(void) {
     }
 }
 
-INCLUDE_ASM("main/etc", GlobalPlySet);
+extern const char D_00399588[]; /* .sdata - "2p com\n" */
+
+void GlobalPlySet(GLOBAL_DATA *gl_pp, PLAY_STEP stp, int stage_num) {
+    GLOBAL_PLY *gply_pp;
+
+    ExamDispInit();
+    WorkClear(&gl_pp->global_ply, sizeof(gl_pp->global_ply));
+
+    global_data.tap_ctrl_level = TCT_START;
+    global_data.play_step = stp;
+
+    if (global_data.demo_flagL != DEMOF_REPLAY) {
+        mccReqSaveInit();
+    }
+
+    switch (stp) {
+    case PSTEP_SERIAL:
+        global_data.draw_tbl_top = 0;
+        
+        gply_pp = &global_data.global_ply[3];
+        gply_pp->player_code = PCODE_NONE;
+        gply_pp->rank_level  = RLVL_GOOD;
+        gply_pp->pad_type    = PAD_DEMO;
+        gply_pp->now_score   = 0;
+        gply_pp->score       = 0;
+        gply_pp->tap_lvl_tmp = 0;
+        break;
+    case PSTEP_XTR:
+        global_data.draw_tbl_top = 0;
+        
+        gply_pp = &global_data.global_ply[3];
+        gply_pp->player_code = PCODE_NONE;
+        gply_pp->rank_level  = RLVL_GOOD;
+        gply_pp->pad_type    = PAD_DEMO;
+        gply_pp->now_score   = 0;
+        gply_pp->score       = 0;
+        gply_pp->tap_lvl_tmp = 0;
+        break;
+    case PSTEP_HOOK:
+        global_data.draw_tbl_top = inCmnHookSet(stage_num);
+        
+        gply_pp = &global_data.global_ply[1];
+        gply_pp->player_code  = PCODE_TEACHER;
+        gply_pp->rank_level   = RLVL_GOOD;
+        gply_pp->pad_type     = PAD_DEMO;
+        gply_pp->now_score    = 0;
+        gply_pp->score        = 0;
+        gply_pp->tap_lvl_tmp  = 0;
+        
+        gply_pp = &global_data.global_ply[0];
+        gply_pp->player_code  = PCODE_PARA;
+        gply_pp->rank_level   = RLVL_GOOD;
+
+        if (global_data.demo_flagL == DEMOF_DEMO) {
+            gply_pp->pad_type = PAD_DEMO;
+        } else if (global_data.demo_flagL == DEMOF_OFF) {
+            gply_pp->pad_type = PAD_1CON;
+        } else {
+            gply_pp->pad_type = PAD_REPLAY;
+        }
+
+        gply_pp->now_score    = 0;
+        gply_pp->score        = 0;
+        gply_pp->tap_lvl_tmp  = 0;
+        ExamDispPlySet(gply_pp, 0);
+        break;
+    case PSTEP_GAME:
+        global_data.draw_tbl_top = 1;
+        
+        gply_pp = &global_data.global_ply[2];
+        gply_pp->player_code = PCODE_BOXY;
+        gply_pp->rank_level  = RLVL_GOOD;
+        gply_pp->pad_type    = PAD_DEMO;
+        gply_pp->now_score   = 0;
+        gply_pp->score       = 0;
+        gply_pp->tap_lvl_tmp = 0;
+        
+        gply_pp = &global_data.global_ply[1];
+        gply_pp->player_code = PCODE_TEACHER;
+        gply_pp->rank_level  = RLVL_GOOD;
+        gply_pp->pad_type    = PAD_DEMO;
+        gply_pp->now_score   = 0;
+        gply_pp->score       = 0;
+        gply_pp->tap_lvl_tmp = 0;
+        
+        gply_pp = &global_data.global_ply[0];
+        gply_pp->player_code  = PCODE_PARA;
+        gply_pp->rank_level   = RLVL_GOOD;
+
+        if (global_data.demo_flagL == DEMOF_DEMO) {
+            gply_pp->pad_type = PAD_DEMO;
+        } else if (global_data.demo_flagL == DEMOF_OFF) {
+            gply_pp->pad_type = PAD_1CON;
+        } else {
+            gply_pp->pad_type = PAD_REPLAY;
+        }
+
+        gply_pp->now_score    = 0;
+        gply_pp->score        = 0;
+        gply_pp->tap_lvl_tmp  = 0;
+        gply_pp->flags        = 1;
+        ExamDispPlySet(gply_pp, 0);
+        break;
+    case PSTEP_BONUS:
+        global_data.draw_tbl_top = 0;
+        
+        gply_pp = &global_data.global_ply[1];
+        gply_pp->player_code = PCODE_TEACHER;
+        gply_pp->rank_level  = RLVL_GOOD;
+        gply_pp->pad_type    = PAD_UNUSE;
+        gply_pp->now_score   = 0;
+        gply_pp->score       = 0;
+        gply_pp->tap_lvl_tmp = 0;
+
+        gply_pp = &global_data.global_ply[0];
+        gply_pp->player_code = PCODE_PARA;
+        gply_pp->rank_level  = RLVL_GOOD;
+        gply_pp->pad_type    = PAD_UNUSE;
+        gply_pp->now_score   = 0;
+        gply_pp->score       = 0;
+        gply_pp->tap_lvl_tmp = 0;
+        ExamDispPlySet(gply_pp, 0);
+        break;
+    case PSTEP_VS:
+        global_data.draw_tbl_top = 0;
+        
+        gply_pp = &global_data.global_ply[2];
+        gply_pp->player_code = PCODE_BOXY;
+        gply_pp->rank_level  = RLVL_GOOD;
+        gply_pp->pad_type    = PAD_DEMO;
+        gply_pp->now_score   = 0;
+        gply_pp->score       = 0;
+        gply_pp->tap_lvl_tmp = 0;
+        
+        gply_pp->vsDraw  = 0;
+        gply_pp->vsWin   = 0;
+        gply_pp->vsLost  = 0;
+        gply_pp->vsScore = 0;
+        
+        gply_pp = &global_data.global_ply[1];
+        gply_pp->player_code = PCODE_TEACHER;
+        gply_pp->rank_level  = RLVL_GOOD;
+
+        if (global_data.demo_flagL == DEMOF_REPLAY) {
+            gply_pp->pad_type = PAD_REPLAY;
+            printf("2p replay\n");
+        } else if (global_data.demo_flagL == DEMOF_DEMO) {
+            gply_pp->pad_type = PAD_DEMO;
+            printf("2p demo\n");
+        } else if (global_data.play_modeL == PLAY_MODE_VS_COM) {
+            gply_pp->pad_type = PAD_COM;
+            printf(D_00399588);
+            global_data.tap_ctrl_level = global_data.level_vs_enumL + 1;
+        } else {
+            gply_pp->pad_type = PAD_2CON;
+            printf("2p 2con\n");
+            global_data.tap_ctrl_level = TCT_LV00;            
+        }
+
+        gply_pp->now_score   = 0;
+        gply_pp->score       = 0;
+        gply_pp->tap_lvl_tmp = 0;
+        
+        gply_pp->vsDraw  = 0;
+        gply_pp->vsWin   = 0;
+        gply_pp->vsLost  = 0;
+        gply_pp->vsScore = 0;
+        ExamDispPlySet(gply_pp, 1);
+        
+        gply_pp = &global_data.global_ply[0];
+        gply_pp->player_code  = PCODE_PARA;
+        gply_pp->rank_level   = RLVL_GOOD;
+
+        if (global_data.demo_flagL == DEMOF_DEMO) {
+            gply_pp->pad_type = PAD_DEMO;
+        } else if (global_data.demo_flagL == DEMOF_OFF) {
+            gply_pp->pad_type = PAD_1CON;
+        } else {
+            gply_pp->pad_type = PAD_REPLAY;
+        }
+
+        gply_pp->now_score    = 0;
+        gply_pp->score        = 0;
+        gply_pp->tap_lvl_tmp  = 0;
+        
+        gply_pp->vsDraw  = 0;
+        gply_pp->vsWin   = 0;
+        gply_pp->vsLost  = 0;
+        gply_pp->vsScore = 0;
+        ExamDispPlySet(gply_pp, 0);
+        break;
+    default:
+        printf("error GlobalPlySet PLAY_STEP [%d]\n", stp);
+        break;
+    }
+}
 
 PAD_TYPE GetPcode2PadType(PLAYER_CODE player_code) {
     int         i;

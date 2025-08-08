@@ -1,15 +1,15 @@
 {
   "measures": {
-    "fuzzy_match_percent": 35.73816,
+    "fuzzy_match_percent": 36.054855,
     "total_code": "342284",
-    "matched_code": "120236",
-    "matched_code_percent": 35.127556,
+    "matched_code": "121320",
+    "matched_code_percent": 35.444252,
     "total_data": "222724",
     "matched_data": "122820",
     "matched_data_percent": 55.14448,
     "total_functions": 1429,
-    "matched_functions": 803,
-    "matched_functions_percent": 56.193142,
+    "matched_functions": 804,
+    "matched_functions_percent": 56.26312,
     "total_units": 70
   },
   "units": [
@@ -4535,14 +4535,14 @@
     {
       "name": "main/etc",
       "measures": {
-        "fuzzy_match_percent": 43.201756,
+        "fuzzy_match_percent": 72.916664,
         "total_code": "3648",
-        "matched_code": "1576",
-        "matched_code_percent": 43.20175,
+        "matched_code": "2660",
+        "matched_code_percent": 72.91667,
         "total_data": "264",
         "total_functions": 38,
-        "matched_functions": 26,
-        "matched_functions_percent": 68.42105,
+        "matched_functions": 27,
+        "matched_functions_percent": 71.05263,
         "total_units": 1
       },
       "sections": [
@@ -4559,13 +4559,13 @@
         {
           "name": ".rodata",
           "size": "264",
-          "fuzzy_match_percent": 71.969696,
+          "fuzzy_match_percent": 36.363636,
           "metadata": {}
         },
         {
           "name": ".text",
           "size": "3736",
-          "fuzzy_match_percent": 43.201756,
+          "fuzzy_match_percent": 72.916664,
           "metadata": {}
         }
       ],
@@ -4655,6 +4655,7 @@
         {
           "name": "GlobalPlySet",
           "size": "1084",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "968"
         },
@@ -12731,16 +12732,16 @@
     {
       "id": "main",
       "measures": {
-        "fuzzy_match_percent": 48.717308,
+        "fuzzy_match_percent": 49.591248,
         "total_code": "124036",
-        "matched_code": "59584",
-        "matched_code_percent": 48.037666,
+        "matched_code": "60668",
+        "matched_code_percent": 48.911606,
         "total_data": "42772",
         "matched_data": "37492",
         "matched_data_percent": 87.65547,
         "total_functions": 570,
-        "matched_functions": 400,
-        "matched_functions_percent": 70.17544,
+        "matched_functions": 401,
+        "matched_functions_percent": 70.350876,
         "total_units": 17
       }
     },
