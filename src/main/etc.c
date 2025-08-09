@@ -8,6 +8,8 @@
 
 #include <prlib/prlib.h>
 
+#include <libpad.h>
+
 #include <stdio.h>
 
 /* .sdata */
@@ -121,10 +123,10 @@ TAP_ROUND_ENUM GetHatRound(void) {
 }
 
 int GlobalMendererUseCheck(void) {
-    int ret = 0;
+    int ret = FALSE;
 
     if (global_data.play_step == PSTEP_GAME || global_data.play_step == PSTEP_SERIAL) {
-        ret = 1;
+        ret = TRUE;
     }
     
     return ret;
@@ -441,11 +443,9 @@ void TimeCallbackTimeSetChanTempo(int chan, u_int time, float tempo) {
         return;
     }
 
-    /* This was actually written in a single line, why? */
     vsync_time[chan] = (int)
     (
-        (((time < 0) ? (time & 1 | time >> 1) : time) * 3600.0f + tempo * 96.0f * 0.5f) 
-            / (tempo * 96.0f)
+        ((time * 3600.0f) + (tempo * 96.0f * 0.5f)) / (tempo * 96.0f)
     );
 }
 
@@ -460,30 +460,30 @@ void TimeCallbackTimeSet(u_int time) {
 INCLUDE_ASM("main/etc", Pcode2Pindex);
 
 int GetKeyCode2Index(int code) {
-    if (code & 0x10) {
+    if (code & SCE_PADRup) {
         return 1;
     }
-    if (code & 0x20) {
+    if (code & SCE_PADRright) {
         return 2;
     }
-    if (code & 0x40) {
+    if (code & SCE_PADRdown) {
         return 3;
     }
-    if (code & 0x80) {
+    if (code & SCE_PADRleft) {
         return 4;
     }
 
-    if (code & 4) {
+    if (code & SCE_PADL1) {
         return 5;
     }
-    if (code & 8) {
+    if (code & SCE_PADR1) {
         return 6;
     }
 
-    if (code & 1) {
+    if (code & SCE_PADL2) {
         return 5;
     }
-    if (code & 2) {
+    if (code & SCE_PADR2) {
         return 6;
     }
 
@@ -555,7 +555,12 @@ void inCmnInit(int stg) {
     ingame_common_str.BonusStage = stg;
 }
 
-INCLUDE_ASM("main/etc", inCmnHookMaxLineCnt);
+int inCmnHookMaxLineCnt(int stg) {
+    if (stg > 8u) {
+        return 0;
+    }
+    return hkl_pkstr[stg].cnt;
+}
 
 INCLUDE_ASM("main/etc", inCmnHookMaxLinePknum);
 
@@ -563,4 +568,7 @@ INCLUDE_ASM("main/etc", inCmnHookSet);
 
 INCLUDE_ASM("main/etc", inCmnHook2GameCheck);
 
-INCLUDE_ASM("main/etc", inCmnHook2GameSave);
+void inCmnHook2GameSave(int level) {
+    ingame_common_str.HookLevel = level;
+    printf("HOOK pack:%d level:%d\n", ingame_common_str.HookLine, level);
+}

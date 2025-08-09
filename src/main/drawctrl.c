@@ -78,7 +78,7 @@ void UseGsSetXyOffset(int ofs) {
 void outsideDrawSceneClear(void) {
     scenectrl_outside_cnt = 0;
     scenectrl_outside_read_cnt = 0;
-    WorkClear(scenectrl_outside, 0x100);
+    WorkClear(scenectrl_outside, sizeof(scenectrl_outside));
 }
 
 int outsideDrawSceneReq(OVL_FUNC prg_pp, u_char pri, u_int useF, u_int drawF, void *param) {

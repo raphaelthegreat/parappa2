@@ -12,8 +12,8 @@
 /* data 186af8 */ extern NIKO_CHAN_STR niko_chan_str_vs[]; /* static */
 /* sdata 399558 */ extern NIKO_CHAN_STR *niko_chan_str_pp; /* static */
 /* sdata 39955c */ extern int niko_chan_str_cnt; /* static */
-// /* sdata 399560 */ static int hook_use_flag;
-// /* data 186b28 */ static MBHOOK_STR mbhook_str[2];
+/* sdata 399560 */ extern int hook_use_flag; /* static */
+/* data 186b28 */ extern MBHOOK_STR mbhook_str[2]; /* static */
 // /* data 186b38 */ static u_int hook_fr_dat[0];
 /* sdata 399564 */ extern int exam_disp_cursor_timer; /* static */
 /* sdata 399568 */ extern int scoreTentouFlag; /* static */
@@ -276,9 +276,20 @@ static void MbarNikoDisp(sceGifPacket *gifpk_pp) {
     }
 }
 
-INCLUDE_ASM("main/mbar", MbarHookUseInit);
+void MbarHookUseInit(void) {
+    int i;
 
-INCLUDE_ASM("main/mbar", MbarHookUnUse);
+    hook_use_flag = TRUE;
+
+    for (i = 0; i < PR_ARRAYSIZE(mbhook_str); i++) {
+        mbhook_str[i].timer = 0;
+        Tim2Trans(cmnfGetFileAdrs(mbhook_str[i].moto));
+    }
+}
+
+void MbarHookUnUse(void) {
+    hook_use_flag = FALSE;
+}
 
 INCLUDE_ASM("main/mbar", MbarHookUseOK);
 

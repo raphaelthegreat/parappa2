@@ -17,6 +17,12 @@ typedef enum {
     NIKO_MAX = 4
 } NIKO_ENUM;
 
+typedef struct { // 0x8
+    /* 0x0 */ u_short moto;
+    /* 0x2 */ u_short saki;
+    /* 0x4 */ int timer;
+} MBHOOK_STR;
+
 typedef enum {
     MBAR_NONE = 0,
     MBAR_TEACHER = 393,

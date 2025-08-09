@@ -432,7 +432,7 @@ int selPlayDisp(int sel_stage, int sel_disp, int firstf) {
             break;
         }
 
-        if (ScrEndCheckFadeOut() && (global_data.demo_flagL == DEMOF_DEMO)) {
+        if (ScrEndCheckFadeOut() && global_data.demo_flagL == DEMOF_DEMO) {
             ret = 2;
             break;
         }

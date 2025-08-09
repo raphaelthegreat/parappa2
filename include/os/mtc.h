@@ -77,8 +77,8 @@ void MtcChangeThCtrl(void* x);
 void MtcInit(void);
 void MtcQuit(void);
 
-void MtcStart(void (*ctrlTh_pp)(void* x));
-void MtcExec(void (*prg_pp)(void* x), long level);
+void MtcStart(void (*ctrlTh_pp)(void *x));
+void MtcExec(void (*prg_pp)(void *x), long level);
 void MtcWait(long wt);
 void MtcKill(long level);
 void MtcPause(long level);
