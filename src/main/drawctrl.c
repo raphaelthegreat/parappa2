@@ -84,7 +84,7 @@ void outsideDrawSceneClear(void) {
 int outsideDrawSceneReq(OVL_FUNC prg_pp, u_char pri, u_int useF, u_int drawF, void *param) {
     SCENECTRL *scenectrl_pp;
 
-    if (scenectrl_outside_cnt >= 8) {
+    if (scenectrl_outside_cnt >= PR_ARRAYSIZE(scenectrl_outside)) {
         printf("outside draw over!!\n");
         return 1;
     }
@@ -205,7 +205,7 @@ static void* vs06BomAdr(OBJBTHROW_TYPE thtype, int time) {
 void BallThrowReq(void *mdlh, OBJBTHROW_TYPE thtype, void *texpp, void *mdlhoming) {
     BTHROW_STR *bt_pp;
 
-    if (bthrow_ctrl[thtype].bthrow_str_cnt >= 128) {
+    if (bthrow_ctrl[thtype].bthrow_str_cnt >= PR_ARRAYSIZE(bthrow_ctrl[thtype].bthrow_str)) {
         return;
     }
 
@@ -242,7 +242,7 @@ void BallThrowPoll(void) {
     int w, h;
     int px, py;
 
-    for (i = 0; i < 2; i++) {
+    for (i = 0; i < PR_ARRAYSIZE(bthrow_ctrl); i++) {
         if (bthrow_ctrl[i].frame == 0) {
             BallThrowInitDare(i);
         } else {
@@ -412,7 +412,7 @@ void* DrawTmpBuffGetArea(int size) {
     int   i;
     void *ret = NULL;
 
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < PR_ARRAYSIZE(tmp_buf_adrs); i++) {
         if (tmp_buf_adrs[i] != NULL) {
             continue;
         }
@@ -438,7 +438,7 @@ void DrawObjdatInit(int size, OBJDAT *od_pp, PR_SCENEHANDLE prf) {
             od_pp->handle = PrInitializeAnimation(tmp_adr);
            
             frame = PrGetAnimationEndFrame(od_pp->handle);
-            od_pp->maxfr = frame + frame;  
+            od_pp->maxfr = frame + frame;
             break;
         case ODAT_SPM:
             od_pp->handle = PrInitializeModel(tmp_adr, prf);
@@ -456,6 +456,7 @@ void DrawObjdatInit(int size, OBJDAT *od_pp, PR_SCENEHANDLE prf) {
             break;
         default:
             printf("Objdat Error!! type[%d]\n", od_pp->objdat_type);
+            break;
         }
     }
 }
@@ -479,12 +480,12 @@ void DrawObjdatReset(int size, OBJDAT *od_pp) {
             PrHideModel(od_pp->handle);
 
             if (PrGetLinkedAnimation(od_pp->handle) != NULL) {
-                PrAnimateModel(od_pp->handle, 0);
+                PrAnimateModel(od_pp->handle, 0.0f);
                 PrUnlinkAnimation(od_pp->handle);
             }
             if (PrGetLinkedPositionAnimation(od_pp->handle) != NULL) {
                 PrUnlinkPositionAnimation(od_pp->handle);
-                PrAnimateModelPosition(od_pp->handle, 0);
+                PrAnimateModelPosition(od_pp->handle, 0.0f);
             }
             break;
         case ODAT_SPC:
@@ -516,7 +517,7 @@ void DrawSceneInit(sceGsDrawEnv1 *draw_env, SCENE_OBJDATA *scene_pp, int useDisp
     scene_pp->handle = PrInitializeScene(draw_env, scene_pp->usrName, fbp_tmp);
     DrawObjdatInit(scene_pp->objdat_size, scene_pp->objdat_pp, scene_pp->handle);
 
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < PR_ARRAYSIZE(scene_pp->objactprg_ctrl.objactprg); i++) {
         scene_pp->objactprg_ctrl.objactprg[i] = NULL;
     }
 
@@ -592,11 +593,7 @@ void DrawObjTapStrTapQuit(SCENE_OBJDATA *scn_pp, int req_num) {
     int     max       = scn_pp->objtapstr_pp[req_num].objtap_size;
     OBJTAP *objtap_pp = scn_pp->objtapstr_pp[req_num].objtap_pp;
 
-    if (max <= 0) {
-        return;
-    }
-
-    for (i = max; i != 0; i--, objtap_pp++) {
+    for (i = 0; i < max; i++, objtap_pp++) {
         if ((u_short)(objtap_pp->channel + 16) > 2) {
             DrawObjStrTapQuit(scn_pp, scn_pp->dr_tap_req[objtap_pp->channel].req_no, 0);
             scn_pp->dr_tap_req[objtap_pp->channel].req_no = -1;
@@ -622,7 +619,7 @@ static u_int GetSpfTimeCtrl(OBJDAT *objdat_pp, u_int frame) {
 
     spf_str_pp = objdat_pp->handle;
     max_cnt = (spf_str_pp->maxFrame * 2) - 2;
-    if (max_cnt < frame) {
+    if (frame > max_cnt) {
         frame = max_cnt;
     }
 
@@ -639,12 +636,10 @@ void camOtherKill(OBJACTPRG *objactprg_pp, int objactprg_num, int oya_num) {
     int i;
 
     for (i = 0; i < objactprg_num; i++, objactprg_pp++) {
-        if (i == oya_num) {
-            continue;
-        }
-        
-        if (objactprg_pp->job_type == OCTRL_CAM) {
-            objactprg_pp->job_type = OCTRL_NON;
+        if (i != oya_num) {
+            if (objactprg_pp->job_type == OCTRL_CAM) {
+                objactprg_pp->job_type = OCTRL_NON;
+            }
         }
     }
 }
@@ -653,13 +648,11 @@ void posAniOtherKill(OBJACTPRG *objactprg_pp, int objactprg_num, int ani_num, in
     int i;
 
     for (i = 0; i < objactprg_num; i++, objactprg_pp++) {
-        if (i == ani_num) {
-            continue;
-        }
-        
-        if (objactprg_pp->job_type == OCTRL_ANIPOS &&
-            objactprg_pp->sub_num == mod_num) {
-            objactprg_pp->job_type = OCTRL_NON;
+        if (i != ani_num) {
+            if (objactprg_pp->job_type == OCTRL_ANIPOS &&
+                objactprg_pp->sub_num == mod_num) {
+                objactprg_pp->job_type = OCTRL_NON;
+            }
         }
     }
 }
@@ -702,10 +695,10 @@ void DrawSceneFirstSet(SCENE_OBJDATA *scene_pp) {
 
     for (i = 0; i < PR_ARRAYSIZE(scene_pp->objactprg_ctrl.objactprg); i++) {
         if (scene_pp->objactprg_ctrl.objactprg[i] == NULL) {
-            scene_pp->objactprg_ctrl.objactprg[i] = DrawTmpBuffGetArea(scene_pp->objdat_size * 28);
+            scene_pp->objactprg_ctrl.objactprg[i] = DrawTmpBuffGetArea(scene_pp->objdat_size * sizeof(OBJACTPRG));
         }
 
-        WorkClear(scene_pp->objactprg_ctrl.objactprg[i], scene_pp->objdat_size * 28);
+        WorkClear(scene_pp->objactprg_ctrl.objactprg[i], scene_pp->objdat_size * sizeof(OBJACTPRG));
     }
 
     scene_pp->objactprg_ctrl.num = scene_pp->objdat_size;
@@ -921,9 +914,9 @@ static void DrawSceneStrInit(SCENESTR *scstr_pp) {
 
         if (scstr_pp->scenectrl_pp[i].prg_pp != NULL) {
             /* 
-               Call the overlay function pointer (DrawSceneObjData)
-               to initialize the scenes and handles for each object 
-            */
+             * Call the overlay function pointer (DrawSceneObjData)
+             * to initialize the scenes and handles for each object 
+             */
             scstr_pp->scenectrl_pp[i].prg_pp(scstr_pp->scenectrl_pp[i].param_pp, 0, -2, scstr_pp->scenectrl_pp[i].useDisp, scstr_pp->scenectrl_pp[i].drDisp);
         }
     }
@@ -937,18 +930,16 @@ static void DrawSceneStrReset(SCENESTR *scstr_pp) {
     }
 
     for (i = 0; i < scstr_pp->scenectrl_num; i++) {
-        if (scstr_pp->scenectrl_pp[i].use_flag == 0) {
-            continue;
-        }
+        if (scstr_pp->scenectrl_pp[i].use_flag != 0) {
+            scstr_pp->scenectrl_pp[i].use_flag = 0;
 
-        scstr_pp->scenectrl_pp[i].use_flag = 0;
-
-        if (scstr_pp->scenectrl_pp[i].prg_pp != NULL) {
-            /* 
-               Call the overlay function pointer (DrawSceneObjData)
-               to reset the objects 
-            */
-            scstr_pp->scenectrl_pp[i].prg_pp(scstr_pp->scenectrl_pp[i].param_pp, 0, -1, 0, 0);
+            if (scstr_pp->scenectrl_pp[i].prg_pp != NULL) {
+                /* 
+                 * Call the overlay function pointer (DrawSceneObjData)
+                 * to reset the objects 
+                 */
+                scstr_pp->scenectrl_pp[i].prg_pp(scstr_pp->scenectrl_pp[i].param_pp, 0, -1, 0, 0);
+            }
         }
     }
 }
@@ -1032,7 +1023,19 @@ void DrawCtrlTimeSet(int time) {
     drawCurrentTime = time;
 }
 
-INCLUDE_ASM("main/drawctrl", DrawCtrlTblChange);
+void DrawCtrlTblChange(int ctrlTbl) {
+    if (ctrlTbl == drawCurrentLine) {
+        return;
+    }
+
+    if (drawCurrentLine >= drawEventrec->scenestr_size) {
+        drawCurrentLine = ctrlTbl;
+        return;
+    }
+
+    DrawSceneStrReset(&drawEventrec->scenestr_pp[drawCurrentLine]);
+    drawCurrentLine = ctrlTbl;
+}
 
 INCLUDE_ASM("main/drawctrl", DrawTapReqTbl);
 

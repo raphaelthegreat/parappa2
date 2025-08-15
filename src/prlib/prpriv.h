@@ -3,10 +3,10 @@
 
 #include "common.h"
 
-#include "prlib/animation.h"
-#include "prlib/camera.h"
-#include "prlib/model.h"
-#include "prlib/scene.h"
+class PrModelObject;
+class SpaFileHeader;
+class SpcFileHeader;
+class PrSceneObject;
 
 typedef struct { // 0x40
     /* 0x00 */ float position[4];

@@ -354,8 +354,7 @@ void intReadSub(void) {
         /* Handle the decoded data */
         switch (PACK(head_read_pp)->ftype) {
         /* TIM2 textures */
-        case FT_VRAM:
-            PR_SCOPE
+        case FT_VRAM: {
             int i;
             printf("int file tim2 file in\n");
 
@@ -364,11 +363,10 @@ void intReadSub(void) {
             }
 
             printf("int file tim2 file out\n");
-            PR_SCOPEEND
             break;
+        }
         /* Sounds */
-        case FT_SND:
-            PR_SCOPE
+        case FT_SND: {
             int i;
             printf("int file snd file in\n");
 
@@ -389,14 +387,13 @@ void intReadSub(void) {
             }
 
             printf("int file snd file out\n");
-            PR_SCOPEEND
             break;
+        }
         /* PaRappa's hat textures (TIM2) */
         case FT_R1:
         case FT_R2:
         case FT_R3:
-        case FT_R4:
-            PR_SCOPE
+        case FT_R4: {
             int i;
 
             if (GetHatRound() == (PACK(head_read_pp)->ftype - 4)) {
@@ -408,18 +405,18 @@ void intReadSub(void) {
 
                 printf("int file tim2 roud file out\n");
             }
-            PR_SCOPEEND
+
             break;
+        }
         /* Models, animations, etc. */
-        case FT_ONMEM:
-            PR_SCOPE
+        case FT_ONMEM: {
             int i;
             printf("mem cnt [%d]\n", PACK(head_read_pp)->fnum);
 
             for (i = 0; i < PACK(head_read_pp)->fnum; i++) {
                 UsrMemAlloc(PACK(head_read_pp)->adr[i + 1] - PACK(head_read_pp)->adr[i]);
             }
-            PR_SCOPEEND
+        }
         /* Fallthrough, stops after the ONMEM file category */
         default:
             printf("intg exit!!\n");
@@ -532,8 +529,7 @@ void CdctrlMemIntgDecode(u_int rbuf, u_int setbuf) {
         /* Handle the decoded data */
         switch (PACK(head_read_pp)->ftype) {
         /* TIM2 textures */
-        case FT_VRAM:
-            PR_SCOPE
+        case FT_VRAM: {
             int i;
             printf("tim trans in\n");
 
@@ -542,11 +538,10 @@ void CdctrlMemIntgDecode(u_int rbuf, u_int setbuf) {
             }
 
             printf("tim trans out\n");
-            PR_SCOPEEND
             break;
+        }
         /* Sounds */
-        case FT_SND:
-            PR_SCOPE
+        case FT_SND: {
             int i;
 
             for (i = 0; i < PACK(head_read_pp)->fnum / 2; i++) {
@@ -560,14 +555,13 @@ void CdctrlMemIntgDecode(u_int rbuf, u_int setbuf) {
             while (TapCt(0x8070, 0, 0)) {
                 MtcWait(1);
             }
-            PR_SCOPEEND
             break;
+        }
         /* PaRappa's hat textures (TIM2) */
         case FT_R1:
         case FT_R2:
         case FT_R3:
-        case FT_R4:
-            PR_SCOPE
+        case FT_R4: {
             int i;
 
             if (GetHatRound() == PACK(head_read_pp)->ftype - 4) {
@@ -580,11 +574,10 @@ void CdctrlMemIntgDecode(u_int rbuf, u_int setbuf) {
                 printf("int file tim2 roud file out\n");
             }
 
-            PR_SCOPEEND
             break;
+        }
         /* Models, animations, etc. */
-        case FT_ONMEM:
-            PR_SCOPE
+        case FT_ONMEM: {
             int i;
             printf("mem cnt [%d]\n", PACK(head_read_pp)->fnum);
 
@@ -592,8 +585,8 @@ void CdctrlMemIntgDecode(u_int rbuf, u_int setbuf) {
                 UsrMemAlloc(PACK(head_read_pp)->adr[i+1] - PACK(head_read_pp)->adr[i]);
             }
 
-            PR_SCOPEEND
             break;
+        }
         default:
             printf("intg exit!!\n");
             usrFree(head_read_pp);

@@ -75,15 +75,16 @@ INCLUDE_ASM("main/etc", GlobalTimeJob);
 void GlobalTimeJob(void) {
     /* Not on STABS, but makes things shorter */
     GLOBAL_DATA *gl_pp = &global_data;
+    int snd_currentTime;
 
     if (gl_pp->TimeType == FGF_VSYNC) {
-        gl_pp->currentTime = TimeCallbackTimeGet();
-        gl_pp->vsyncTime = gl_pp->currentTime;
+        gl_pp->currentTime = gl_pp->vsyncTime = TimeCallbackTimeGet();
         
-        gl_pp->Snd_currentTime =
-            ((gl_pp->currentTime * 96.0f * gl_pp->tempo + 1800.0f) / 3600.0f);
+        snd_currentTime = (((gl_pp->currentTime * 96.0f * gl_pp->tempo) + 1800.0f) / 3600.0f);
 
-        gl_pp->Snd_vsyncTime = gl_pp->Snd_currentTime;
+        gl_pp->Snd_currentTime = snd_currentTime;
+        gl_pp->Snd_vsyncTime = snd_currentTime;
+
         gl_pp->Snd_cdSampleCnt = CdctrlSndTime2WP2sample(gl_pp->tempo, gl_pp->Snd_currentTime);
     } else if (gl_pp->TimeType == FGF_CD) {
         CdctrlWp2GetSampleTmpBuf();

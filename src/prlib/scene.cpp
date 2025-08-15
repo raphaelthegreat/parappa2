@@ -1,22 +1,170 @@
-#include "common.h"
+#include "scene.h"
+
+#include "model.h"
+
+#include <float.h>
 
 INCLUDE_ASM("prlib/scene", __13PrSceneObjectP13sceGsDrawEnv1PCcUi);
 
 INCLUDE_ASM("prlib/scene", _$_13PrSceneObject);
 
-INCLUDE_ASM("prlib/scene", SelectCamera__13PrSceneObjectP13SpcFileHeader);
+void PrSceneObject::SelectCamera(SpcFileHeader* camera) {
+    mCamera = camera;
+    mCameraTime = 0.0f;
+}
 
-INCLUDE_ASM("prlib/scene", GetCurrentCamera__13PrSceneObject);
+PrPERSPECTIVE_CAMERA* PrSceneObject::GetCurrentCamera() {    
+    if (mCamera != NULL) {
+        return mCamera->GetCamera(mCameraTime);  
+    } else {
+        return &mDefaultCamera;
+    }
+}
 
 INCLUDE_ASM("prlib/scene", SetAppropriateDefaultCamera__13PrSceneObject);
 
-INCLUDE_ASM("prlib/scene", GetFocalLength__C13PrSceneObject);
+float PrSceneObject::GetFocalLength() const {
+    SpcFileHeader* camera = mCamera;
+    if (camera == NULL || !(camera->flags & 0x8) ) {
+        return mDefaultFocalLen;
+    } else {
+        float focal_length = *camera->focal_len_track->GetValue(mCameraTime);
+        if (focal_length <= 0.0f) {
+            focal_length = FLT_EPSILON;
+        }
+        return focal_length;
+    }
+}
 
-INCLUDE_ASM("prlib/scene", GetDefocusLength__C13PrSceneObject);
+float PrSceneObject::GetDefocusLength() const {
+    SpcFileHeader* camera = mCamera;
+    if (camera == NULL || !(camera->flags & 0x8)) {
+        return mDefaultDefocusLen;
+    } else {
+        return *camera->defocus_len_track->GetValue(mCameraTime);
+    }
+}
 
-INCLUDE_ASM("prlib/scene", GetDepthLevel__C13PrSceneObject);
+u_int PrSceneObject::GetDepthLevel() const {
+    SpcFileHeader* camera = mCamera;
+    if (camera == NULL || !(camera->flags & 0x8)) {
+        return mDefaultDepthLevel;
+    } else {
+        return camera->depth_level;
+    }
+}
 
-INCLUDE_ASM("prlib/scene", PreprocessModel__13PrSceneObject);
+void PrSceneObject::PreprocessModel() {
+    PrModelObject* sp = NULL;
+    PrModelObject* model = mModelSet.mHead;
+
+    PrModelObject* modelList = NULL;
+    PrModelObject* screenList = NULL;
+    PrModelObject* t1 = NULL;
+
+    while (model != NULL) {
+        SpmFileHeader* spm = model->mSpmImage;
+        PrModelObject* next = model->mList.mNext;
+        if (spm->flags & eSpmIsScreenModel) {
+            model->mList.mNext = screenList;
+            screenList = model;
+        } else if (spm->flags & 0x200) {
+            PrModelObject* a1 = sp;
+            PrModelObject** a3 = &sp;
+            u_int t0_1 = spm->unk78;
+            while (a1 != NULL && a1->mSpmImage->unk78 < t0_1) {
+                a3 = (PrModelObject**)a1;
+                a1 = *a3;
+            }
+            model->mList.mNext = a1;
+            *a3 = model;
+        } else if (spm->flags & 0x400) {
+            model->mList.mNext = t1;
+            t1 = model;
+        } else {
+            model->mList.mNext = modelList;
+            modelList = model;
+        }
+        model = next;
+    }
+
+    PrModelObject* head = NULL;
+    PrModelObject* tail = NULL;
+
+    mScreenModelList = screenList;
+    if (modelList != NULL) {
+        this->unk9C = modelList;
+    } else {
+        this->unk9C = screenList;
+    }
+
+    if (t1 != NULL) {
+        this->unk98 = t1;
+    } else {
+        this->unk98 = this->unk9C;
+    }
+
+    PrModelObject* v1 = sp;
+    if (v1 != NULL) {
+        head = v1;
+        while (sp != NULL) {
+            PrModelObject* v0;
+            sp = v1->mList.mNext;
+            v1->mList.mPrev = tail;
+            tail = v1;
+            v0 = sp;
+            v1 = v0;
+        }
+    }
+
+    if (t1 != NULL) {
+        if (head == NULL) {
+            head = t1;
+        } else {
+            tail->mList.mNext = t1;
+        }
+
+        do {
+            PrModelObject* model = t1;
+            t1 = t1->mList.mNext;
+            model->mList.mPrev = tail;
+            tail = model;
+        } while (t1 != NULL);
+    }
+
+    if (modelList != NULL) {
+        if (head == NULL) {
+            head = modelList;
+        } else {
+            tail->mList.mNext = modelList;
+        }
+
+        while (modelList != NULL) {
+            PrModelObject* model = modelList;
+            modelList = modelList->mList.mNext;
+            model->mList.mPrev = tail;
+            tail = model;
+        }
+    }
+
+    if (screenList != NULL) {
+        if (head == NULL) {
+            head = screenList;
+        } else {
+            tail->mList.mNext = screenList;
+        }
+
+        do {
+            PrModelObject* model = screenList;
+            screenList = screenList->mList.mNext;
+            model->mList.mPrev = tail;
+            tail = model;
+        } while (screenList != NULL);
+    }
+
+    mModelSet.mHead = head;
+    mModelSet.mTail = tail;
+}
 
 /* nalib/navector.h */
 INCLUDE_ASM("prlib/scene", func_0014B988);

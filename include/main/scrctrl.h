@@ -99,7 +99,7 @@ typedef enum {
 } SCRRJ_LESSON_ROUND_ENUM;
 
 typedef struct { // 0x10
-    /* 0x0 */ short job;
+    /* 0x0 */ short job; /* For use with SCRR_JOB */
     /* 0x2 */ short sub;
     /* 0x4 */ int jobd1;
     /* 0x8 */ int jobd2;
@@ -206,26 +206,43 @@ typedef enum {
     SCRLINE_SER_MAIN = 0
 } SCRLINE_ENUM;
 
-typedef enum
-{
-    EXAM_NONE,
-    EXAM_COOL,
-    EXAM_GOOD,
-    EXAM_BAD,
-    EXAM_AWFUL,
-    EXAM_HOOK,
-    EXAM_VS,
-    EXAM_CANCEL,
-    EXAM_BONUS,
-    EXAM_MAX
+typedef enum {
+    EXAM_NONE = 0,
+    EXAM_COOL = 1,
+    EXAM_GOOD = 2,
+    EXAM_BAD = 3,
+    EXAM_AWFUL = 4,
+    EXAM_HOOK = 5,
+    EXAM_VS = 6,
+    EXAM_CANCEL = 7,
+    EXAM_BONUS = 8,
+    EXAM_MAX = 9
 } EXAM_ENUM;
 
-typedef enum
-{
-    EXAM_DO_NON,
-    EXAM_DO_END,
-    EXAM_DO_END_GO,
-    EXAM_DO_END_GO_RET
+typedef enum {
+    SCRRJ_PLY = 0,
+    SCRRJ_SCR = 1,
+    SCRRJ_EXAM = 2,
+    SCRRJ_UP_LINE = 3,
+    SCRRJ_UP_JOB = 4,
+    SCRRJ_DOWN_LINE = 5,
+    SCRRJ_DOWN_JOB = 6,
+    SCRRJ_ENDJOB = 7,
+    SCRRJ_ENDGAME = 8,
+    SCRRJ_SUBJOB = 9,
+    SCRRJ_MSG_DISP = 10,
+    SCRRJ_ADD_JOB = 11,
+    SCRRJ_SUB_JOB = 12,
+    SCRRJ_LINE = 13,
+    SCRRJ_JOB = 14,
+    SCRRJ_MAX = 15
+} SCRR_JOB;
+
+typedef enum {
+    EXAM_DO_NON = 0,
+    EXAM_DO_END = 1,
+    EXAM_DO_END_GO = 2,
+    EXAM_DO_END_GO_RET = 3
 } EXAM_DO_ENUM;
 
 typedef struct { // 0x3

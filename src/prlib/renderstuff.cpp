@@ -111,15 +111,14 @@ void PrRenderStuff::WaitRender() {
 
     mStatistics.render_time6 = *T3_COUNT;
 
-    const float f0 = this->unk1C->GetFocalLength();
-    if (f0 != 0.0f) {
+    if (this->unk1C->GetFocalLength() != 0.0f) {
         sceGsSyncPath(0, 0);
         s1 = true;
         this->unk1C->ApplyDepthOfField();
         sceGsSyncPath(0, 0);
     }
 
-    if (this->unk1C->unkA0) {
+    if (this->unk1C->mScreenModelList != NULL) {
         s1 = false;
         this->unk1C->PrepareScreenModelRender();
         mDmaQueue.Wait();

@@ -9,6 +9,12 @@
 #include <eetypes.h>
 #include <libgifpk.h>
 
+typedef struct { // 0xc
+    /* 0x0 */ TIM2_DAT *tim2_dat_pp;
+    /* 0x4 */ float sclx;
+    /* 0x8 */ float scly;
+} MBA_CHAR_DATA;
+
 typedef enum {
     NIKO_KAGE = 0,
     NIKO_HALF = 1,

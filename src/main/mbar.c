@@ -6,31 +6,31 @@
 
 #include <stdio.h>
 
-/* data 186288 */ extern TIM2_DAT tim2spr_tbl_tmp1[0]; /* static, tim2spr_tbl */
-// /* data 186a68 */ static u_int tmpColor[0];
+/* data 186288 */ extern TIM2_DAT tim2spr_tbl_tmp1[]; /* static, tim2spr_tbl */
+// /* data 186a68 */ static u_int tmpColor[];
 /* data 186aa8 */ extern NIKO_CHAN_STR niko_chan_str_hook[]; /* static */
 /* data 186af8 */ extern NIKO_CHAN_STR niko_chan_str_vs[]; /* static */
 /* sdata 399558 */ extern NIKO_CHAN_STR *niko_chan_str_pp; /* static */
 /* sdata 39955c */ extern int niko_chan_str_cnt; /* static */
 /* sdata 399560 */ extern int hook_use_flag; /* static */
 /* data 186b28 */ extern MBHOOK_STR mbhook_str[2]; /* static */
-// /* data 186b38 */ static u_int hook_fr_dat[0];
+// /* data 186b38 */ static u_int hook_fr_dat[];
 /* sdata 399564 */ extern int exam_disp_cursor_timer; /* static */
 /* sdata 399568 */ extern int scoreTentouFlag; /* static */
 /* data 186b78 */ extern u_char scr_tenmetu_col[4][3]; /* static */
 /* sdata 39956c */ extern int otehonAniCnt; /* static */
 /* sdata 399570 */ extern int othon_frame; /* static */
-// /* sdata 399574 */ static int vs_mouse_disp_flag;
+/* sdata 399574 */ extern int vs_mouse_disp_flag; /* static */
 /* data 186b88 */ extern METCOL_STR metcol_str[3]; /* static */
-// /* data 186bb0 */ static MBA_CHAR_DATA mba_char_data[0];
+/* data 186bb0 */ extern MBA_CHAR_DATA mba_char_data[]; /* static */
 // /* sdata 399578 */ static int mbar_pos_y_ofs;
-// /* data 186d78 */ static u_char colp[0][3];
-// /* data 186d90 */ static void (*marSetPrgTbl[0])(/* parameters unknown */);
-// /* data 186da0 */ static GUIMAP guimap[0];
-// /* data 186ee0 */ static int guimap_single[0];
-// /* data 186ef0 */ static int guimap_vs[0];
-// /* data 186f00 */ static int guimap_sr[0];
-// /* data 186f08 */ static int guimap_hk[0];
+// /* data 186d78 */ static u_char colp[][3];
+// /* data 186d90 */ static void (*marSetPrgTbl[])(/* parameters unknown */);
+// /* data 186da0 */ static GUIMAP guimap[];
+// /* data 186ee0 */ static int guimap_single[];
+// /* data 186ef0 */ static int guimap_vs[];
+// /* data 186f00 */ static int guimap_sr[];
+// /* data 186f08 */ static int guimap_hk[];
 /* bss 1c70030 */ extern GLOBAL_PLY *exam_global_ply[4]; /* static */
 // /* sbss 399a80 */ static GLOBAL_PLY *exam_global_ply_current;
 /* bss 1c70040 */ extern int exam_global_ply_current_ply[4]; /* static */
@@ -435,7 +435,9 @@ void MbarInit(int stg) {
     MbarCharSetSub();
 }
 
-INCLUDE_ASM("main/mbar", MbarReset);
+void MbarReset(void) {
+    WorkClear(mbar_req_str, sizeof(mbar_req_str));
+}
 
 INCLUDE_RODATA("main/mbar", D_00393450);
 
@@ -467,9 +469,31 @@ void MbarSetCtrlTime(int mctime) {
     mbar_ctrl_time = mctime;
 }
 
+#ifndef NON_MATCHING
 INCLUDE_ASM("main/mbar", MbarCl1CharSet);
+#else
+static void MbarCl1CharSet(/* a0 4 */ int col_num, /* a1 5 */ int moto_num) {
+    /* a0 4 */ MBA_CHAR_DATA *mbcd_col;
+    /* a1 5 */ MBA_CHAR_DATA *mbcd_mot;
+    /* v0 2 */ sceGsTex0 ColGsTex0;
 
-INCLUDE_ASM("main/mbar", MbarCharSetSub);
+    mbcd_col = &mba_char_data[col_num];
+    mbcd_mot = &mba_char_data[moto_num];
+    
+    ColGsTex0 = *(sceGsTex0*)&mbcd_col->tim2_dat_pp->GsTex0;
+    *mbcd_col->tim2_dat_pp = *mbcd_mot->tim2_dat_pp;
+
+    PR_TEX0(mbcd_col->tim2_dat_pp).CBP = ColGsTex0.CBP;
+}
+#endif
+
+static void MbarCharSetSub(void) {
+    int i;
+
+    for (i = 0; i < 7; i++) {
+        MbarCl1CharSet(i + 15, i + 1);
+    }
+}
 
 INCLUDE_ASM("main/mbar", MbarGifInit);
 
@@ -537,7 +561,9 @@ INCLUDE_ASM("main/mbar", MbarDispSceneDraw);
 
 INCLUDE_ASM("main/mbar", MbarDispSceneVsDraw);
 
-INCLUDE_ASM("main/mbar", MbarDispSceneVsDrawInit);
+void MbarDispSceneVsDrawInit(void) {
+    vs_mouse_disp_flag = 0;
+}
 
 INCLUDE_ASM("main/mbar", guidisp_init_pr);
 

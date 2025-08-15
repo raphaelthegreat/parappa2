@@ -558,12 +558,10 @@ void MNScene_SetAnimeEnd(MN_SCENE *pshdl) {
     for (i = 0; i < 10; i++) {
         panm = pshdl->anime[i];
 
-        if (panm == NULL) {
-            continue;
-        }
-
-        if (panm->kind - 1 > 1u) {
-            pshdl->time[i] = panm->etime;
+        if (panm != NULL) {
+            if (panm->kind != 1 && panm->kind != 2) {
+                pshdl->time[i] = panm->etime;
+            }
         }
     }
 

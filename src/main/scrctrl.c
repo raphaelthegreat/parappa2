@@ -1,5 +1,7 @@
 #include "main/scrctrl.h"
 
+#include "dbug/dbgmsg.h"
+
 #include "os/cmngifpk.h"
 #include "os/mtc.h"
 #include "os/syssub.h"
@@ -19,45 +21,43 @@
 
 #include <stdio.h>
 
-/* data */
-extern u_int thnum_tbl[4];
-extern TCL_CTRL tcl_ctrl[4][33];
-extern LERO_TIM2_PT lero_tim2_pt[7];
-extern LERO_POS_STR lero_pos_str[10][2];
-extern SCR_SND_DBUFF scr_snd_dbuff;
-extern SCORE_STR score_str;
-extern TAPDAT vs_tapdat_tmp[64];
-
-/* sdata */
-/* static */ int titleStartKey;
-/* static */ int fadeoutStartKey;
-/* static */ int gameEndWaitLoop;
-/* static */ int replayGuiOffFlag;
-/* static */ int jimakuWakuOff;
-int currentTblNumber;
-int vs_tapdat_tmp_cnt;
-int scrJimakuLine;
-int scrDrawLine;
-int scrMbarLine;
-int scrRefLineTime;
-
-/* sdata - static */
-/* implement on ScrCtrlMainLoop */
-int dbgmsg_on_off;
-
-/* bss - static */
-/* not static */ extern SCORE_INDV_STR score_indv_str[5];
-extern SNDTAP *scr_sndtap_pp[4];
-extern SCR_TAP_MEMORY follow_scr_tap_memory[256];
-extern TAP_GROUPE_STR tap_groupe_str[5];
-
-/* sbss - static */
-int follow_scr_tap_memory_cnt;
-int follow_scr_tap_memory_cnt_load;
-int commake_str_cnt;
-
-/* .bss - static */
-extern BNG_STR bng_str;
+/* sdata 399438 */ extern int titleStartKey; /* static */
+/* sdata 39943c */ extern int fadeoutStartKey; /* static */
+/* sdata 399440 */ extern int gameEndWaitLoop; /* static */
+/* sdata 399444 */ extern int replayGuiOffFlag; /* static */
+/* sdata 399448 */ extern int jimakuWakuOff; /* static */
+/* sdata 39944c */ extern int currentTblNumber;
+/* sdata 399450 */ extern int vs_tapdat_tmp_cnt;
+/* sdata 399454 */ extern int scrJimakuLine;
+/* sdata 399458 */ extern int scrDrawLine;
+/* sdata 39945c */ extern int scrMbarLine;
+/* sdata 399460 */ extern int scrRefLineTime;
+// /* data 183258 */ static EXH_STR exh_str_normal[];
+// /* data 1832a8 */ static EXH_STR exh_str_original[];
+// /* data 1832e0 */ static EXH_STR exh_str_hane[];
+// /* data 183310 */ static EXH_STR exh_str_hook[];
+/* data 183320 */ static u_int thnum_tbl[]; /* static */
+/* data 183330 */ extern TCL_CTRL tcl_ctrl[4][33];
+// /* data 183b70 */ static SCRPRGSTR scrprgstr[];
+// /* data 183b88 */ static SCRPRGSTR scrprgstr_hook[];
+// /* data 183b90 */ static TIM2_DAT tim2spr_tbl[];
+// /* data 183bd0 */ static BN_NUM_TYPE bn_num_type[];
+/* data 183c10 */ extern LERO_TIM2_PT lero_tim2_pt[]; /* static */
+/* data 183c68 */ extern LERO_POS_STR lero_pos_str[][2]; /* static */
+/* data 183d58 */ extern SCR_SND_DBUFF scr_snd_dbuff;
+/* bss 1c5f030 */ extern SNDTAP *scr_sndtap_pp[4]; /* static */
+/* data 183d70 */ extern SCORE_STR score_str;
+/* bss 1c5f040 */ extern SCORE_INDV_STR score_indv_str[5];
+/* data 183d88 */ extern TAPDAT vs_tapdat_tmp[64];
+/* sbss 399a38 */ extern int follow_scr_tap_memory_cnt; /* static */
+/* sbss 399a3c */ extern int follow_scr_tap_memory_cnt_load; /* static */
+/* bss 1c63a68 */ extern SCR_TAP_MEMORY follow_scr_tap_memory[256]; /* static */
+/* bss 1c64668 */ extern TAP_GROUPE_STR tap_groupe_str[5]; /* static */
+// /* bss 1c646b8 */ static COMMAKE_STR commake_str[32];
+// /* sbss 399a40 */ static int commake_str_cnt;
+// /* bss 1c647b8 */ static EXAM_CHECK exam_check[3];
+// /* bss 1c65b00 */ static u_char yaku_tmp_buf[36];
+/* bss 1c65b28 */ extern BNG_STR bng_str; /* static */
 
 static void exam_tbl_updownInit(SCORE_INDV_STR *sindv_pp);
 static void exam_tbl_updownSet(SCORE_INDV_STR *sindv_pp, int now, int sikiichi, int oth);
@@ -158,9 +158,6 @@ void ScrTapDbuffCtrlInit(void *data_top, int bk0, int bk1) {
     scr_snd_dbuff.sndrec_pp[1] = NULL;
 }
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("main/scrctrl", ScrTapDbuffSet);
-#else /* Function matches, but the sloop bug triggers */
 u_int ScrTapDbuffSet(SNDREC *sndrec_pp) {
     u_int ret;
     u_int id;
@@ -183,7 +180,6 @@ u_int ScrTapDbuffSet(SNDREC *sndrec_pp) {
     scr_snd_dbuff.next_index++;
     return ret;
 }
-#endif
 
 void ScrTapDbuffSetSp(SNDREC *sndrec_pp, int id) {
     if (id < 0) {
@@ -484,9 +480,6 @@ static void followTapSave(SCORE_INDV_STR *sindv_pp) {
     }
 }
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("main/scrctrl", followTapLoad);
-#else /* Function matches, but the sloop bug triggers */
 static SCR_TAP_MEMORY* followTapLoad(int pos, int time) {
     if (follow_scr_tap_memory_cnt <= pos) {
         return NULL;
@@ -501,7 +494,6 @@ static SCR_TAP_MEMORY* followTapLoad(int pos, int time) {
     follow_scr_tap_memory_cnt_load = pos + 1;
     return &follow_scr_tap_memory[pos];
 }
-#endif
 
 static void ScrLincChangTbl(int line) {
     scrJimakuLine = line;
@@ -512,7 +504,6 @@ static void ScrLincChangTbl(int line) {
 }
 
 static void ScrLincChangTblRef(int line, int ck_time) {
-    // TODO(poly): Flags?
     scrDrawLine |= 0x8000;
     scrMbarLine |= 0x8000;
     scrRefLineTime = ck_time;
@@ -555,38 +546,33 @@ void KeyCntClear(int *key_pp) {
     }
 }
 
-INCLUDE_ASM("main/scrctrl", ScrCtrlCurrentSearch);
-SCRREC* ScrCtrlCurrentSearch(/* a0 4 */ SCORE_INDV_STR *sindv_pp, /* a3 7 */ int index, /* a2 6 */ int frame);
-#if 0
-{
+SCRREC* ScrCtrlCurrentSearch(SCORE_INDV_STR *sindv_pp, int index, int frame) {
     SCRREC *scrrec_pp;
 
-    if (index >= score_str.stdat_dat_pp->scr_pp->scr_ctrl_num)
-    {
+    if (score_str.stdat_dat_pp->scr_pp->scr_ctrl_num <= index) {
         printf("ScrCtrlCurrentSearch index[%d] is over!!\n", index);
         return NULL;
     }
-    else
-    {
-        scrrec_pp = sindv_pp->top_scr_ctrlpp[index].scrrec_pp;
 
-        while (1)
-        {
-            if (scrrec_pp->job - 7 < 2)
-                break;
-            if (scrrec_pp->data >= frame)
-                break;
-            
-            scrrec_pp++;
-        }
-
-        return scrrec_pp;
+    scrrec_pp = sindv_pp->top_scr_ctrlpp[index].scrrec_pp;
+    if (scrrec_pp == NULL) {
+        printf("ScrCtrlCurrentSearch index[%d] is NULL line!!\n", index);
+        return NULL;
     }
 
-    printf("ScrCtrlCurrentSearch index[%d] is NULL line!!\n", index);
-    return NULL;
+    while (1) {
+        if (scrrec_pp->job == SCRRJ_ENDJOB || scrrec_pp->job == SCRRJ_ENDGAME) {
+            break;
+        }
+        if (scrrec_pp->job == SCRRJ_PLY && scrrec_pp->data >= frame) {
+            break;
+        }
+
+        scrrec_pp++;
+    }
+    
+    return scrrec_pp;
 }
-#endif
 
 void ScrCtrlIndvInit(STDAT_DAT *sdat_pp) {
     int             i, j;
@@ -656,33 +642,28 @@ void ScrCtrlExamClearIndv(SCR_EXAM_STR *sexam_pp) {
     sexam_pp->exam_start = -1;
 }
 
-INCLUDE_ASM("main/scrctrl", ScrCtrlIndvNextTime);
-int ScrCtrlIndvNextTime(/* a0 4 */ SCORE_INDV_STR *sindv_pp, /* a1 5 */ int Ncnt);
-#if 0
-{
+int ScrCtrlIndvNextTime(SCORE_INDV_STR *sindv_pp, int Ncnt) {
     SCRREC *cur_pp = sindv_pp->current_scrrec_pp;
 
-    while (1)
-    {
-        if (cur_pp->job == 7 || cur_pp->job == 8)
-            break;
-
-        if (cur_pp->job == 0)
-        {
-            Ncnt--;
-            if (Ncnt == 0)
-                break;
+    while (1) {
+        if (cur_pp->job == SCRRJ_ENDJOB) {
+            return cur_pp->data;
+        }
+        if (cur_pp->job == SCRRJ_ENDGAME) {
+            return cur_pp->data;
         }
 
+        if (cur_pp->job == SCRRJ_PLY) {
+            if (--Ncnt == 0) {
+                return cur_pp->data;
+            }
+        }
+        
         cur_pp++;
     }
-
-    return cur_pp->data;
 }
-#endif
 
 INCLUDE_ASM("main/scrctrl", ScrCtrlIndvNextReadLine);
-int ScrCtrlIndvNextReadLine(/* t0 8 */ SCORE_INDV_STR *sindv_pp, /* t2 10 */ int ckf);
 
 int getLvlTblRand(TAPLVL_DAT *taplvl_dat_pp) {
     int rand_tmp;
@@ -990,7 +971,8 @@ void ScrCtrlIndvNextRead(/* s0 16 */ SCORE_INDV_STR *sindv_pp, /* a1 5 */ int ta
 
 void intIndvStatusSet(SCORE_INDV_STR *sindv_pp, u_int CKF, u_int STF, u_int UNF) {
     if (sindv_pp->status & CKF) {
-        sindv_pp->status = (sindv_pp->status | STF) & ~UNF;
+        sindv_pp->status |= STF;
+        sindv_pp->status &= ~UNF;
     }
 }
 
@@ -1017,10 +999,9 @@ void otherIndvPause(int num) {
     SCORE_INDV_STR *sindv_pp = score_indv_str;
 
     for (i = 0; i < PR_ARRAYSIZE(score_indv_str); i++, sindv_pp++) {
-        if (i == num) {
-            continue;
+        if (i != num) {
+            intIndvStatusSet(sindv_pp, SCS_USE, SCS_PAUSE, 0);
         }
-        intIndvStatusSet(sindv_pp, SCS_USE, SCS_PAUSE, 0);
     }
 }
 
@@ -1029,18 +1010,17 @@ void otherIndvTapReset(int num) {
     SCORE_INDV_STR *sindv_pp = score_indv_str;
 
     for (i = 0; i < PR_ARRAYSIZE(score_indv_str); i++, sindv_pp++) {
-        if (i == num) {
-            continue;
-        }
-        if (sindv_pp->status & SCS_USE) {
-            KeyCntClear(sindv_pp->keyCnt);
-                
-            sindv_pp->keyCntCom = 0;
-            sindv_pp->scr_tap_memory_cnt = 0;
-            sindv_pp->scr_tap_vib_on = 0;
-            sindv_pp->cansel_flag = 0;
-                
-            tapReqGroupTapClear(Pcode2Pindex(sindv_pp->plycode));
+        if (i != num) {
+            if (sindv_pp->status & SCS_USE) {
+                KeyCntClear(sindv_pp->keyCnt);
+                    
+                sindv_pp->keyCntCom = 0;
+                sindv_pp->scr_tap_memory_cnt = 0;
+                sindv_pp->scr_tap_vib_on = 0;
+                sindv_pp->cansel_flag = 0;
+                    
+                tapReqGroupTapClear(Pcode2Pindex(sindv_pp->plycode));
+            }
         }
     }
 }
@@ -1115,8 +1095,41 @@ static int useIndevCodeGet(void) {
     return ret;
 }
 
-INCLUDE_ASM("main/scrctrl", targetTimeGet);
-int targetTimeGet(/* a0 4 */ int line, /* a1 5 */ int time, /* a2 6 */ int codeAll);
+static int targetTimeGet(int line, int time, int codeAll) {
+    SCRREC *scrrec_pp;
+    int     max;
+    int     i;
+    int     ret;
+    int     pcode_tmp;
+
+    ret       = 0;
+    pcode_tmp = 0;
+
+    max       = score_str.stdat_dat_pp->scr_pp->scr_ctrl_pp[line].scrrec_num;
+    scrrec_pp = score_str.stdat_dat_pp->scr_pp->scr_ctrl_pp[line].scrrec_pp;
+
+    for (i = 0; i < max; i++, scrrec_pp++) {
+        if (scrrec_pp->job == SCRRJ_ENDJOB || scrrec_pp->job == SCRRJ_ENDGAME) {
+            break;
+        }
+
+        if (scrrec_pp->job == SCRRJ_PLY) {
+            pcode_tmp = scrrec_pp->sub & codeAll;
+            if (scrrec_pp->data < time) {
+                pcode_tmp = 0;
+            }
+        }
+
+        if (scrrec_pp->job == SCRRJ_SUBJOB && scrrec_pp->sub == 2) {
+            if (pcode_tmp != 0) {
+                ret = scrrec_pp->data;
+                break;
+            }
+        }
+    }
+
+    return ret;
+}
 
 void useIndevSndKill(void) {
     int             i;
@@ -1142,11 +1155,10 @@ int useIndevSndKillOther(int num) {
     SCORE_INDV_STR *sindv_pp = score_indv_str;
 
     for (i = 0; i < PR_ARRAYSIZE(score_indv_str); i++, sindv_pp++) {
-        if (i == num) {
-            continue;
-        }
-        if (sindv_pp->status & SCS_USE) {
-            TapCt(0xe0, i, 0);
+        if (i != num) {
+            if (sindv_pp->status & SCS_USE) {
+                TapCt(0xe0, i, 0);
+            }
         }
     }
 
@@ -1272,7 +1284,7 @@ static int otehon_all_make(EXAM_CHECK *ec_pp) {
     int i;
     int ret = 0;
 
-    if (!ec_pp->tapset_pp) {
+    if (ec_pp->tapset_pp == NULL) {
         return 0;
     }
 
@@ -1282,8 +1294,6 @@ static int otehon_all_make(EXAM_CHECK *ec_pp) {
 
     return ret;
 }
-
-static int thnum_get(int p96_num, CK_TH_ENUM ckth);
 
 INCLUDE_ASM("main/scrctrl", treateTimeChange);
 #if 0
@@ -1426,7 +1436,6 @@ INCLUDE_ASM("main/scrctrl", exh_mbar_key_out);
 }
 
 INCLUDE_ASM("main/scrctrl", exh_yaku);
-int exh_yaku(/* s2 18 */ EXAM_CHECK *ec_pp, /* s6 22 */ int hane_flag);
 
 /* static */ int exh_yaku_original(EXAM_CHECK *ec_pp) {
     return exh_yaku(ec_pp, 0);
@@ -1455,12 +1464,10 @@ INCLUDE_ASM("main/scrctrl", exh_mane);
 INCLUDE_ASM("main/scrctrl", exh_all_add);
 
 INCLUDE_ASM("main/scrctrl", IndvGetTapSetAdrs);
-TAPSET* IndvGetTapSetAdrs(/* a0 4 */ SCORE_INDV_STR *sindv_pp);
 
 INCLUDE_ASM("main/scrctrl", nextExamTime);
 
 INCLUDE_ASM("main/scrctrl", GetSindvPcodeLine);
-SCORE_INDV_STR* GetSindvPcodeLine(/* a0 4 */ PLAYER_CODE pcode);
 
 INCLUDE_ASM("main/scrctrl", ExamScoreCheck);
 
@@ -1551,8 +1558,8 @@ void subjobEvent(SCORE_INDV_STR *sindv_pp, int ctime_next) {
     int j;
     int cont_job;
 
-    for (j = 0; j < 24; j++) {
-        cont_job = 0;
+    for (j = 0; j < PR_ARRAYSIZE(sindv_pp->sjob); j++) {
+        cont_job = FALSE;
 
         if (sindv_pp->sjob[j] == -1 || ctime_next < sindv_pp->sjob[j]) {
             continue;
@@ -1573,8 +1580,7 @@ void subjobEvent(SCORE_INDV_STR *sindv_pp, int ctime_next) {
         case SCRSUBJ_EFFECT:
             TapCt(0xb0, sindv_pp->sjob_data[j][0], sindv_pp->sjob_data[j][1]);
             break;
-        case SCRSUBJ_REVERS:
-            PR_SCOPE
+        case SCRSUBJ_REVERS: {
             int drline = sindv_pp->retStartLine;
             int time_tmp;
             int temp2 = (sindv_pp->sjob_data[j][0] / 2) < ctime_next;
@@ -1589,9 +1595,9 @@ void subjobEvent(SCORE_INDV_STR *sindv_pp, int ctime_next) {
             time_tmp = time_tmp != 0 ? time_tmp : 1;
             ScrLincChangTblRef(drline, time_tmp + sindv_pp->refStartTime);
 
-            cont_job = 1;
-            PR_SCOPEEND
+            cont_job = TRUE;
             break;
+        }
         case SCRSUBJ_SPU_ON:
         case SCRSUBJ_SPU_ON2:
         case SCRSUBJ_SPU_ON3:
@@ -1619,65 +1625,61 @@ void subjobEvent(SCORE_INDV_STR *sindv_pp, int ctime_next) {
                 }
             } else if (pad[0].one & SCE_PADstart) {
                 if (!titleStartKey) {
-                    titleStartKey = 1;
+                    titleStartKey = TRUE;
                     ScrTapReq(-1, 0, 2);
                     DrawTapReqTbl(0xfe04, PINDEX_NONE, NULL);
                 }
             }
-            cont_job = 1;
+
+            cont_job = TRUE;
             break;
-        case SCRSUBJ_LOOP:
-            PR_SCOPE
+        case SCRSUBJ_LOOP: {
             int next_time = sindv_pp->sjob_data[j][0];
 
             TimeCallbackTimeSetChanTempo(sindv_pp->useLine, next_time, GetLineTempo(sindv_pp->useLine));
-            cont_job = 1;
-            PR_SCOPEEND
+            cont_job = TRUE;
             break;
+        }
         case SCRSUBJ_FADEOUT:
-            fadeoutStartKey = 1;
-            cont_job = 1;
+            fadeoutStartKey = TRUE;
+            cont_job = TRUE;
             break;
         case SCRSUBJ_ENDLOOP:
-            gameEndWaitLoop = 1;
+            gameEndWaitLoop = TRUE;
             break;
-        case SCRSUBJ_SPUTRANS:
-            PR_SCOPE
+        case SCRSUBJ_SPUTRANS: {
             int *data = (int*)sindv_pp->sjob_data[j][0];
             if (*data != 0) {
                 ScrTapDbuffSetSp(&score_str.stdat_dat_pp->scr_pp->sndrec_pp[*data], sindv_pp->sndId);
             }
-            PR_SCOPEEND
             break;
-        case SCRSUBJ_STOP_MENDERER:
-            PR_SCOPE
+        }
+        case SCRSUBJ_STOP_MENDERER: {
             int next_time = ScrCtrlIndvNextTime(sindv_pp, 1) - sindv_pp->current_time;
 
             PrDecelerateMenderer(((next_time * 3600.0f) + (GetLineTempo(sindv_pp->useLine) * 96.0f * 0.5f)) / (GetLineTempo(sindv_pp->useLine) * 96.0f));
             printf("SCRSUBJ_STOP_MENDERER req\n");
-            PR_SCOPEEND
             break;
+        }
         case SCRSUBJ_BONUS_GAME:
             bonusGameCtrl(ctime_next);
-            cont_job = 1;
+            cont_job = TRUE;
             break;
         case SCRSUBJ_BONUS_GAME_END:
             bonusPointSave();
             bonusScoreDraw();
             break;
-        case SCRSUBJ_LESSON:
-            PR_SCOPE
+        case SCRSUBJ_LESSON: {
             int time_tmp;
             LessonRoundDisp(sindv_pp->sjob_data[j][0]);
 
             time_tmp = sindv_pp->sjob_data[j][1] + 1;
             sindv_pp->sjob_data[j][1] = time_tmp;
 
-            cont_job = time_tmp < 180;
-            PR_SCOPEEND
+            cont_job = (time_tmp < 180);
             break;
-        case SCRSUBJ_VS_RESET:
-            PR_SCOPE
+        }
+        case SCRSUBJ_VS_RESET: {
             SCORE_INDV_STR *cngSindv_pp;
 
             cngSindv_pp = GetSindvPcodeLine(PCODE_TEACHER);
@@ -1691,8 +1693,8 @@ void subjobEvent(SCORE_INDV_STR *sindv_pp, int ctime_next) {
                 cngSindv_pp->global_ply->score = 500;
             }
             vsAnimationReset(0, 500);
-            PR_SCOPEEND
             break;
+        }
         case SCRSUBJ_CDSND_READY:
             CdctrlWP2Set(&score_str.stdat_dat_pp->sndfile[sindv_pp->sjob_data[j][0]]);
             break;
@@ -1704,11 +1706,11 @@ void subjobEvent(SCORE_INDV_STR *sindv_pp, int ctime_next) {
             ScrTapReqStop(sindv_pp->sjob_data[j][0]);
             break;
         case SCRSUBJ_JIMAKU_OFF:
-            jimakuWakuOff = 1;
+            jimakuWakuOff = TRUE;
             break;
         }
 
-        if (cont_job == 0) {
+        if (!cont_job) {
             sindv_pp->sjob[j] = -1;
         }
     }
@@ -1893,7 +1895,165 @@ static int otehonSetCheck(void)
 }
 #endif
 
-INCLUDE_ASM("main/scrctrl", ScrCtrlMainLoop);
+/* TODO: Match .sdata */
+extern const char D_00399478[];
+extern const char D_00399480[];
+extern const char D_00399488[];
+extern const char D_00399490[];
+extern const char D_00399498[];
+extern const char D_003994A0[];
+extern const char D_003994A8[];
+extern const char D_003994B0[];
+extern const char D_003994B8[];
+extern const char D_003994C0[];
+extern const char D_003994C8[];
+extern const char D_003994D0[];
+extern const char D_003994D8[];
+extern const char D_003994E0[];
+extern const char D_003994E8[];
+extern const char D_003994F0[];
+extern const char D_003994F8[];
+
+void ScrCtrlMainLoop(void *x) {
+    int tmp_time;
+    int rtime;
+    int subtline;
+    int i;
+
+    if (score_str.stdat_dat_pp->play_step == PSTEP_BONUS) {
+        bonusGameInit();
+    }
+
+    while (TapCt(0x8070, 0, 0) != 0) {
+        MtcWait(1);
+    }
+
+    if (GetTimeType(global_data.draw_tbl_top) != GTIME_VSYNC) {
+        while (CdctrlWP2CheckBuffer()) {
+            printf("cd buffer wait\n");
+            MtcWait(1);
+        }
+    }
+    MtcWait(3);
+
+    score_str.ready_flag = TRUE;
+    do {
+        MtcWait(1);
+    } while (!score_str.go_loop_flag);
+
+    if (GetTimeType(global_data.draw_tbl_top) != GTIME_VSYNC) {
+        CdctrlWP2Play();
+        CdctrlWP2SetVolume(120);
+    } else {
+        TimeCallbackTimeSet(0);
+        allTimeCallbackTimeSetChanTempo(0);
+    }
+
+    while (1) {
+        MbarReset();
+        MbarDispSceneVsDrawInit();
+
+        outsideDrawSceneClear();
+        
+        GlobalTimeJob();
+        ScrTimeRenew(score_str.stdat_dat_pp->scr_pp);
+
+        if (global_data.demo_flagL == DEMOF_REPLAY) {
+            if (pad[0].one & SCE_PADselect) {
+                replayGuiOffFlag ^= 1;
+            }
+        }
+
+        ScrLineSafeRefMode();
+
+        ScrCtrlIndvJob();
+        tapReqGroupPoll();
+
+        for (i = 0; i < PR_ARRAYSIZEU(score_indv_str); i++) {
+            SetIndvCdChannel(&score_indv_str[i]);
+            SetIndvDrawTblLine(&score_indv_str[i]);
+        }
+
+        DrawCtrlTimeSet(ScrDrawTimeGetFrame(scrDrawLine));
+
+        rtime = nextExamTime();
+        if (rtime >= 0) {
+            BallThrowSetFrame(((rtime * 3600.0f) + (score_str.stdat_dat_pp->tempo * 96.0f * 0.5f)) / (score_str.stdat_dat_pp->tempo * 96.0f));
+        }
+
+        SprClear();
+
+        if (score_str.mbar_flag) {
+            ScrMbarReq(ScrDrawTimeGet(scrMbarLine));
+            outsideDrawSceneReq(MbarDispScene, 0xdc, 0, DNUM_VRAM2, NULL);
+            if (replayGuiOffFlag == 0) {
+                if (otehonSetCheck()) {
+                    outsideDrawSceneReq(MbarDispGuiScene, 0xf0, 2, DNUM_DRAW, NULL);
+                } else {
+                    outsideDrawSceneReq(MbarDispGuiScene, 0xf0, 0, DNUM_DRAW, NULL);
+                }
+            } else {
+                outsideDrawSceneReq(MbarDispGuiSceneMbarArea, 0xf0, 0, DNUM_DRAW, NULL);
+            }
+        } else if (jimakuWakuOff == 0) {
+            outsideDrawSceneReq(MbarDispGuiScene, 0xf0, 0, DNUM_DRAW, NULL);
+            if (game_status.subtitle == SUBTITLE_ON) {
+                ExamDispSubt();
+            }
+        }
+
+        tmp_time = ((ScrDrawTimeGet(scrJimakuLine) * 3600.0f) + (score_str.stdat_dat_pp->tempo * 96.0f * 0.5f)) / (score_str.stdat_dat_pp->tempo * 96.0f);
+        subtline = GetSubtLine(scrJimakuLine);
+        if (subtline != -1) {
+            if (game_status.subtitle == SUBTITLE_ON) {
+                SubtCtrlPrint(score_str.stdat_dat_pp->jimaku_str_pp, subtline, tmp_time, game_status.language_type);
+            }
+        }
+
+        if (global_data.play_step == PSTEP_GAME ||
+            global_data.play_step == PSTEP_VS   ||
+            global_data.play_step == PSTEP_HOOK ||
+            global_data.play_step == PSTEP_BONUS) {
+            sceGifPacket dbgPk;
+            u_char *dbg_tbl_msg[17] = {
+                #if 0
+                "BASE",
+                "LV1",  "LV2",  "LV3",  "LV4",
+                "LV5",  "LV6",  "LV7",  "LV8",
+                "LV9",  "LV10", "LV11", "LV12",
+                "LV13", "LV14", "LV15", "LV16",
+                #else
+                (u_char*)D_00399478,
+                (u_char*)D_00399480, (u_char*)D_00399488, (u_char*)D_00399490, (u_char*)D_00399498,
+                (u_char*)D_003994A0, (u_char*)D_003994A8, (u_char*)D_003994B0, (u_char*)D_003994B8,
+                (u_char*)D_003994C0, (u_char*)D_003994C8, (u_char*)D_003994D0, (u_char*)D_003994D8,
+                (u_char*)D_003994E0, (u_char*)D_003994E8, (u_char*)D_003994F0, (u_char*)D_003994F8,
+                #endif
+            };
+            int    drtime;
+            u_char timemsg[16];
+            /* sdata 399500 */ extern int dbgmsg_on_off;
+
+            if (pad[0].one & SCE_PADi) {
+                dbgmsg_on_off ^= 1;
+            }
+
+            if (dbgmsg_on_off) {
+                DbgMsgInit();
+                DbgMsgClear();
+                CmnGifOpenCmnPk(&dbgPk);
+                DbgMsgClearUserPkt(&dbgPk);
+                DbgMsgPrintUserPkt(dbg_tbl_msg[global_data.tapLevel], 0x6c2, 0x79c, &dbgPk);
+                drtime = ScrDrawTimeGet(scrMbarLine);
+                sprintf(timemsg, "%2d.%d.%2d", (drtime / 384) + 1, ((drtime / 96) % 4) + 1, (drtime % 96) + 1);
+                DbgMsgPrintUserPkt(timemsg, 0x6c2, 0x792, &dbgPk);
+                CmnGifCloseCmnPk(&dbgPk, 0xf);
+            }
+        }
+        
+        MtcWait(1);
+    }
+}
 
 GET_TIME_TYPE GetTimeType(int scr_line) {
     return score_str.stdat_dat_pp->scr_pp->scr_ctrl_pp[scr_line].gtime_type;
@@ -1926,7 +2086,6 @@ void SetLineChannel(int scr_line) {
 INCLUDE_ASM("main/scrctrl", SetIndvCdChannel);
 
 INCLUDE_ASM("main/scrctrl", CheckIndvCdChannel);
-int CheckIndvCdChannel(/* s1 17 */ SCORE_INDV_STR *sindv_pp, /* s0 16 */ u_char *chantmp);
 
 void ScrCtrlInit(STDAT_DAT *sdat_pp, void *data_top) {
     int           i, j;
@@ -2063,7 +2222,7 @@ int ScrCtrlInitCheck(void) {
 }
 
 void ScrCtrlGoLoop(void) {
-    score_str.go_loop_flag = 1;
+    score_str.go_loop_flag = TRUE;
 }
 
 int ScrEndCheckScore(void) {
@@ -2110,14 +2269,13 @@ static void bonusPointSave(void) {
 }
 
 INCLUDE_ASM("main/scrctrl", bngTapEventCheck);
-void bngTapEventCheck(/* s1 17 */ SCORE_INDV_STR *sindv_pp, /* t0 8 */ int num, /* s3 19 */ int id);
 
 void bonusGameParaReq(BNG_ACT_P_ENUM actnum) {
-    bngTapEventCheck(score_indv_str + 2, actnum, 0);
+    bngTapEventCheck(&score_indv_str[2], actnum, 0);
 }
 
 static void bonusGameKoamaReq(int kotamaNum, BNG_ACT_K_ENUM actnum) {
-    bngTapEventCheck(score_indv_str + 1, actnum + kotamaNum, kotamaNum + 1);
+    bngTapEventCheck(&score_indv_str[1], actnum + kotamaNum, kotamaNum + 1);
 }
 
 static int bonus_minus_point_sub(int wtime) {
@@ -2165,7 +2323,6 @@ static u_long hex2dec(u_long data) {
 }
 
 INCLUDE_ASM("main/scrctrl", bnNumberDisp);
-void bnNumberDisp(sceGifPacket *gif_pp, long score, short x, short y, int keta, int tate, int type);
 
 static void bonusScoreDraw(void) {
     long         scr_stg;

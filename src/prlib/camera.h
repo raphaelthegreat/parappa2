@@ -3,7 +3,8 @@
 
 #include <eetypes.h>
 
-#include "prlib/spadata.h"
+#include "prpriv.h"
+#include "spadata.h"
 
 #include <nalib/navector.h>
 
@@ -21,12 +22,15 @@ struct SpcFileHeader {
     SpaTrack<float>* unk90;
     SpaTrack<float>* unk94;
 
-    char unk98[0x4];
+    u_int depth_level;
 
-    SpaTrack<float>* unk9C;
-    SpaTrack<float>* unkA0;
-    
+    SpaTrack<float>* focal_len_track;
+    SpaTrack<float>* defocus_len_track;
+
 public:
+    void Initialize();
+    PrPERSPECTIVE_CAMERA* GetCamera(float time) const;
+
     void ChangePointer();
 
     template <typename T>

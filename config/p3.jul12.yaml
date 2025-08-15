@@ -373,7 +373,7 @@ segments:
 
         - [0x29a9d0, sdata, nalib/navector]
         
-        # .sbss / .bss
+        # .sbss
         - { start: 0x29aa00, type: sbss,  vram: 0x00399a00, name: dbug/dbgmsg          }
  
         - { start: 0x29aa00, type: .sbss, vram: 0x00399a18, name: os/mtc               }
@@ -407,6 +407,7 @@ segments:
 
         - { start: 0x29aa00, type: sbss,  vram: 0x00399bd0, name: sdk/newlib           }
 
+        # .bss
         - { start: 0x29aa1c, type: bss,   vram: 0x00399c00, name: bss                  }
 
         - { start: 0x29aa1c, type: .bss,  vram: 0x00399d60, name: dbug/dbgmsg          }
@@ -458,8 +459,8 @@ segments:
         - { start: 0x29aa1c, type: bss,   vram: 0x01c84c40, name: prlib/wave           }
         - { start: 0x29aa1c, type: bss,   vram: 0x01c884c0, name: prlib/camera         }
 
-        - { start: 0x29aa1c, type: bss,  vram: 0x01c88500, name: sdk/scelib  }
-        - { start: 0x29aa1c, type: bss,  vram: 0x01c8df00, name: sdk/newlib  }
+        - { start: 0x29aa1c, type: bss,   vram: 0x01c88500, name: sdk/scelib           }
+        - { start: 0x29aa1c, type: bss,   vram: 0x01c8df00, name: sdk/newlib           }
         
     - [0x29aa00, databin] # pad
     - [0x29b000, databin] # .mfifo

@@ -3,7 +3,9 @@
 
 #include "common.h"
 
+#include "prlib/linkedlist.h"
 #include "prlib/microprogram.h"
+#include "prlib/objectset.h"
 
 #include <nalib/navector.h>
 #include <nalib/namatrix.h>
@@ -13,6 +15,7 @@
 
 struct SpmFileHeader;
 class PrModelObject;
+class PrSceneObject;
 
 struct PrVuNodeHeaderDmaPacket {
     sceDmaTag mTag;
@@ -56,10 +59,14 @@ public:
     void RenderContext1Node(PrModelObject* model);
 };
 
+enum SpmFlags {
+    eSpmIsScreenModel = 0x80,
+};
+
 struct SpmFileHeader {
 public:
     PR_PADDING(unk0, 0x6);
-    u_short unk6;
+    u_short flags;
     PR_PADDING(unk8, 0x28);
     NaVECTOR<float, 4> unk30;
     NaVECTOR<float, 4> unk40;
@@ -68,6 +75,7 @@ public:
     u_int unk68;
     PR_PADDING(unk6C, 0x8);
     SpmNode** unk74;
+    int unk78;
 
 public:
     void ChangePointer();
@@ -93,8 +101,10 @@ public:
     void GetPrimitivePosition(NaVECTOR<float, 4>* arg0);
     void GetScreenPosition(NaVECTOR<float, 4>* arg0);
 
-private:
-    PR_PADDING(unk0, 0x10);
+public:
+    PrLinkedList<PrModelObject> mList;
+    PrObjectSet<PrModelObject>* mObjSet;
+    PrSceneObject* unkC;
     NaMATRIX<float, 4, 4> unk10;
     PR_PADDING(unk50, 0x8);
     SpmFileHeader* mSpmImage;

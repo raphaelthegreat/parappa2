@@ -285,14 +285,14 @@ void p3StrDispDs(P3SRT_OD *p3o_pp, P3STR_SD *p3sd_pp, int subtime) {
                     } else {
                         PrLinkAnimation((PR_MODELHANDLE)adrd_pp[scn_pp->adr1num].handle, (PR_ANIMATIONHANDLE)adrd_pp[scn_pp->adr2num].handle);
                         PrAnimateModel((PR_MODELHANDLE)adrd_pp[scn_pp->adr1num].handle, cur_time);
-                        PrShowModel((PR_MODELHANDLE)adrd_pp[scn_pp->adr1num].handle, 0);
+                        PrShowModel((PR_MODELHANDLE)adrd_pp[scn_pp->adr1num].handle, NULL);
                     }
                     break;
                 case STE_ANIPOS:
                     if (tmp_time < 1) {
                         PrUnlinkPositionAnimation((PR_MODELHANDLE)adrd_pp[scn_pp->adr1num].handle);
                     } else {
-                        PrLinkPositionAnimation((PR_MODELHANDLE)adrd_pp[scn_pp->adr1num].handle, (PR_CAMERAHANDLE)adrd_pp[scn_pp->adr2num].handle);
+                        PrLinkPositionAnimation((PR_MODELHANDLE)adrd_pp[scn_pp->adr1num].handle, (PR_ANIMATIONHANDLE)adrd_pp[scn_pp->adr2num].handle);
                         PrAnimateModelPosition((PR_MODELHANDLE)adrd_pp[scn_pp->adr1num].handle, cur_time);
                     }
                     break;

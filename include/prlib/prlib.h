@@ -152,4 +152,7 @@ int   PrIsMendererColorModulation(void);
 void  PrInitializeMenderer(u_int tbp, void *noodlePicture, u_int fbp);
 void  PrRenderMenderer(void);
 
+/* menderercreate.cpp */
+void PrCreateMendererTexture(void);
+
 #endif /* PRLIB_C_H */

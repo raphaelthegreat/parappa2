@@ -3,23 +3,53 @@
 
 #include "common.h"
 
+#include "camera.h"
+#include "objectset.h"
+#include "prpriv.h"
+
 #include <eetypes.h>
 #include <eestruct.h>
+#include <libgraph.h>
+
+class PrModelObject;
 
 class PrSceneObject {
 public:
-    float GetFocalLength(void) const;
+    PrSceneObject(sceGsDrawEnv1* arg0, char* arg1, u_int arg2);
+    ~PrSceneObject();
+
+    void SelectCamera(SpcFileHeader* camera);
+    PrPERSPECTIVE_CAMERA* GetCurrentCamera();
+    void SetAppropriateDefaultCamera();
+
+    float GetFocalLength() const;
+    float GetDefocusLength() const;
+    u_int GetDepthLevel() const;
+    void ApplyDepthOfField();
 
     void PreprocessModel();
-    void ApplyDepthOfField();
+
+    void Render();
+    void InitializeVu1();
     void PrepareScreenModelRender();
 
 public:
-    PR_PADDING(unk0, 0x50);
+    PR_PADDING(unk0, 0x10);
+    PrPERSPECTIVE_CAMERA mDefaultCamera;
     sceGsFrame unk50;
     sceGsXyoffset unk58;
-    PR_PADDING(unk60, 0x40);
-    int unkA0;
+    PrObjectSet<PrModelObject> mModelSet;
+    SpcFileHeader* mCamera;
+    PR_PADDING(unk70, 0xc);
+    float mCameraTime;
+    PR_PADDING(unk80, 0x4);
+    float mDefaultFocalLen;
+    float mDefaultDefocusLen;
+    u_int mDefaultDepthLevel;
+    PR_PADDING(unk90, 0x8);
+    PrModelObject* unk98;
+    PrModelObject* unk9C;
+    PrModelObject* mScreenModelList;
 };
 
 #endif /* PRLIB_SCENE_H */

@@ -8,7 +8,7 @@
 #include "prlib/model.h"
 
 void SpmFileHeader::ChangePointer() {
-    if (this->unk6 & 0x1) {
+    if (this->flags & 0x1) {
         return;
     }
 
@@ -21,7 +21,7 @@ void SpmFileHeader::ChangePointer() {
 
     /* Change node pointers starting from the first. */
     (*this->unk74)->ChangePointer(this, NULL);
-    this->unk6 |= 0x1;
+    this->flags |= 0x1;
 }
 
 void SpmNode::ChangePointer(SpmFileHeader* arg0, SpmNode* arg1) {
@@ -101,14 +101,14 @@ void SpcFileHeader::ChangePointer() {
     }
 
     if (this->flags & 0x8) {
-        this->unk9C = this->CalculatePointer<SpaTrack<float> >(this->unk9C);
-        if (this->unk9C != NULL) {
-            this->unk9C->ChangePointer();
+        this->focal_len_track = this->CalculatePointer<SpaTrack<float> >(this->focal_len_track);
+        if (this->focal_len_track != NULL) {
+            this->focal_len_track->ChangePointer();
         }
 
-        this->unkA0 = this->CalculatePointer<SpaTrack<float> >(this->unkA0);
-        if (this->unkA0 != NULL) {
-            this->unkA0->ChangePointer();
+        this->defocus_len_track = this->CalculatePointer<SpaTrack<float> >(this->defocus_len_track);
+        if (this->defocus_len_track != NULL) {
+            this->defocus_len_track->ChangePointer();
         }
     }
 
