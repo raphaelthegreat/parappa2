@@ -9,9 +9,36 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* .data */
-extern /* static */ TIM2SETINFO tim2setinfo;
-extern sceGsStoreImage gs_simage;
+static TIM2SETINFO tim2setinfo = {
+    .t2h = {
+        .FileId = {'T', 'I', 'M', '2'},
+
+        .FormatVersion = 4,
+        .FormatId = 0,
+        .Pictures = 1,
+
+        .Reserved = {},
+    },
+    .t2p = {
+        .TotalSize = 0,
+        .ClutSize = 0,
+        .ImageSize = 0,
+        .HeaderSize = sizeof(TIM2_PICTUREHEADER),
+        .ClutColors = 0,
+        .PictFormat = 0,
+        .MipMapTextures = 1,
+        .ClutType = 0,
+        .ImageType = 3,
+        .ImageWidth = 0,
+        .ImageHeight = 0,
+        .GsTex0 = 0,
+        .GsTex1 = 0,
+        .GsRegs = 0,
+        .GsTexClut = 0,
+    }
+};
+
+sceGsStoreImage gs_simage = {};
 
 static u_int BekiDat(u_int size);
 

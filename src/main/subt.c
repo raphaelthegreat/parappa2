@@ -5,18 +5,15 @@
 
 #include "main/etc.h"
 
-/* .data */
-extern u_long SubtGsTex0[3];
-extern MCODE_ASCII mcode_ascii[];
+/* data 184ba0 */ extern MCODE_ASCII mcode_ascii[]; /* static */
 
-/* .sdata */
-extern int SUBT_POSX;
-extern int SUBT_POSY;
-/* static */ extern int subtSetNum;
+int SUBT_POSX = 2048;
+int SUBT_POSY = 2098;
+/* data 185460  */ extern u_long SubtGsTex0[3]; /* static */
+static int subtSetNum = 0;
 
 static MCODE_STR *kanji_pp;
 
-/* .bss */
 static sceGifPacket subtPkSpr;
 static SUBT_CODE subt_code[16];
 static MCODE_DAT *mcode_dat_pp[256];

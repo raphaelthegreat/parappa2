@@ -6,8 +6,7 @@
 
 #include <stdio.h>
 
-/* .sdata */
-extern int sprSetNum;
+static int sprSetNum = 0;
 
 static u_long128 sprPacket[2048];
 static sceGifPacket gifPkSpr;

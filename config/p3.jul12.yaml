@@ -39,7 +39,7 @@ segments:
       type: code
       start: 0x1000
       vram: 0x100000
-      bss_size: 0x18F4434 # Should be 1 byte less?
+      bss_size: 0x18f4634
       subsegments:
         # .text
         - [0x1000,  asm, sdk/crt0]
@@ -177,7 +177,7 @@ segments:
         # .data
         - [0x7b900, data]
         - [0x7b970, .data, dbug/dbgmsg]
-        - [0x7c9e0, data, dbug/vramsave]
+        - [0x7c9e0, .data, dbug/vramsave]
         - [0x7ca90, .data, os/mtc]
         - [0x7cb40, .data, os/syssub]
         - [0x7cbc0, .data, os/system]
@@ -329,8 +329,8 @@ segments:
         - [0x29a360, .sdata, main/cdctrl]
         - [0x29a378, sdata, main/stdat]
         - [0x29a438, sdata, main/scrctrl]
-        - [0x29a504, sdata, main/sprite]
-        - [0x29a508, sdata, main/subt]
+        - [0x29a504, .sdata, main/sprite]
+        - [0x29a508, .sdata, main/subt]
         - [0x29a518, sdata, main/drawctrl]
         - [0x29a558, sdata, main/mbar]
         - [0x29a588, sdata, main/etc]
