@@ -1,4 +1,4 @@
-#include "prlib/gifreg.h"
+#include "gifreg.h"
 
 static bool gifRegisterModeInitialized = false;
 static PrDmaStripForSetGifRegister setGifRegisterMode[6];

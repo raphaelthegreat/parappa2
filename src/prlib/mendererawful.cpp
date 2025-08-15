@@ -1,7 +1,7 @@
 #include "common.h"
 
-#include "prlib/dma.h"
-#include "prlib/random.h"
+#include "dma.h"
+#include "random.h"
 
 #include <eekernel.h>
 #include <eetypes.h>

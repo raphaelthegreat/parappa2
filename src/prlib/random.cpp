@@ -2,8 +2,8 @@
 
 #include <stdlib.h>
 
-extern u_int randomSeed;
-extern u_int randomPool[97];
+static u_int randomSeed = 1;
+static u_int randomPool[97];
 
 static u_int RawRandom() {
     randomSeed = (randomSeed * 0x5d588b65 + 1);
@@ -11,7 +11,7 @@ static u_int RawRandom() {
 }
 
 u_int PrRandom() {
-    extern u_int poolIndex;
+    static u_int poolIndex = 0;
     int ret;
 
     poolIndex = randomPool[poolIndex] % 97;
@@ -22,7 +22,7 @@ u_int PrRandom() {
 }
 
 void PrInitializeRandomPool() {
-    for (u_int i = 0; i < 97; i++) {
+    for (u_int i = 0; i < PR_ARRAYSIZE(randomPool); i++) {
         randomPool[i] = RawRandom();
     }
 

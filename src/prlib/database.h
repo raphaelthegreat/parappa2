@@ -3,7 +3,7 @@
 
 #include "common.h"
 
-#include "prlib/scene.h"
+#include "scene.h"
 
 #include <eetypes.h>
 #include <libgraph.h>

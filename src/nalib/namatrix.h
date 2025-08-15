@@ -1,7 +1,7 @@
 #ifndef NALIB_NAMATRIX_H
 #define NALIB_NAMATRIX_H
 
-#include "nalib/navector.h"
+#include "navector.h"
 
 template <typename T, int t0, int t1>
 class NaMATRIX {

@@ -1,7 +1,7 @@
-#include "prlib/mfifo.h"
+#include "mfifo.h"
 
-#include "prlib/dma.h"
-#include "prlib/spram.h"
+#include "dma.h"
+#include "spram.h"
 
 #include <eeregs.h>
 #include <libdma.h>

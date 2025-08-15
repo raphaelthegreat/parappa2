@@ -1,7 +1,7 @@
-#include "prlib/spadata.h"
+#include "spadata.h"
 
-#include "prlib/animation.h"
-#include "prlib/model.h"
+#include "animation.h"
+#include "model.h"
 
 #include <math.h>
 

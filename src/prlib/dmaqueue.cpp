@@ -1,6 +1,6 @@
 #include "dmaqueue.h"
 
-#include "prlib/dma.h"
+#include "dma.h"
 
 #include <eekernel.h>
 

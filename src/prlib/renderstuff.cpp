@@ -1,9 +1,9 @@
-#include "prlib/renderstuff.h"
+#include "renderstuff.h"
 
-#include "prlib/gifreg.h"
-#include "prlib/mfifo.h"
-#include "prlib/microprogram.h"
-#include "prlib/scene.h"
+#include "gifreg.h"
+#include "mfifo.h"
+#include "microprogram.h"
+#include "scene.h"
 
 #include <eeregs.h>
 #include <libgraph.h>
@@ -133,13 +133,13 @@ void PrRenderStuff::WaitRender() {
     this->unk1C = NULL;
 }
 
-void PrRenderStuff::AllocateTransmitDmaArray(unsigned int arg0) {
-    if (this->unk14 >= arg0) {
+void PrRenderStuff::AllocateTransmitDmaArray(u_int size) {
+    if (this->unk14 >= size) {
         return;
     }
 
     int s0 = 600;
-    while (s0 < arg0) {
+    while (s0 < size) {
         s0 = s0 * 2;
     }
 
@@ -149,7 +149,7 @@ void PrRenderStuff::AllocateTransmitDmaArray(unsigned int arg0) {
     this->unk14 = s0;
 }
 
-void PrRenderStuff::AppendTransmitDmaTag(const sceDmaTag* arg0, unsigned int arg1, float arg2) {
+void PrRenderStuff::AppendTransmitDmaTag(const sceDmaTag* arg0, u_int arg1, float arg2) {
     extern bool warned_tmp_renderstuff;
 
     if (this->unk10 >= this->unk14) {

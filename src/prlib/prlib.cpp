@@ -1,18 +1,20 @@
-#include "prlib/prpriv.h"
+#include "prpriv.h"
 
-#include "prlib/animation.h"
-#include "prlib/camera.h"
-#include "prlib/database.h"
-#include "prlib/model.h"
-#include "prlib/random.h"
-#include "prlib/renderstuff.h"
-#include "prlib/scene.h"
+#include "animation.h"
+#include "camera.h"
+#include "database.h"
+#include "model.h"
+#include "random.h"
+#include "renderstuff.h"
+#include "scene.h"
 
 #include <nalib/navector.h>
 
 #include <eetypes.h>
 #include <eestruct.h>
 #include <libgraph.h>
+
+#include <stdlib.h>
 
 /* sdata */
 static float prFrameRate = 1.0f;
@@ -91,7 +93,27 @@ void PrPreprocessSceneModel(PrSceneObject *scene) {
     scene->PreprocessModel();
 }
 
-INCLUDE_ASM("prlib/prlib", PrInitializeModel);
+PR_EXTERN
+PrModelObject* PrInitializeModel(SpmFileHeader *spm, PrSceneObject *scene) {
+    if (spm->magic != SPM_MAGIC) {
+    #if 0 /* (poly): Only present on McDonald's Demo build */
+        printf("PRLIB(FATAL): not a SPM file (illegal magic number)\n");
+    #endif
+        exit(0);
+    }
+    if (spm->version != SPM_VERSION) {
+    #if 0 /* (poly): Only present on McDonald's Demo build */
+        printf("PRLIB(FATAL): not supported SPM file version %d:%d\n", spm->version, SPM_VERSION);
+    #endif
+        exit(0);
+    }
+
+    PrModelObject* model = new PrModelObject(spm);
+    model->Initialize();
+    scene->mModelSet.Insert(model);
+    model->mLinkedScene = scene;
+    return model;
+}
 
 INCLUDE_ASM("prlib/prlib", PrInitializeAnimation);
 

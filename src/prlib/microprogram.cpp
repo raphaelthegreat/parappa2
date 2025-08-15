@@ -1,4 +1,4 @@
-#include "prlib/microprogram.h"
+#include "microprogram.h"
 
 #include <libdma.h>
 

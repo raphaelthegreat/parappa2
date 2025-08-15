@@ -40,7 +40,8 @@ public:
     sceGsXyoffset unk58;
     PrObjectSet<PrModelObject> mModelSet;
     SpcFileHeader* mCamera;
-    PR_PADDING(unk70, 0xc);
+    sceGsDrawEnv1* unk70;
+    PR_PADDING(unk74, 0x8);
     float mCameraTime;
     PR_PADDING(unk80, 0x4);
     float mDefaultFocalLen;

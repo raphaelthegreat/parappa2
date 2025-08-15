@@ -3,9 +3,9 @@
 
 #include "common.h"
 
-#include "prlib/linkedlist.h"
-#include "prlib/microprogram.h"
-#include "prlib/objectset.h"
+#include "linkedlist.h"
+#include "microprogram.h"
+#include "objectset.h"
 
 #include <nalib/navector.h>
 #include <nalib/namatrix.h>
@@ -13,7 +13,11 @@
 #include <eetypes.h>
 #include <libdma.h>
 
+#define SPM_MAGIC   (0x18df540a)
+#define SPM_VERSION (5)
+
 struct SpmFileHeader;
+struct SpaFileHeader;
 class PrModelObject;
 class PrSceneObject;
 
@@ -65,7 +69,8 @@ enum SpmFlags {
 
 struct SpmFileHeader {
 public:
-    PR_PADDING(unk0, 0x6);
+    u_int magic;
+    u_short version;
     u_short flags;
     PR_PADDING(unk8, 0x28);
     NaVECTOR<float, 4> unk30;
@@ -96,18 +101,41 @@ public:
 
 class PrModelObject {
 public:
+    PrModelObject(SpmFileHeader* spm);
+    ~PrModelObject();
+
+    void Initialize();
+    void LinkAnimation(SpaFileHeader* animation);
+    void CleanupAnimation();
+    void LinkPositionAnimation(SpaFileHeader* animation);
+    void CleanupPositionAnimation();
+
     void UnionBoundaryBox(NaVECTOR<float, 4>* arg0, NaVECTOR<float, 4>* arg1);
 
-    void GetPrimitivePosition(NaVECTOR<float, 4>* arg0);
-    void GetScreenPosition(NaVECTOR<float, 4>* arg0);
+    void GetPrimitivePosition(NaVECTOR<float, 4>* position);
+    void GetScreenPosition(NaVECTOR<float, 4>* position);
+
+    void CalculateCurrentMatrix();
+
+    void RenderContext1Model();
+    void RenderScreenModelNode();
+    void RenderBackgroundScreenModel();
+    void RenderContext2Model();
+
+    void SavePosture();
+    void ResetPosture();
+
+    void SaveContour();
+    void ResetContour();
 
 public:
     PrLinkedList<PrModelObject> mList;
     PrObjectSet<PrModelObject>* mObjSet;
-    PrSceneObject* unkC;
+    PrSceneObject* mLinkedScene;
     NaMATRIX<float, 4, 4> unk10;
     PR_PADDING(unk50, 0x8);
     SpmFileHeader* mSpmImage;
+    PR_PADDING(unk5C, 0x54);
 };
 
 #endif /* PRLIB_MODEL_H */

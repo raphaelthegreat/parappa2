@@ -3,9 +3,9 @@
 
 #include "common.h"
 
-#include "prlib/dmaqueue.h"
-#include "prlib/scene.h"
-#include "prlib/prpriv.h"
+#include "dmaqueue.h"
+#include "scene.h"
+#include "prpriv.h"
 
 #include <eetypes.h>
 #include <eestruct.h>
@@ -30,8 +30,8 @@ public:
     void StartRender(PrSceneObject* scene);
     void WaitRender();
 
-    void AllocateTransmitDmaArray(unsigned int arg0);
-    void AppendTransmitDmaTag(const sceDmaTag* arg0, unsigned int arg1, float arg2);
+    void AllocateTransmitDmaArray(u_int size);
+    void AppendTransmitDmaTag(const sceDmaTag* arg0, u_int arg1, float arg2);
 
     static int CompareFunction(const void* arg0, const void* arg1);
     void SortTransmitDmaArray();

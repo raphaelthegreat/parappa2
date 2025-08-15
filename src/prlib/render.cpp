@@ -1,10 +1,12 @@
-#include "common.h"
+#include "render.h"
 
-#include "prlib/model.h"
-#include "prlib/renderstuff.h"
+#include "dma.h"
+#include "model.h"
+#include "renderstuff.h"
+#include "scene.h"
+#include "spram.h"
 
-#include "nalib/namatrix.h"
-#include "prlib/spram.h"
+#include <nalib/namatrix.h>
 
 float D_FLT_003998E4;
 
@@ -12,9 +14,28 @@ extern PrSPRAM_DATA* prSpramData;
 
 extern bool AwfulStatus;
 
+extern PrVu1InitPacket initVu1DmaPacket;
+
 INCLUDE_ASM("prlib/render", Render__13PrSceneObject);
 
+#ifndef NON_MATCHING
 INCLUDE_ASM("prlib/render", InitializeVu1__13PrSceneObject);
+#else /* Uses tail call? */
+void PrSceneObject::InitializeVu1() {
+    PrVu1InitPacket *packet = (PrVu1InitPacket*)PR_UNCACHED(&initVu1DmaPacket);
+    packet->zbuf     = prRenderStuff.unk20;
+    packet->frame    = this->unk50;
+    packet->xyoffset = this->unk58;
+    packet->scissor  = this->unk70->scissor1;
+
+    PrWaitDmaFinish(SCE_DMA_GIF);
+
+    sceDmaChan* chan = sceDmaGetChan(SCE_DMA_GIF);
+    chan->chcr.TTE = 0; /* Don't transfer the DMAtag */
+
+    sceDmaSend(chan, &initVu1DmaPacket);
+}
+#endif
 
 INCLUDE_ASM("prlib/render", PrepareScreenModelRender__13PrSceneObject);
 

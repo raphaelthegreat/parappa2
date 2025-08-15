@@ -361,7 +361,7 @@ segments:
         - [0x29a930, sdata, prlib/billboard]
         - [0x29a938, sdata, prlib/depthfield]
         - [0x29a93c, sdata, prlib/vram]
-        - [0x29a940, sdata, prlib/random]
+        - [0x29a940, .sdata, prlib/random]
         - [0x29a948, sdata, prlib/menderer]
         - [0x29a9a0, sdata, prlib/menderercreate]
         - [0x29a9ac, sdata, prlib/mendererawful]
@@ -451,7 +451,7 @@ segments:
         - { start: 0x29aa1c, type: bss,   vram: 0x01c83260, name: prlib/spadata        }
         - { start: 0x29aa1c, type: bss,   vram: 0x01c83390, name: prlib/billboard      }
         - { start: 0x29aa1c, type: bss,   vram: 0x01c833d0, name: prlib/depthfield     }
-        - { start: 0x29aa1c, type: bss,   vram: 0x01c833e0, name: prlib/random         }
+        - { start: 0x29aa1c, type: .bss,  vram: 0x01c833e0, name: prlib/random         }
         - { start: 0x29aa1c, type: bss,   vram: 0x01c83570, name: prlib/menderercreate }
         - { start: 0x29aa1c, type: bss,   vram: 0x01c83ba0, name: prlib/mendererawful  }
         - { start: 0x29aa1c, type: bss,   vram: 0x01c83bd0, name: prlib/mendereralpha  }

@@ -1,4 +1,4 @@
-#include "prlib/database.h"
+#include "database.h"
 
 /* .sdata */
 extern int databaseInitialized;

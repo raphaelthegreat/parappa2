@@ -2029,7 +2029,7 @@ PrInitializeRandomPool__Fv                                                      
 PrFloatRandom__Fv                                                                   = 0x0014d9d8; // type:func
 
 randomSeed                                                                          = 0x00399940;
-poolIndex                                                                           = 0x00399944;
+poolIndex.1140                                                                      = 0x00399944;
 
 randomPool                                                                          = 0x01c833e0; // size:0x184
 
@@ -2313,75 +2313,79 @@ sceMcChdir                          = 0x001649b8; // type:func
 sceMcFormat                         = 0x00164b08; // type:func
 sceMcDelete                         = 0x00164bd0; // type:func
 
-// ee/gcc/src/newlib/libm/math/sf_sin.c
+// sce/ee/gcc/src/newlib/libm/math/sf_sin.c
 sinf                                = 0x001654a0; // type:func
 
-// ee/gcc/src/newlib/libm/math/wf_atan2.c
+// sce/ee/gcc/src/newlib/libm/math/wf_atan2.c
 atan2f                              = 0x00165730; // type:func
 
-// ee/gcc/src/newlib/libm/math/wf_fmod.c
+// sce/ee/gcc/src/newlib/libm/math/wf_fmod.c
 fmodf                               = 0x00165858; // type:func
 
-// ee/gcc/src/gcc/libgcc2.c
+// sce/ee/gcc/src/gcc/libgcc2.c
 __main                              = 0x001680b0; // type:func
 __divdi3                            = 0x001680d0; // type:func
+exit                                = 0x00169730; // type:func
 __fixsfdi                           = 0x00169760; // type:func
 __floatdisf                         = 0x00169a20; // type:func
 __udivdi3                           = 0x0016a1c8; // type:func
 __umoddi3                           = 0x0016a798; // type:func
 
-// ee/gcc/src/gcc/build/gcc/dp-bit.c
+// sce/ee/gcc/src/gcc/build/gcc/dp-bit.c
 dpadd                               = 0x0016b0e8; // type:func
 dpsub                               = 0x0016b140; // type:func
 dpcmp                               = 0x0016b6d0; // type:func
 dptofp                              = 0x0016b978; // type:func
 
-// ee/gcc/src/gcc/build/gcc/fp-bit.c
+// sce/ee/gcc/src/gcc/build/gcc/fp-bit.c
 fptoui                              = 0x0016cbc8; // type:func
 fptodp                              = 0x0016ccc8; // type:func
 
-// ee/gcc/src/gcc/cp/new2.cc
+// sce/ee/gcc/src/gcc/cp/new1.cc
+__builtin_new                       = 0x0016de60; // type:func
+
+// sce/ee/gcc/src/gcc/cp/new2.cc
 __builtin_delete                    = 0x0016dde8; // type:func
 __builtin_vec_new                   = 0x0016e000; // type:func
 
-// ee/gcc/src/newlib/libc/stdlib/malign.c
+// sce/ee/gcc/src/newlib/libc/stdlib/malign.c
 memalign                            = 0x0016f7e8; // type:func
 
-// ee/gcc/src/newlib/libc/stdlib/malloc.c
+// sce/ee/gcc/src/newlib/libc/stdlib/malloc.c
 malloc                              = 0x0016f9e8; // type:func
 free                                = 0x0016fa10; // type:func
 
-// ee/gcc/src/newlib/libc/machine/r5900/memcpy.S
+// sce/ee/gcc/src/newlib/libc/machine/r5900/memcpy.S
 memcpy                              = 0x00170484; // type:func
 
-// ee/gcc/src/newlib/libc/machine/r5900/memset.S
+// sce/ee/gcc/src/newlib/libc/machine/r5900/memset.S
 memset                              = 0x00170534; // type:func
 
-// ee/gcc/src/newlib/libc/stdlib/mstats.c
+// sce/ee/gcc/src/newlib/libc/stdlib/mstats.c
 mallinfo                            = 0x00170608; // type:func
 
-// ee/gcc/src/newlib/libc/stdio/printf.c
+// sce/ee/gcc/src/newlib/libc/stdio/printf.c
 printf                              = 0x00170700; // type:func
 
-// ee/gcc/src/newlib/libc/stdlib/qsort.c
+// sce/ee/gcc/src/newlib/libc/stdlib/qsort.c
 qsort                               = 0x00170750; // type:func
 
-// ee/gcc/src/newlib/libc/stdlib/rand.c
+// sce/ee/gcc/src/newlib/libc/stdlib/rand.c
 rand                                = 0x00171188; // type:func
 
-// ee/gcc/src/newlib/libc/stdio/sprintf.c
+// sce/ee/gcc/src/newlib/libc/stdio/sprintf.c
 sprintf                             = 0x00171650; // type:func
 
-// ee/gcc/src/newlib/libc/machine/r5900/strcat.S
+// sce/ee/gcc/src/newlib/libc/machine/r5900/strcat.S
 strcat                              = 0x00171830; // type:func
 
-// ee/gcc/src/newlib/libc/machine/r5900/strcmp.S
+// sce/ee/gcc/src/newlib/libc/machine/r5900/strcmp.S
 strcmp                              = 0x0017195c; // type:func
 
-// ee/gcc/src/newlib/libc/machine/r5900/strcpy.S
+// sce/ee/gcc/src/newlib/libc/machine/r5900/strcpy.S
 strcpy                              = 0x00171aa0; // type:func
 
-// ee/gcc/src/newlib/libc/machine/r5900/strlen.S
+// sce/ee/gcc/src/newlib/libc/machine/r5900/strlen.S
 strlen                              = 0x00171bb4; // type:func
 
 // -- Temporary symbols --

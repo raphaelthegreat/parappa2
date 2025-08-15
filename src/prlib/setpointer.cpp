@@ -3,9 +3,9 @@
 #include <eetypes.h>
 #include <eestruct.h>
 
-#include "prlib/camera.h"
-#include "prlib/microprogram.h"
-#include "prlib/model.h"
+#include "camera.h"
+#include "microprogram.h"
+#include "model.h"
 
 void SpmFileHeader::ChangePointer() {
     if (this->flags & 0x1) {
