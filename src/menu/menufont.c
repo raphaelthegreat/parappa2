@@ -30,7 +30,7 @@ static MCODE_DAT* codeKanjiACheck(u_char dat0, u_char dat1, MCODE_KANJI_ANIME *k
 static void euc2sjis(unsigned char *c1, unsigned char *c2);
 
 #if 1
-INCLUDE_ASM("menu/menufont", MenuFont_ASC2EUC);
+INCLUDE_ASM("asm/nonmatchings/menu/menufont", MenuFont_ASC2EUC);
 #else
 void MenuFont_ASC2EUC(/* s0 16 */ char *des, /* s1 17 */ char *src)
 {
@@ -112,7 +112,7 @@ int MENUSubtGetLine(u_char *str, int lflg) {
 }
 
 #ifndef NON_MATCHING
-INCLUDE_ASM("menu/menufont", MENUSubtPut);
+INCLUDE_ASM("asm/nonmatchings/menu/menufont", MENUSubtPut);
 #else
 void MENUSubtPut(SPR_PKT pk, SPR_PRM *spr, int x, int y, u_int abgr, int flg, u_char *str, int lflg)
 {
@@ -181,13 +181,13 @@ void MENUFontPutL(SPR_PKT pk, SPR_PRM *spr, int x, int y, u_int abgr, int flg, u
     _PKFontPut(pk, spr, subt_code, line, x, y, flg, 24, spr->zx, spr->zy);
 }
 
-INCLUDE_ASM("menu/menufont", MENUFontPutS);
+INCLUDE_ASM("asm/nonmatchings/menu/menufont", MENUFontPutS);
 
-INCLUDE_ASM("menu/menufont", MENUFontPutR);
+INCLUDE_ASM("asm/nonmatchings/menu/menufont", MENUFontPutR);
 
-INCLUDE_ASM("menu/menufont", _PKFontPut);
+INCLUDE_ASM("asm/nonmatchings/menu/menufont", _PKFontPut);
 
-INCLUDE_ASM("menu/menufont", _PADArrow_Put);
+INCLUDE_ASM("asm/nonmatchings/menu/menufont", _PADArrow_Put);
 #if 0
 static void _PADArrow_Put(/* s6 22 */ SPR_PKT pk, /* s0 16 */ SPR_PRM *spr, /* a2 6 */ MCODE_DAT *pfnt, /* s5 21 */ int x, /* s4 20 */ int y)
 {
@@ -242,7 +242,7 @@ static void _PADArrow_Put(/* s6 22 */ SPR_PKT pk, /* s0 16 */ SPR_PRM *spr, /* a
 }
 #endif
 
-INCLUDE_ASM("menu/menufont", _JPFont_GetSubtCode);
+INCLUDE_ASM("asm/nonmatchings/menu/menufont", _JPFont_GetSubtCode);
 
 static int _EGFont_GetSubtCode(u_char *str, SUBT_CODE *subt_code, MCODE_DAT *pfnt_ascii) {
     int         line_num;

@@ -49,7 +49,7 @@ void GlobalInit(void) {
     game_status.level_vs_enumG   = LVS_1;
 }
 
-INCLUDE_ASM("main/etc", clearStageCheck);
+INCLUDE_ASM("asm/nonmatchings/main/etc", clearStageCheck);
 
 void GlobalTimeInit(GLOBAL_DATA *gl_pp) {
     gl_pp->currentTime     = 0;
@@ -70,7 +70,7 @@ void GlobalTimeJobChange(TIME_GET_FLAG tfg) {
 }
 
 #ifndef NON_MATCHING
-INCLUDE_ASM("main/etc", GlobalTimeJob);
+INCLUDE_ASM("asm/nonmatchings/main/etc", GlobalTimeJob);
 #else
 void GlobalTimeJob(void) {
     /* Not on STABS, but makes things shorter */
@@ -458,7 +458,7 @@ void TimeCallbackTimeSet(u_int time) {
     TimeCallbackTimeSetChan(0, time);
 }
 
-INCLUDE_ASM("main/etc", Pcode2Pindex);
+INCLUDE_ASM("asm/nonmatchings/main/etc", Pcode2Pindex);
 
 int GetKeyCode2Index(int code) {
     if (code & SCE_PADRup) {
@@ -491,9 +491,9 @@ int GetKeyCode2Index(int code) {
     return 0;
 }
 
-INCLUDE_ASM("main/etc", GetIndex2KeyCode);
+INCLUDE_ASM("asm/nonmatchings/main/etc", GetIndex2KeyCode);
 
-INCLUDE_ASM("main/etc", GetIndex2PressId);
+INCLUDE_ASM("asm/nonmatchings/main/etc", GetIndex2PressId);
 
 int GetKeyCode2PressId(int code) {
     if (code & 0x10) {
@@ -531,7 +531,7 @@ void UsrPrQuitScene(void) {
     /* Empty */
 }
 
-INCLUDE_ASM("main/etc", UsrPrSetScene);
+INCLUDE_ASM("asm/nonmatchings/main/etc", UsrPrSetScene);
 
 void SpuBankSet(void) {
     int i;
@@ -563,11 +563,11 @@ int inCmnHookMaxLineCnt(int stg) {
     return hkl_pkstr[stg].cnt;
 }
 
-INCLUDE_ASM("main/etc", inCmnHookMaxLinePknum);
+INCLUDE_ASM("asm/nonmatchings/main/etc", inCmnHookMaxLinePknum);
 
-INCLUDE_ASM("main/etc", inCmnHookSet);
+INCLUDE_ASM("asm/nonmatchings/main/etc", inCmnHookSet);
 
-INCLUDE_ASM("main/etc", inCmnHook2GameCheck);
+INCLUDE_ASM("asm/nonmatchings/main/etc", inCmnHook2GameCheck);
 
 void inCmnHook2GameSave(int level) {
     ingame_common_str.HookLevel = level;

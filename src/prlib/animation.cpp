@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("prlib/animation", Initialize__13SpaFileHeader);
+INCLUDE_ASM("asm/nonmatchings/prlib/animation", Initialize__13SpaFileHeader);

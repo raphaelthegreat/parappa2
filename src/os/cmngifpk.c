@@ -191,6 +191,6 @@ int CmnGifADPacketMakeTrans(sceGifPacket *gifP_pp) {
 
     FlushCache(WRITEBACK_DCACHE);
     sceDmaSend(cmnDmaC, gifP_pp->pBase);
-    sceGsSyncPath(0,0);
+    sceGsSyncPath(0, 0);
     return 0;
 }

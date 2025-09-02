@@ -47,7 +47,8 @@ public:
     float mDefaultFocalLen;
     float mDefaultDefocusLen;
     u_int mDefaultDepthLevel;
-    PR_PADDING(unk90, 0x8);
+    sceGsDBuffDc* unk90;
+    PR_PADDING(unk94, 0x4);
     PrModelObject* unk98;
     PrModelObject* unk9C;
     PrModelObject* mScreenModelList;

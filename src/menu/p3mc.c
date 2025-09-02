@@ -58,9 +58,10 @@ static int P3MC_GetIconSize(int mode) {
     return isize;
 }
 
-INCLUDE_RODATA("menu/p3mc", D_00396180);
+INCLUDE_RODATA("asm/nonmatchings/menu/p3mc", D_00396180);
+INCLUDE_RODATA("asm/nonmatchings/menu/p3mc", D_00396190);
 
-INCLUDE_ASM("menu/p3mc", P3MC_GetIconPtr);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", P3MC_GetIconPtr);
 
 static void _P3MC_SetUserDirName(int mode, int fileNo) {
     memc_setDirName(_P3MC_GetFilePath(mode, fileNo));
@@ -73,7 +74,7 @@ extern char D_00399858[]; /* "REP%03d" */
 extern char D_00399860[]; /* "??????"  */
 
 #ifndef NON_MATCHING /* Requires sdata split to match */
-INCLUDE_ASM("menu/p3mc", _P3MC_GetFilePath);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MC_GetFilePath);
 #else
 static char* _P3MC_GetFilePath(int mode, int fileNo)
 {
@@ -106,17 +107,17 @@ static char* _P3MC_GetFilePath(int mode, int fileNo)
 }
 #endif
 
-INCLUDE_ASM("menu/p3mc", _P3MC_EUC2SJIS);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MC_EUC2SJIS);
 
-INCLUDE_ASM("menu/p3mc", _P3MC_ASC2SJIS);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MC_ASC2SJIS);
 
-INCLUDE_ASM("menu/p3mc", _P3MC_UserName_ASC2SJIS);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MC_UserName_ASC2SJIS);
 
-INCLUDE_ASM("menu/p3mc", _P3MC_SetBrowsInfo);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MC_SetBrowsInfo);
 
-INCLUDE_ASM("menu/p3mc", _P3MC_mainfile_chk);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MC_mainfile_chk);
 
-INCLUDE_ASM("menu/p3mc", _P3MC_file_chk);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MC_file_chk);
 
 int P3MC_InitReady(void) {
     int re;
@@ -147,7 +148,7 @@ int P3MC_InitReady(void) {
     return 0;
 }
 
-INCLUDE_ASM("menu/p3mc", P3MC_GetSaveSize);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", P3MC_GetSaveSize);
 
 void P3MC_SetCheckSaveSize(int mode, int fsize, int csize) {
     int asize = _P3MC_GetSaveDataSize(csize);
@@ -163,9 +164,9 @@ void P3MC_SetCheckSaveSize(int mode, int fsize, int csize) {
     }
 }
 
-INCLUDE_ASM("menu/p3mc", _P3MC_freesize_chk);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MC_freesize_chk);
 
-INCLUDE_ASM("menu/p3mc", P3MC_CheckChange);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", P3MC_CheckChange);
 
 void P3MC_CheckChangeClear(void) {
     memc_setChangeState(0);
@@ -179,7 +180,7 @@ int P3MC_CheckIsNewSave(int mode) {
     return FreeSizeFlg & mode;
 }
 
-INCLUDE_ASM("menu/p3mc", _P3MC_GetSaveDataSize);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MC_GetSaveDataSize);
 
 void P3MC_DeleteDataWork(MCRWDATA_HDL *phdl) {
     if (phdl == NULL) {
@@ -196,7 +197,7 @@ void P3MC_DeleteDataWork(MCRWDATA_HDL *phdl) {
 #define USER_HDR(x) ((USER_HEADER*)x)
 
 #if 1
-INCLUDE_ASM("menu/p3mc", P3MC_MakeDataWork);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", P3MC_MakeDataWork);
 #else
 MCRWDATA_HDL* P3MC_MakeDataWork(/* s4 20 */ int dsize, /* s5 21 */ USER_DATA *puser)
 {
@@ -238,11 +239,11 @@ MCRWDATA_HDL* P3MC_MakeDataWork(/* s4 20 */ int dsize, /* s5 21 */ USER_DATA *pu
 }
 #endif
 
-INCLUDE_ASM("menu/p3mc", _P3MCStrCmpLen);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MCStrCmpLen);
 
-INCLUDE_ASM("menu/p3mc", _P3MCStrNum);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MCStrNum);
 
-INCLUDE_ASM("menu/p3mc", _P3MC_MemcCheck);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MC_MemcCheck);
 
 int P3MC_GetUserStart(int mode, P3MC_USRLST *pUsrLst, int bFirst) {
     GETUSER_WORK *pWork;
@@ -285,19 +286,19 @@ void P3MC_GetUserEnd(void) {
     pUChkWork = NULL;
 }
 
-INCLUDE_ASM("menu/p3mc", P3MC_GetUserCheck);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", P3MC_GetUserCheck);
 
-INCLUDE_ASM("menu/p3mc", P3MC_AddUser);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", P3MC_AddUser);
 
-INCLUDE_RODATA("menu/p3mc", D_00396420);
+INCLUDE_RODATA("asm/nonmatchings/menu/p3mc", D_00396420);
 
-INCLUDE_RODATA("menu/p3mc", D_00396448);
+INCLUDE_RODATA("asm/nonmatchings/menu/p3mc", D_00396448);
 
-INCLUDE_RODATA("menu/p3mc", D_00396470);
+INCLUDE_RODATA("asm/nonmatchings/menu/p3mc", D_00396470);
 
-INCLUDE_ASM("menu/p3mc", _P3MC_AddUserBroken);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MC_AddUserBroken);
 
-INCLUDE_ASM("menu/p3mc", P3MC_SortUser);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", P3MC_SortUser);
 
 int P3MC_CheckBrokenUser(P3MC_USRLST *pUser, int mode) {
     int         nmuser;
@@ -357,10 +358,10 @@ void P3MC_OpeningCheckEnd(void) {
     pUChkWork = NULL;
 }
 
-INCLUDE_ASM("menu/p3mc", P3MC_OpeningCheck);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", P3MC_OpeningCheck);
 
 #if 1
-INCLUDE_ASM("menu/p3mc", P3MC_LoadUser);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", P3MC_LoadUser);
 #else
 int P3MC_LoadUser(/* s5 21 */ int mode, /* s3 19 */ int fileNo, /* s1 17 */ MCRWDATA_HDL *pdhdl, /* s4 20 */ int flg)
 {
@@ -385,9 +386,9 @@ int P3MC_LoadUser(/* s5 21 */ int mode, /* s3 19 */ int fileNo, /* s1 17 */ MCRW
 }
 #endif
 
-INCLUDE_ASM("menu/p3mc", P3MC_LoadCheck);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", P3MC_LoadCheck);
 
-INCLUDE_ASM("menu/p3mc", _P3MC_loadCheck);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MC_loadCheck);
 
 void P3MC_SetUserWorkTime(USER_DATA *puser) {
     int        err;
@@ -415,13 +416,13 @@ void P3MC_SetUserWorkTime(USER_DATA *puser) {
     }
 }
 
-INCLUDE_ASM("menu/p3mc", P3MC_SaveUser);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", P3MC_SaveUser);
 
-INCLUDE_ASM("menu/p3mc", P3MC_SaveCheck);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", P3MC_SaveCheck);
 
-INCLUDE_ASM("menu/p3mc", _P3MC_SaveCheck);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MC_SaveCheck);
 
-INCLUDE_ASM("menu/p3mc", _P3MC_proc);
+INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MC_proc);
 
 void _P3MC_dataCheckFunc(P3MC_WORK *pw, P3MCDataCheckFunc funcp) {
     pw->data_cfunc = funcp;

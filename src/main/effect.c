@@ -117,7 +117,7 @@ void CG_WaveDisp(WAVE_STR *wstr, sceGsFrame *frame_pp, int pri) {
 }
 
 #ifndef NON_MATCHING
-INCLUDE_ASM("main/effect", UG_AlpDisp);
+INCLUDE_ASM("asm/nonmatchings/main/effect", UG_AlpDisp);
 #else
 void UG_AlpDisp(/* s0 16 */ PLH_STR *plh_pp, /* s1 17 */ sceGsFrame *frame_pp, /* s2 18 */ sceGifPacket *alpPkSpr)
 {
@@ -291,7 +291,7 @@ void UG_FadeDisp(FADE_MAKE_STR *fade_pp, sceGifPacket *fadePkSpr, sceGsFrame *te
 }
 
 #ifndef NON_MATCHING
-INCLUDE_ASM("main/effect", UG_FadeDisp2);
+INCLUDE_ASM("asm/nonmatchings/main/effect", UG_FadeDisp2);
 #else
 void UG_FadeDisp2(/* s0 16 */ FADE_MAKE_STR *fade_pp, /* s3 19 */ sceGifPacket *fadePkSpr, /* s1 17 */ sceGsFrame *texFr_pp, /* f20 58 */ float scale) {
     /* s1 17 */ int xp;
@@ -349,7 +349,7 @@ void CG_FadeDisp(FADE_MAKE_STR *fade_pp, int pri, sceGsFrame *texFr_pp) {
     CmnGifCloseCmnPk(&fadePkSpr,pri);
 }
 
-INCLUDE_ASM("main/effect", UG_NoodlesDisp);
+INCLUDE_ASM("asm/nonmatchings/main/effect", UG_NoodlesDisp);
 
 void CG_NoodlesDisp(NOODLES_STR *ndl_pp, sceGsFrame *frame_pp, int pri, int time) {
     sceGifPacket noodlesPkSpr;
@@ -359,7 +359,8 @@ void CG_NoodlesDisp(NOODLES_STR *ndl_pp, sceGsFrame *frame_pp, int pri, int time
     CmnGifCloseCmnPk(&noodlesPkSpr, pri);
 }
 
-INCLUDE_RODATA("main/effect", D_00393400);
+INCLUDE_RODATA("asm/nonmatchings/main/effect", D_00393400);
+INCLUDE_RODATA("asm/nonmatchings/main/effect", D_00393408);
 
 void FD_MonocroDisp(MONOCRO_STR *mono_pp, int tbp, int w, int h) {
     u_char *dat_pp;

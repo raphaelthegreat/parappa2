@@ -1,11 +1,11 @@
 #include "common.h"
 
-INCLUDE_ASM("prlib/mendereralpha", PrInitializeAlphaModulation__Fv);
+INCLUDE_ASM("asm/nonmatchings/prlib/mendereralpha", PrInitializeAlphaModulation__Fv);
 
-INCLUDE_ASM("prlib/mendereralpha", PrCreateAlphaModulation__Ff);
+INCLUDE_ASM("asm/nonmatchings/prlib/mendereralpha", PrCreateAlphaModulation__Ff);
 
-INCLUDE_ASM("prlib/mendereralpha", PrBlendNoodleImage__Fb);
+INCLUDE_ASM("asm/nonmatchings/prlib/mendereralpha", PrBlendNoodleImage__Fb);
 
-INCLUDE_RODATA("prlib/mendereralpha", D_00396980);
+INCLUDE_RODATA("asm/nonmatchings/prlib/mendereralpha", D_00396980);
 
-INCLUDE_RODATA("prlib/mendereralpha", D_00396990);
+INCLUDE_RODATA("asm/nonmatchings/prlib/mendereralpha", D_00396990);

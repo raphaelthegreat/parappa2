@@ -476,7 +476,7 @@ void ChangeDrawArea(sceGsDrawEnv1 *env_pp) {
     FlushCache(WRITEBACK_DCACHE);
 
     sceDmaSend(cmnDmaC, gifpk.pBase);
-    sceGsSyncPath(0,0);
+    sceGsSyncPath(0, 0);
 }
 
 void ChangeDrawAreaSetGifTag(sceGsDrawEnv1 *env_pp, sceGifPacket *gifpk_pp) {
@@ -511,7 +511,7 @@ void ChangeDrawArea2(sceGsDrawEnv1 *env_pp) {
     FlushCache(WRITEBACK_DCACHE);
 
     sceDmaSend(cmnDmaC, gifpk.pBase);
-    sceGsSyncPath(0,0);
+    sceGsSyncPath(0, 0);
 }
 
 void ClearFrameBufferGifTag(sceGsFrame *draw_pp, sceGifPacket *gifpk_pp, u_char r, u_char g, u_char b, u_char a) {

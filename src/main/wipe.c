@@ -285,11 +285,11 @@ extern FADE_MAKE_STR D_003995B0;
 extern void UG_FadeDisp2(/* s0 16 */ FADE_MAKE_STR *fade_pp, /* s3 19 */ sceGifPacket *fadePkSpr, /* s1 17 */ sceGsFrame *texFr_pp, /* f20 58 */ float scale);
 
 /* TODO: split .sdata */
-INCLUDE_ASM("main/wipe", WipeLoadInDispNR);
+INCLUDE_ASM("asm/nonmatchings/main/wipe", WipeLoadInDispNR);
 
 /* TODO: split .sdata */
 #if 1
-INCLUDE_ASM("main/wipe", WipeLoadOutDispNR);
+INCLUDE_ASM("asm/nonmatchings/main/wipe", WipeLoadOutDispNR);
 void WipeLoadOutDispNR(void);
 #else
 void WipeLoadOutDispNR(void) {
@@ -392,7 +392,7 @@ void WipeInReq(void) {
     MtcExec(WipeLoadInDisp, MTC_TASK_WIPECTRL);
 }
 
-INCLUDE_RODATA("main/wipe", D_00393680);
+INCLUDE_RODATA("asm/nonmatchings/main/wipe", D_00393680);
 extern SPR_PRIM D_00393680;
 
 void WipeLoadInDispSame(void *x) {
@@ -791,13 +791,13 @@ void wipeParaOutReq(void) {
     MtcExec(WipeParaOutDisp, MTC_TASK_WIPECTRL);
 }
 
-INCLUDE_RODATA("main/wipe", D_003936B8);
+INCLUDE_RODATA("asm/nonmatchings/main/wipe", D_003936B8);
 
-INCLUDE_RODATA("main/wipe", D_003936C8);
+INCLUDE_RODATA("asm/nonmatchings/main/wipe", D_003936C8);
 
-INCLUDE_RODATA("main/wipe", D_003936E0);
+INCLUDE_RODATA("asm/nonmatchings/main/wipe", D_003936E0);
 
-INCLUDE_RODATA("main/wipe", D_00393700);
+INCLUDE_RODATA("asm/nonmatchings/main/wipe", D_00393700);
 
 static void WipeBoxyInDisp(void *x) {
     void *scn_hdl;

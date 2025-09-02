@@ -16,10 +16,10 @@ extern bool AwfulStatus;
 
 extern PrVu1InitPacket initVu1DmaPacket;
 
-INCLUDE_ASM("prlib/render", Render__13PrSceneObject);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", Render__13PrSceneObject);
 
 #ifndef NON_MATCHING
-INCLUDE_ASM("prlib/render", InitializeVu1__13PrSceneObject);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", InitializeVu1__13PrSceneObject);
 #else /* Uses tail call? */
 void PrSceneObject::InitializeVu1() {
     PrVu1InitPacket *packet = (PrVu1InitPacket*)PR_UNCACHED(&initVu1DmaPacket);
@@ -37,26 +37,26 @@ void PrSceneObject::InitializeVu1() {
 }
 #endif
 
-INCLUDE_ASM("prlib/render", PrepareScreenModelRender__13PrSceneObject);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", PrepareScreenModelRender__13PrSceneObject);
 
-INCLUDE_ASM("prlib/render", CalculateCurrentMatrix__13PrModelObject);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", CalculateCurrentMatrix__13PrModelObject);
 
-INCLUDE_ASM("prlib/render", CalculateCurrentMatrix__13SpmFileHeaderP13PrModelObjectRCt8NaMATRIX3Zfi4i4);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", CalculateCurrentMatrix__13SpmFileHeaderP13PrModelObjectRCt8NaMATRIX3Zfi4i4);
 
-INCLUDE_ASM("prlib/render", CalculateCurrentMatrixAnimation__13SpmFileHeaderP13PrModelObjectRCt8NaMATRIX3Zfi4i4);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", CalculateCurrentMatrixAnimation__13SpmFileHeaderP13PrModelObjectRCt8NaMATRIX3Zfi4i4);
 
-INCLUDE_ASM("prlib/render", CalculateClusterMatrix__13SpmFileHeaderP13PrModelObjectRCt8NaMATRIX3Zfi4i4);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", CalculateClusterMatrix__13SpmFileHeaderP13PrModelObjectRCt8NaMATRIX3Zfi4i4);
 
-INCLUDE_ASM("prlib/render", CalculateClusterMatrixAnimation__13SpmFileHeaderP13PrModelObjectRCt8NaMATRIX3Zfi4i4);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", CalculateClusterMatrixAnimation__13SpmFileHeaderP13PrModelObjectRCt8NaMATRIX3Zfi4i4);
 
-INCLUDE_ASM("prlib/render", RenderContext1Model__13PrModelObject);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", RenderContext1Model__13PrModelObject);
 
-INCLUDE_ASM("prlib/render", RenderContext1Model__13SpmFileHeaderP13PrModelObject);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", RenderContext1Model__13SpmFileHeaderP13PrModelObject);
 
-INCLUDE_ASM("prlib/render", ModifySimpleDmaPacket__7SpmNodeP23PrVuNodeHeaderDmaPacket);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", ModifySimpleDmaPacket__7SpmNodeP23PrVuNodeHeaderDmaPacket);
 
 #ifndef NON_MATCHING
-INCLUDE_ASM("prlib/render", RenderContext1Node__7SpmNodeP13PrModelObject);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", RenderContext1Node__7SpmNodeP13PrModelObject);
 #else /* Need to match .sdata */
 void SpmNode::RenderContext1Node(PrModelObject* model) {
     prRenderStuff.mStatistics.node_num++;
@@ -123,32 +123,32 @@ void SpmNode::RenderContext1Node(PrModelObject* model) {
 }
 #endif
 
-INCLUDE_ASM("prlib/render", RenderScreenModelNode__13PrModelObject);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", RenderScreenModelNode__13PrModelObject);
 
-INCLUDE_ASM("prlib/render", RenderScreenModelNode__13SpmFileHeader);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", RenderScreenModelNode__13SpmFileHeader);
 
-INCLUDE_ASM("prlib/render", RenderScreenModelNode__7SpmNode);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", RenderScreenModelNode__7SpmNode);
 
-INCLUDE_ASM("prlib/render", RenderBackgroundScreenModel__13PrModelObject);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", RenderBackgroundScreenModel__13PrModelObject);
 
-INCLUDE_ASM("prlib/render", RenderBackgroundScreenModel__13SpmFileHeader);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", RenderBackgroundScreenModel__13SpmFileHeader);
 
-INCLUDE_ASM("prlib/render", RenderBackgroundScreenModel__7SpmNode);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", RenderBackgroundScreenModel__7SpmNode);
 
-INCLUDE_ASM("prlib/render", RenderContext2Model__13PrModelObject);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", RenderContext2Model__13PrModelObject);
 
-INCLUDE_ASM("prlib/render", RenderContext2Model__13SpmFileHeaderP13PrModelObject);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", RenderContext2Model__13SpmFileHeaderP13PrModelObject);
 
-INCLUDE_ASM("prlib/render", RenderContext2Node__7SpmNodeP13PrModelObject);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", RenderContext2Node__7SpmNodeP13PrModelObject);
 
 /* nalib/navector.h */
-INCLUDE_ASM("prlib/render", func_00145DB0);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", func_00145DB0);
 
 /* prlib/render.cpp */
-INCLUDE_ASM("prlib/render", ComposeGlobalMatrix__7SpmNodeP13PrModelObjectRCt8NaMATRIX3Zfi4i4);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", ComposeGlobalMatrix__7SpmNodeP13PrModelObjectRCt8NaMATRIX3Zfi4i4);
 
 /* prlib/renderstuff.h */
-INCLUDE_ASM("prlib/render", func_00145E50);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", func_00145E50);
 
 /* prlib/render.cpp */
-INCLUDE_ASM("prlib/render", ComposeGlobalMatrixWithoutVisibility__7SpmNodeP13PrModelObjectRCt8NaMATRIX3Zfi4i4);
+INCLUDE_ASM("asm/nonmatchings/prlib/render", ComposeGlobalMatrixWithoutVisibility__7SpmNodeP13PrModelObjectRCt8NaMATRIX3Zfi4i4);

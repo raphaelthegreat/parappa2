@@ -1,65 +1,38 @@
 #ifndef INCLUDE_ASM_H
 #define INCLUDE_ASM_H
 
-#if !defined(SPLAT) && !defined(M2CTX) && !defined(PERMUTER)
+#if !defined(M2CTX) && !defined(PERMUTER)
+
 #ifndef INCLUDE_ASM
-#define INCLUDE_ASM(FOLDER, NAME)                                       \
-    __asm__(                                                            \
-        ".section .text\n"                                              \
-        "   .set noat\n"                                                \
-        "   .set noreorder\n"                                           \
-        "   .globl\t" #NAME ".NON_MATCHING\n"                           \
-        "   .ent\t" #NAME "\n" #NAME ".NON_MATCHING:\n"                 \
-        "   .include \"asm/nonmatchings/" FOLDER "/" #NAME ".s\"\n"     \
-        "   .set reorder\n"                                             \
-        "   .set at\n"                                                  \
-        "   .end\t" #NAME                                               \
-    );
-#endif
-#ifndef IOP_INCLUDE_ASM
-#define IOP_INCLUDE_ASM(FOLDER, NAME)                                       \
-    __asm__(                                                            \
-        ".section .text\n"                                              \
-        "   .set noat\n"                                                \
-        "   .set noreorder\n"                                           \
-        "   .globl\t" #NAME ".NON_MATCHING\n"                           \
-        "   .ent\t" #NAME "\n" #NAME ".NON_MATCHING:\n"                 \
-        "   .include \"asm/iop_mdl/" FOLDER "/" #NAME ".s\"\n"     \
-        "   .set reorder\n"                                             \
-        "   .set at\n"                                                  \
-        "   .end\t" #NAME                                               \
-    );
+#define INCLUDE_ASM(FOLDER, NAME) \
+    __asm__( \
+        ".section .text\n" \
+        "    .set noat\n" \
+        "    .set noreorder\n" \
+        "    .include \"" FOLDER "/" #NAME ".s\"\n" \
+        "    .set reorder\n" \
+        "    .set at\n" \
+    )
 #endif
 #ifndef INCLUDE_RODATA
-#define INCLUDE_RODATA(FOLDER, NAME)                                    \
-    __asm__(                                                            \
-        ".section .rodata\n"                                            \
-        "    .include \"asm/nonmatchings/" FOLDER "/" #NAME ".s\"\n"    \
-        ".section .text"                                                \
+#define INCLUDE_RODATA(FOLDER, NAME) \
+    __asm__( \
+        ".section .rodata\n" \
+        "    .include \"" FOLDER "/" #NAME ".s\"\n" \
+        ".section .text" \
     )
 #endif
-#ifndef IOP_INCLUDE_RODATA
-#define IOP_INCLUDE_RODATA(FOLDER, NAME)                                    \
-    __asm__(                                                            \
-        ".section .rodata\n"                                            \
-        "    .include \"asm/iop_mdl/" FOLDER "/" #NAME ".s\"\n"    \
-        ".section .text"                                                \
-    )
-#endif
-__asm__(".include \"include/macro.inc\"\n");
+__asm__(".include \"include/labels.inc\"\n");
+
 #else
+
 #ifndef INCLUDE_ASM
 #define INCLUDE_ASM(FOLDER, NAME)
-#endif
-#ifndef IOP_INCLUDE_ASM
-#define IOP_INCLUDE_ASM(FOLDER, NAME)
 #endif
 #ifndef INCLUDE_RODATA
 #define INCLUDE_RODATA(FOLDER, NAME)
 #endif
-#ifndef IOP_INCLUDE_RODATA
-#define IOP_INCLUDE_RODATA(FOLDER, NAME)
-#endif
-#endif
+
+#endif /* !defined(M2CTX) && !defined(PERMUTER) */
 
 #endif /* INCLUDE_ASM_H */

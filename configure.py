@@ -44,11 +44,11 @@ IOP_COMPILER_DIR = f"{TOOLS_DIR}/cc/iop-gcc281/bin"
 EE_COMMON_INCLUDES = "-Iinclude -Isrc -Iinclude/rtl/common -Iinclude/rtl/ee -Iinclude/rtl/ee_gcc -Iinclude/rtl/ee_gcc/gcc-lib"
 IOP_COMMON_INCLUDES = "-Iinclude -Isrc/iop_mdl/wp2cd/iop -Iinclude/rtl/common -Iinclude/rtl/iop -Iinclude/rtl/iop_gcc -Iinclude/rtl/iop_gcc/gcc-lib"
 
-EE_COMPILER_FLAGS = "-O2 -G8 -g"
+EE_COMPILER_FLAGS = "-O2 -G8 -g -Wa,-Iinclude"
 # We need to get rid of symbols on the C++ code to have a match.
-EE_COMPILER_FLAGS_CXX = "-O2 -G8 -x c++ -fno-exceptions -fno-strict-aliasing"
+EE_COMPILER_FLAGS_CXX = "-O2 -G8 -x c++ -fno-exceptions -fno-strict-aliasing -Wa,-Iinclude"
 
-IOP_COMPILER_FLAGS = f"-B {TOOLS_DIR}/cc/iop-gcc281/lib/gcc-lib/mipsel-scei-elfl/2.8.1/ -O0 -G0 -g"
+IOP_COMPILER_FLAGS = f"-B {TOOLS_DIR}/cc/iop-gcc281/lib/gcc-lib/mipsel-scei-elfl/2.8.1/ -O0 -G0 -g -Wa,-Iinclude"
 
 EE_COMPILE_CMD = f"{EE_COMPILER_DIR}/ee-gcc -c {EE_COMMON_INCLUDES} {EE_COMPILER_FLAGS}"
 EE_COMPILE_CMD_CXX = f"{EE_COMPILER_DIR}/ee-gcc -c {EE_COMMON_INCLUDES} {EE_COMPILER_FLAGS_CXX}"
@@ -209,7 +209,7 @@ def build_stuff(linker_entries: List[LinkerEntry], is_irx: bool = False, append:
     # Rules
     cross = "mips-linux-gnu-"
     common_ld_args = "-EL -Map $mapfile -T $in -o $out"
-    ee_ld_args = f"{common_ld_args} -T config/p3.jul12.vu_syms.txt -T config/p3.jul12.undefined_syms_auto.txt -T config/p3.jul12.undefined_funcs_auto.txt -T config/p3.jul12.undefined_syms.txt"
+    ee_ld_args = f"{common_ld_args} -T config/p3.jul12.misc.txt -T config/p3.jul12.vu_syms.txt -T config/p3.jul12.undefined_syms_auto.txt -T config/p3.jul12.undefined_funcs_auto.txt -T config/p3.jul12.undefined_syms.txt"
     wp2_ld_args = f"{common_ld_args} -T config/irx.wave2ps2.jul12.undefined_syms_auto.txt -T config/irx.wave2ps2.jul12.undefined_funcs_auto.txt -T config/irx.wave2ps2.jul12.undefined_syms.txt"
 
     if not append:
@@ -636,7 +636,7 @@ if __name__ == "__main__":
     if args.cleansrc:
         shutil.rmtree("src", ignore_errors=True)
 
-    split.main([Path(P3_YAML_FILE)], modes="all", verbose=False)
+    split.main([Path(P3_YAML_FILE)], modes=["all"], verbose=False)
     linker_entries = split.linker_writer.entries
     p3_config = split.config
     build_stuff(linker_entries)
@@ -648,7 +648,7 @@ if __name__ == "__main__":
     splat.util.symbols.spim_context = spimdisasm.common.Context()
     splat.util.symbols.reset_symbols()
 
-    split.main([Path(WP2_YAML_FILE)], modes="all", verbose=False, use_cache=False)
+    split.main([Path(WP2_YAML_FILE)], modes=["all"], verbose=False, use_cache=False)
     linker_entries = split.linker_writer.entries
     build_stuff(linker_entries, True, True)
 

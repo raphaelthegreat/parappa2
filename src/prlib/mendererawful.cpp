@@ -19,9 +19,9 @@ void SetNextSwitchRotationTimer() {
     awfulChangeTimer = (u_int)((PrFloatRandom() * 4.0f + 3.0f) * 60.0f);
 }
 
-INCLUDE_ASM("prlib/mendererawful", GetAwfulRotation__Fv);
+INCLUDE_ASM("asm/nonmatchings/prlib/mendererawful", GetAwfulRotation__Fv);
 
-INCLUDE_ASM("prlib/mendererawful", PrStartAwfulRotation__Fv);
+INCLUDE_ASM("asm/nonmatchings/prlib/mendererawful", PrStartAwfulRotation__Fv);
 
 void PrFadeFrameImage(float arg0) {
     if (arg0 == 0.0f) {
@@ -46,13 +46,13 @@ void PrFadeFrameImage(float arg0) {
     sceDmaSendN(chan, &mendererFadeData, 7);
 }
 
-INCLUDE_ASM("prlib/mendererawful", PrInitializeAwfulBackground__FPv);
+INCLUDE_ASM("asm/nonmatchings/prlib/mendererawful", PrInitializeAwfulBackground__FPv);
 
-INCLUDE_ASM("prlib/mendererawful", PrDrawAwfulBackground__FG10sceGsFrame);
+INCLUDE_ASM("asm/nonmatchings/prlib/mendererawful", PrDrawAwfulBackground__FG10sceGsFrame);
 
-INCLUDE_ASM("prlib/mendererawful", PrUpdateAwfulMenderer__Fv);
+INCLUDE_ASM("asm/nonmatchings/prlib/mendererawful", PrUpdateAwfulMenderer__Fv);
 
 /* nalib/navector.h */
-INCLUDE_ASM("prlib/mendererawful", func_00150CE8);
+INCLUDE_ASM("asm/nonmatchings/prlib/mendererawful", func_00150CE8);
 
-INCLUDE_ASM("prlib/mendererawful", func_00150D10);
+INCLUDE_ASM("asm/nonmatchings/prlib/mendererawful", func_00150D10);

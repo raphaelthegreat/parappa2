@@ -4,10 +4,10 @@ u_int PackGetDecodeSize(u_char *fp_r) {
     return *(u_int*)fp_r;
 }
 
-INCLUDE_ASM("main/pack", PackDecode);
+INCLUDE_ASM("asm/nonmatchings/main/pack", PackDecode);
 
 #ifndef NON_MATCHING
-INCLUDE_ASM("main/pack", PackGetAdrs);
+INCLUDE_ASM("asm/nonmatchings/main/pack", PackGetAdrs);
 #else
 int PackGetAdrs(/* a0 4 */ u_int adrs, /* a1 5 */ int num)
 {
@@ -16,4 +16,4 @@ int PackGetAdrs(/* a0 4 */ u_int adrs, /* a1 5 */ int num)
 }
 #endif
 
-INCLUDE_ASM("main/pack", PackDbgList);
+INCLUDE_ASM("asm/nonmatchings/main/pack", PackDbgList);

@@ -16,7 +16,6 @@
 
 #include <stdlib.h>
 
-/* sdata */
 static float prFrameRate = 1.0f;
 static float prInverseFrameRate = 1.0f;
 
@@ -58,14 +57,18 @@ void PrCleanupModule() {
 }
 
 PR_EXTERN
-PrSceneObject* PrInitializeScene(sceGsDrawEnv1 *drawEnv, const char *name, u_int fbp) {
+PrSceneObject* PrInitializeScene(sceGsDrawEnv1* drawEnv, const char *name, u_int fbp) {
     return prObjectDatabase.CreateScene(drawEnv, name, fbp);
 }
 
-INCLUDE_ASM("prlib/prlib", PrInitializeSceneDBuff);
+PR_EXTERN
+PrSceneObject* PrInitializeSceneDBuff(sceGsDBuffDc* dbuff, const char *name, u_int fbp) {
+    PrSceneObject* scene = prObjectDatabase.CreateScene(&dbuff->draw01, name, fbp);
+    scene->unk90 = dbuff;
+}
 
 PR_EXTERN
-void PrCleanupScene(PrSceneObject *scene) {
+void PrCleanupScene(PrSceneObject* scene) {
     if (scene == NULL) {
         scene = prObjectDatabase.unk0;
         while (scene != NULL) {
@@ -83,18 +86,18 @@ void PrSetSceneFrame() {
 }
 
 PR_EXTERN
-void PrSetSceneEnv(PrSceneObject *scene, sceGsDrawEnv1 *drawEnv) {
+void PrSetSceneEnv(PrSceneObject* scene, sceGsDrawEnv1* drawEnv) {
     scene->unk50 = drawEnv->frame1;
     scene->unk58 = drawEnv->xyoffset1;
 }
 
 PR_EXTERN
-void PrPreprocessSceneModel(PrSceneObject *scene) {
+void PrPreprocessSceneModel(PrSceneObject* scene) {
     scene->PreprocessModel();
 }
 
 PR_EXTERN
-PrModelObject* PrInitializeModel(SpmFileHeader *spm, PrSceneObject *scene) {
+PrModelObject* PrInitializeModel(SpmFileHeader* spm, PrSceneObject* scene) {
     if (spm->magic != SPM_MAGIC) {
     #if 0 /* (poly): Only present on McDonald's Demo build */
         printf("PRLIB(FATAL): not a SPM file (illegal magic number)\n");
@@ -115,77 +118,80 @@ PrModelObject* PrInitializeModel(SpmFileHeader *spm, PrSceneObject *scene) {
     return model;
 }
 
-INCLUDE_ASM("prlib/prlib", PrInitializeAnimation);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrInitializeAnimation);
 
-INCLUDE_ASM("prlib/prlib", PrInitializeCamera);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrInitializeCamera);
 
-INCLUDE_ASM("prlib/prlib", PrCleanupModel);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrCleanupModel);
 
-INCLUDE_ASM("prlib/prlib", PrCleanupAnimation);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrCleanupAnimation);
 
-INCLUDE_ASM("prlib/prlib", PrCleanupCamera);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrCleanupCamera);
 
-INCLUDE_ASM("prlib/prlib", PrCleanupAllSceneModel);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrCleanupAllSceneModel);
 
 PR_EXTERN
-float PrGetAnimationStartFrame(SpaFileHeader *animation) {
+float PrGetAnimationStartFrame(SpaFileHeader* animation) {
     return 0.0f;
 }
 
 PR_EXTERN
-float PrGetAnimationEndFrame(SpaFileHeader *animation) {
+float PrGetAnimationEndFrame(SpaFileHeader* animation) {
     return animation->unk14 * prFrameRate;
 }
 
 PR_EXTERN
-float PrGetCameraStartFrame(SpcFileHeader *camera) {
+float PrGetCameraStartFrame(SpcFileHeader* camera) {
     return 0.0f;
 }
 
-INCLUDE_ASM("prlib/prlib", PrGetCameraEndFrame);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrGetCameraEndFrame);
 
-INCLUDE_ASM("prlib/prlib", PrSetModelUserData);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrSetModelUserData);
 
-INCLUDE_ASM("prlib/prlib", PrSetAnimationUserData);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrSetAnimationUserData);
 
-INCLUDE_ASM("prlib/prlib", PrSetCameraUserData);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrSetCameraUserData);
 
-INCLUDE_ASM("prlib/prlib", PrGetModelUserData);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrGetModelUserData);
 
-INCLUDE_ASM("prlib/prlib", PrGetAnimationUserData);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrGetAnimationUserData);
 
-INCLUDE_ASM("prlib/prlib", PrGetCameraUserData);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrGetCameraUserData);
 
-INCLUDE_ASM("prlib/prlib", PrLinkAnimation);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrLinkAnimation);
 
-INCLUDE_ASM("prlib/prlib", PrUnlinkAnimation);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrUnlinkAnimation);
 
-INCLUDE_ASM("prlib/prlib", PrGetLinkedAnimation);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrGetLinkedAnimation);
 
-INCLUDE_ASM("prlib/prlib", PrLinkPositionAnimation);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrLinkPositionAnimation);
 
-INCLUDE_ASM("prlib/prlib", PrUnlinkPositionAnimation);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrUnlinkPositionAnimation);
 
-INCLUDE_ASM("prlib/prlib", PrGetLinkedPositionAnimation);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrGetLinkedPositionAnimation);
 
-INCLUDE_ASM("prlib/prlib", PrSelectCamera);
-
-INCLUDE_ASM("prlib/prlib", PrGetSelectedCamera);
-
-INCLUDE_ASM("prlib/prlib", PrGetCurrentCamera);
-
-INCLUDE_ASM("prlib/prlib", PrSetDefaultCamera);
-
-INCLUDE_ASM("prlib/prlib", PrSetAppropriateDefaultCamera);
-
-INCLUDE_ASM("prlib/prlib", PrShowModel);
-
-INCLUDE_ASM("prlib/prlib", PrGetModelMatrix);
-
-INCLUDE_ASM("prlib/prlib", PrHideModel);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrSelectCamera);
 
 PR_EXTERN
-NaVECTOR<float, 4>* PrGetModelPrimitivePosition(PrModelObject *model) {
+SpcFileHeader* PrGetSelectedCamera(PrSceneObject* scene) {
+    return scene->mCamera;
+}
+
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrGetCurrentCamera);
+
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrSetDefaultCamera);
+
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrSetAppropriateDefaultCamera);
+
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrShowModel);
+
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrGetModelMatrix);
+
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrHideModel);
+
+PR_EXTERN
+NaVECTOR<float, 4>* PrGetModelPrimitivePosition(PrModelObject* model) {
     /*
      * FIXME(poly): These `tmp_X` symbols aren't real
      * and are product of the static NaVECTOR instances.
@@ -210,7 +216,7 @@ NaVECTOR<float, 4>* PrGetModelPrimitivePosition(PrModelObject *model) {
 }
 
 PR_EXTERN
-NaVECTOR<float, 4>* PrGetModelScreenPosition(PrModelObject *model) {
+NaVECTOR<float, 4>* PrGetModelScreenPosition(PrModelObject* model) {
     /*
      * FIXME(poly): These `tmp_X` symbols aren't real
      * and are product of the static NaVECTOR instances.
@@ -236,72 +242,103 @@ NaVECTOR<float, 4>* PrGetModelScreenPosition(PrModelObject *model) {
 
 int prCurrentStage = 0;
 
-INCLUDE_ASM("prlib/prlib", PrAnimateModel);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrAnimateModel);
 
-INCLUDE_ASM("prlib/prlib", PrAnimateModelPosition);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrAnimateModelPosition);
 
-INCLUDE_ASM("prlib/prlib", PrAnimateSceneCamera);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrAnimateSceneCamera);
 
-INCLUDE_ASM("prlib/prlib", PrRender);
+PR_EXTERN
+void PrRender(PrSceneObject* scene) {
+    scene->Render();
+}
 
-INCLUDE_ASM("prlib/prlib", PrWaitRender);
+PR_EXTERN
+void PrWaitRender() {
+    prRenderStuff.WaitRender();
+}
 
 PR_EXTERN
 void PrSetStage(int stage) {
     prCurrentStage = stage;
 }
 
-INCLUDE_ASM("prlib/prlib", PrSetDepthOfField);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrSetDepthOfField);
 
-INCLUDE_ASM("prlib/prlib", PrSetDepthOfFieldLevel);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrSetDepthOfFieldLevel);
 
-INCLUDE_ASM("prlib/prlib", PrGetFocalLength);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrGetFocalLength);
 
-INCLUDE_ASM("prlib/prlib", PrGetDefocusLength);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrGetDefocusLength);
 
-INCLUDE_ASM("prlib/prlib", PrGetDepthOfFieldLevel);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrGetDepthOfFieldLevel);
 
-INCLUDE_ASM("prlib/prlib", PrSaveContour);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrSaveContour);
 
-INCLUDE_ASM("prlib/prlib", PrResetContour);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrResetContour);
 
-INCLUDE_ASM("prlib/prlib", PrSavePosture);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrSavePosture);
 
-INCLUDE_ASM("prlib/prlib", PrResetPosture);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrResetPosture);
 
-INCLUDE_ASM("prlib/prlib", PrSetContourBlurAlpha);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrSetContourBlurAlpha);
 
-INCLUDE_ASM("prlib/prlib", PrSetTransactionBlendRatio);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrSetTransactionBlendRatio);
 
-INCLUDE_ASM("prlib/prlib", PrGetContourBlurAlpha);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrGetContourBlurAlpha);
 
-INCLUDE_ASM("prlib/prlib", PrGetContourBlurAlpha2);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrGetContourBlurAlpha2);
 
-INCLUDE_ASM("prlib/prlib", PrGetTransactionBlendRatio);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrGetTransactionBlendRatio);
 
-INCLUDE_ASM("prlib/prlib", PrSetModelDisturbance);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrSetModelDisturbance);
 
-INCLUDE_ASM("prlib/prlib", PrGetModelDisturbance);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrGetModelDisturbance);
 
-INCLUDE_ASM("prlib/prlib", PrGetVertexNum);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrGetVertexNum);
 
-INCLUDE_ASM("prlib/prlib", PrGetModelName);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrGetModelName);
 
-INCLUDE_ASM("prlib/prlib", PrGetAnimationName);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrGetAnimationName);
 
-INCLUDE_ASM("prlib/prlib", PrGetCameraName);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrGetCameraName);
 
-INCLUDE_ASM("prlib/prlib", PrGetSceneName);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrGetSceneName);
 
-INCLUDE_ASM("prlib/prlib", PrGetRenderingStatistics);
+PR_EXTERN
+PrRENDERING_STATISTICS* PrGetRenderingStatistics() {
+    PrRenderStuff* renderStuff = &prRenderStuff;
+    return &renderStuff->mStatistics;
+}
 
-INCLUDE_ASM("prlib/prlib", PrSetModelVisibility);
+PR_EXTERN
+void PrSetModelVisibillity(PrModelObject* model, u_int nodeIdx, bool visible) {
+    if (nodeIdx >= model->mSpmImage->unk68) {
+        return;
+    }
 
-INCLUDE_ASM("prlib/prlib", PrGetModelImage);
+    SpmNode* node = model->mSpmImage->unk74[nodeIdx];
+    if (visible) {
+        node->unk154 &= ~0x20000;
+    } else {
+        node->unk154 |= 0x20000;
+    }
+}
 
-INCLUDE_ASM("prlib/prlib", PrGetAnimationImage);
+PR_EXTERN
+SpmFileHeader* PrGetModelImage(PrModelObject* model) {
+    return model->mSpmImage;
+}
 
-INCLUDE_ASM("prlib/prlib", PrGetCameraImage);
+PR_EXTERN
+SpaFileHeader* PrGetAnimationImage(SpaFileHeader* animation) {
+    return animation;
+}
+
+PR_EXTERN
+SpcFileHeader* PrGetCameraImage(SpcFileHeader* camera) {
+    return camera;
+}
 
 PR_EXTERN
 void PrSetDebugParam(int param, int value) {

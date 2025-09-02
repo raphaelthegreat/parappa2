@@ -428,9 +428,9 @@ void vsTapdatSetMemorySave(void) {
 }
 
 /* https://decomp.me/scratch/ZjsvF */
-INCLUDE_ASM("main/scrctrl", vsTapdatSetMemoryLoad);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", vsTapdatSetMemoryLoad);
 
-INCLUDE_ASM("main/scrctrl", vsTapdatSet);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", vsTapdatSet);
 
 void vsTapdatSetMoto(SCORE_INDV_STR *sindv_pp) {
     int     i;
@@ -663,7 +663,7 @@ int ScrCtrlIndvNextTime(SCORE_INDV_STR *sindv_pp, int Ncnt) {
     }
 }
 
-INCLUDE_ASM("main/scrctrl", ScrCtrlIndvNextReadLine);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", ScrCtrlIndvNextReadLine);
 
 int getLvlTblRand(TAPLVL_DAT *taplvl_dat_pp) {
     int rand_tmp;
@@ -686,7 +686,7 @@ int getLvlTblRand(TAPLVL_DAT *taplvl_dat_pp) {
 }
 
 #ifndef NON_MATCHING
-INCLUDE_ASM("main/scrctrl", tapLevelChangeSub);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", tapLevelChangeSub);
 #else
 int tapLevelChangeSub(void) {
     /* a3 7 */ int add_move;
@@ -789,7 +789,7 @@ void tapLevelChange(SCORE_INDV_STR *sindv_pp) {
     printf("            after [%d]\n\n", add_move);
 }
 
-INCLUDE_ASM("main/scrctrl", ScrCtrlIndvNextRead);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", ScrCtrlIndvNextRead);
 #if 0
 void ScrCtrlIndvNextRead(/* s0 16 */ SCORE_INDV_STR *sindv_pp, /* a1 5 */ int tap_res_f)
 {
@@ -1278,7 +1278,7 @@ void tapReqGroupPoll(void) {
     }
 }
 
-INCLUDE_ASM("main/scrctrl", tapEventCheck);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", tapEventCheck);
 
 static int otehon_all_make(EXAM_CHECK *ec_pp) {
     int i;
@@ -1295,7 +1295,7 @@ static int otehon_all_make(EXAM_CHECK *ec_pp) {
     return ret;
 }
 
-INCLUDE_ASM("main/scrctrl", treateTimeChange);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", treateTimeChange);
 #if 0
 static int treateTimeChange(/* s0 16 */ int time)
 {
@@ -1348,7 +1348,7 @@ static int MapNormalNumGet(int time) {
     return thnum_get(time / 4, CK_TH_NORMAL);
 }
 
-INCLUDE_ASM("main/scrctrl", on_th_make);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", on_th_make);
 
 /* TODO(poly): Make these static once .data is migrated */
 /* static */ int exh_normal_add(EXAM_CHECK *ec_pp) {
@@ -1379,7 +1379,7 @@ INCLUDE_ASM("main/scrctrl", on_th_make);
     return ret;
 }
 
-INCLUDE_ASM("main/scrctrl", exh_nombar_sub);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", exh_nombar_sub);
 #if 0
 static int exh_nombar_sub(/* s2 18 */ EXAM_CHECK *ec_pp)
 {
@@ -1413,7 +1413,7 @@ static int exh_nombar_sub(/* s2 18 */ EXAM_CHECK *ec_pp)
 }
 #endif
 
-INCLUDE_ASM("main/scrctrl", exh_mbar_key_out);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", exh_mbar_key_out);
 
 /* static */ int exh_mbar_time_out(EXAM_CHECK *ec_pp) {
     int ret;
@@ -1435,7 +1435,7 @@ INCLUDE_ASM("main/scrctrl", exh_mbar_key_out);
     return (ret >= 0) ? -ret : ret;
 }
 
-INCLUDE_ASM("main/scrctrl", exh_yaku);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", exh_yaku);
 
 /* static */ int exh_yaku_original(EXAM_CHECK *ec_pp) {
     return exh_yaku(ec_pp, 0);
@@ -1445,47 +1445,47 @@ INCLUDE_ASM("main/scrctrl", exh_yaku);
     return exh_yaku(ec_pp, 1);
 }
 
-INCLUDE_ASM("main/scrctrl", exh_allkey_out);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", exh_allkey_out);
 
-INCLUDE_ASM("main/scrctrl", exh_allkey_out_nh);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", exh_allkey_out_nh);
 
 /* static */ int exh_command(EXAM_CHECK *ec_pp) {
     return 0;
 }
 
-INCLUDE_ASM("main/scrctrl", exh_renda_out);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", exh_renda_out);
 
-INCLUDE_ASM("main/scrctrl", manemane_check_sub);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", manemane_check_sub);
 
-INCLUDE_ASM("main/scrctrl", manemane_check);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", manemane_check);
 
-INCLUDE_ASM("main/scrctrl", exh_mane);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", exh_mane);
 
-INCLUDE_ASM("main/scrctrl", exh_all_add);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", exh_all_add);
 
-INCLUDE_ASM("main/scrctrl", IndvGetTapSetAdrs);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", IndvGetTapSetAdrs);
 
-INCLUDE_ASM("main/scrctrl", nextExamTime);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", nextExamTime);
 
-INCLUDE_ASM("main/scrctrl", GetSindvPcodeLine);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", GetSindvPcodeLine);
 
-INCLUDE_ASM("main/scrctrl", ExamScoreCheck);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", ExamScoreCheck);
 
-INCLUDE_ASM("main/scrctrl", ExamScoreCheckSame);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", ExamScoreCheckSame);
 
-INCLUDE_ASM("main/scrctrl", levelChangeCheck);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", levelChangeCheck);
 
-INCLUDE_ASM("main/scrctrl", levelUpRank);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", levelUpRank);
 
-INCLUDE_ASM("main/scrctrl", levelDownRank);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", levelDownRank);
 
-INCLUDE_RODATA("main/scrctrl", D_00392D30);
+INCLUDE_RODATA("asm/nonmatchings/main/scrctrl", D_00392D30);
 
-INCLUDE_RODATA("main/scrctrl", D_00392D40);
+INCLUDE_RODATA("asm/nonmatchings/main/scrctrl", D_00392D40);
 
-INCLUDE_RODATA("main/scrctrl", D_00392D88);
+INCLUDE_RODATA("asm/nonmatchings/main/scrctrl", D_00392D88);
 
-INCLUDE_ASM("main/scrctrl", ScrMoveSetSub);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", ScrMoveSetSub);
 #if 0
 void ScrMoveSetSub(SCORE_INDV_STR *sindv_pp, /* s0 16 */ int Pnum, /* s4 20 */ int sub_job, /* s1 17 */ int sub_time, /* s6 22 */ int goto_job, /* s7 23 */ int goto_time, /* fp 30 */ int start_move_line, /* s3 19 */ int start_move_time)
 {
@@ -1552,7 +1552,7 @@ void ScrMoveSetSub(SCORE_INDV_STR *sindv_pp, /* s0 16 */ int Pnum, /* s4 20 */ i
 
 /* Big function! Decompiler discretion advised */
 /*      https://decomp.me/scratch/woLno        */
-INCLUDE_ASM("main/scrctrl", ScrExamSetCheck);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", ScrExamSetCheck);
 
 void subjobEvent(SCORE_INDV_STR *sindv_pp, int ctime_next) {
     int j;
@@ -1716,7 +1716,7 @@ void subjobEvent(SCORE_INDV_STR *sindv_pp, int ctime_next) {
     }
 }
 
-INCLUDE_ASM("main/scrctrl", ScrCtrlIndvJob);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", ScrCtrlIndvJob);
 
 static void ScrTimeRenew(SCR_MAIN *scr_main_pp) {
     int   i;
@@ -1752,7 +1752,7 @@ static void ScrTimeRenew(SCR_MAIN *scr_main_pp) {
 }
 
 #ifndef NON_MATCHING
-INCLUDE_ASM("main/scrctrl", ScrMbarReq);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", ScrMbarReq);
 #else
 void ScrMbarReq(/* s5 21 */ int mbarTime)
 {
@@ -1837,7 +1837,7 @@ void allTimeCallbackTimeSetChanTempo(int time) {
     }
 }
 
-INCLUDE_ASM("main/scrctrl", SetIndvDrawTblLine);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", SetIndvDrawTblLine);
 #if 0
 int SetIndvDrawTblLine(/* s0 16 */ SCORE_INDV_STR *sindv_pp)
 {
@@ -1871,7 +1871,7 @@ int SetIndvDrawTblLine(/* s0 16 */ SCORE_INDV_STR *sindv_pp)
 }
 #endif
 
-INCLUDE_ASM("main/scrctrl", otehonSetCheck);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", otehonSetCheck);
 #if 0
 static int otehonSetCheck(void)
 {
@@ -2083,9 +2083,9 @@ void SetLineChannel(int scr_line) {
     }
 }
 
-INCLUDE_ASM("main/scrctrl", SetIndvCdChannel);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", SetIndvCdChannel);
 
-INCLUDE_ASM("main/scrctrl", CheckIndvCdChannel);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", CheckIndvCdChannel);
 
 void ScrCtrlInit(STDAT_DAT *sdat_pp, void *data_top) {
     int           i, j;
@@ -2254,7 +2254,7 @@ int ScrEndWaitLoop(void) {
     return gameEndWaitLoop;
 }
 
-INCLUDE_ASM("main/scrctrl", bonusGameInit);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", bonusGameInit);
 
 static int bonusGameCntPls(void) {
     bng_str.bonus_cnt++;
@@ -2268,7 +2268,7 @@ static void bonusPointSave(void) {
     }
 }
 
-INCLUDE_ASM("main/scrctrl", bngTapEventCheck);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", bngTapEventCheck);
 
 void bonusGameParaReq(BNG_ACT_P_ENUM actnum) {
     bngTapEventCheck(&score_indv_str[2], actnum, 0);
@@ -2302,7 +2302,7 @@ static int bonus_pls_point_sub(int wtime) {
     }
 }
 
-INCLUDE_ASM("main/scrctrl", bonusGameCtrl);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", bonusGameCtrl);
 
 static u_long hex2dec(u_long data) {
     u_long ret = 0;
@@ -2322,7 +2322,7 @@ static u_long hex2dec(u_long data) {
     return ret;
 }
 
-INCLUDE_ASM("main/scrctrl", bnNumberDisp);
+INCLUDE_ASM("asm/nonmatchings/main/scrctrl", bnNumberDisp);
 
 static void bonusScoreDraw(void) {
     long         scr_stg;

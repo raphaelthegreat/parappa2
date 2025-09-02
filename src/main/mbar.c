@@ -88,9 +88,9 @@ static void   mbar_othon_frame_set(MBAR_REQ_STR *mr_pp);
 static void   guidisp_init_pr(void);
 static void   guidisp_draw_quit(int drapP);
 
-INCLUDE_ASM("main/mbar", examCharSet);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", examCharSet);
 
-INCLUDE_ASM("main/mbar", clrColorBuffer);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", clrColorBuffer);
 
 void MbarMemberClear(int stg) {
     if (stg < 6) {
@@ -291,11 +291,11 @@ void MbarHookUnUse(void) {
     hook_use_flag = FALSE;
 }
 
-INCLUDE_ASM("main/mbar", MbarHookUseOK);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarHookUseOK);
 
-INCLUDE_ASM("main/mbar", MbarHookUseNG);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarHookUseNG);
 
-INCLUDE_ASM("main/mbar", MbarHookPoll);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarHookPoll);
 
 void vsAnimationInit(void) {
     int i;
@@ -308,13 +308,13 @@ void vsAnimationInit(void) {
     WorkClear(vs_scr_ctrl, sizeof(vs_scr_ctrl));
 }
 
-INCLUDE_ASM("main/mbar", vsAnimationReq);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", vsAnimationReq);
 
-INCLUDE_ASM("main/mbar", vsAnimationReset);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", vsAnimationReset);
 
-INCLUDE_ASM("main/mbar", vsScr2Move);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", vsScr2Move);
 
-INCLUDE_ASM("main/mbar", vsAnimationPoll);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", vsAnimationPoll);
 
 static void metColorInit(void) {
     int i;
@@ -324,7 +324,7 @@ static void metColorInit(void) {
     }
 }
 
-INCLUDE_ASM("main/mbar", metColorSet);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", metColorSet);
 
 void metFrameInit(void) {
     int i;
@@ -375,9 +375,9 @@ void ExamDispInit(void) {
     vsAnimationInit();
 }
 
-INCLUDE_ASM("main/mbar", ExamDispPlySet);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", ExamDispPlySet);
 
-INCLUDE_ASM("main/mbar", ExamDispReq);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", ExamDispReq);
 
 void ExamDispReset(void) {
     exam_disp_cursor_timer = -1;
@@ -405,19 +405,19 @@ float examScore2Level(long score) {
     return ret_lvl;
 }
 
-INCLUDE_ASM("main/mbar", ExamDispOn);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", ExamDispOn);
 
-INCLUDE_ASM("main/mbar", hex2dec_mbar_tmp);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", hex2dec_mbar_tmp);
 
-INCLUDE_ASM("main/mbar", hex2decPlMi);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", hex2decPlMi);
 
-INCLUDE_ASM("main/mbar", examNumDisp);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", examNumDisp);
 
-INCLUDE_ASM("main/mbar", examScoreSet);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", examScoreSet);
 
-INCLUDE_ASM("main/mbar", examLevelDisp);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", examLevelDisp);
 
-INCLUDE_ASM("main/mbar", ExamDispSet);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", ExamDispSet);
 
 void ExamDispSubt(void) {
     /* Empty */
@@ -439,9 +439,9 @@ void MbarReset(void) {
     WorkClear(mbar_req_str, sizeof(mbar_req_str));
 }
 
-INCLUDE_RODATA("main/mbar", D_00393450);
+INCLUDE_RODATA("asm/nonmatchings/main/mbar", D_00393450);
 
-INCLUDE_RODATA("main/mbar", D_00393458);
+INCLUDE_RODATA("asm/nonmatchings/main/mbar", D_00393458);
 
 void MbarReq(MBAR_REQ_ENUM mm_req, TAPSET *ts_pp, int curr_time, SCR_TAP_MEMORY *tm_pp, int tm_cnt, 
              int lang, int tapdat_size, TAPDAT *tapdat_pp, GUI_CURSOR_ENUM guic) {
@@ -470,7 +470,7 @@ void MbarSetCtrlTime(int mctime) {
 }
 
 #ifndef NON_MATCHING
-INCLUDE_ASM("main/mbar", MbarCl1CharSet);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarCl1CharSet);
 #else
 static void MbarCl1CharSet(/* a0 4 */ int col_num, /* a1 5 */ int moto_num) {
     /* a0 4 */ MBA_CHAR_DATA *mbcd_col;
@@ -495,23 +495,23 @@ static void MbarCharSetSub(void) {
     }
 }
 
-INCLUDE_ASM("main/mbar", MbarGifInit);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarGifInit);
 
-INCLUDE_ASM("main/mbar", MbarGifTrans);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarGifTrans);
 
-INCLUDE_ASM("main/mbar", MbarCharSet);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarCharSet);
 
-INCLUDE_ASM("main/mbar", MbarCharSet2);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarCharSet2);
 
-INCLUDE_ASM("main/mbar", MbarWindowSet);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarWindowSet);
 
-INCLUDE_ASM("main/mbar", MbarGetDispPosX);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarGetDispPosX);
 
-INCLUDE_ASM("main/mbar", MbarGetDispPosY);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarGetDispPosY);
 
-INCLUDE_ASM("main/mbar", MbarGetTimeArea);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarGetTimeArea);
 
-INCLUDE_ASM("main/mbar", MbarGetTimeArea2);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarGetTimeArea2);
 
 int MbarGetStartTime(MBAR_REQ_STR *mr_pp) {
     return ((mr_pp->current_time + mr_pp->tapset_pp->taptimeStart - 24) / 96) * 96;
@@ -521,9 +521,9 @@ int MbarGetEndTime(MBAR_REQ_STR *mr_pp) {
     return (mr_pp->current_time + mr_pp->tapset_pp->taptimeEnd);
 }
 
-INCLUDE_ASM("main/mbar", MbarGetStartTap);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarGetStartTap);
 
-INCLUDE_ASM("main/mbar", MbarSclRotMake);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarSclRotMake);
 
 void MbarGuideLightMake(MBARR_CHR *mbarr_pp, int mbtime) {
     u_char col = 128;
@@ -535,50 +535,50 @@ void MbarGuideLightMake(MBARR_CHR *mbarr_pp, int mbtime) {
     mbarr_pp->r = mbarr_pp->g = mbarr_pp->b = col;
 }
 
-INCLUDE_ASM("main/mbar", MbarFlashMake);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarFlashMake);
 
-INCLUDE_ASM("main/mbar", MbarBackSet);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarBackSet);
 
-INCLUDE_RODATA("main/mbar", D_00393488);
+INCLUDE_RODATA("asm/nonmatchings/main/mbar", D_00393488);
 
-INCLUDE_RODATA("main/mbar", D_003934A0);
+INCLUDE_RODATA("asm/nonmatchings/main/mbar", D_003934A0);
 
-INCLUDE_ASM("main/mbar", MbarOthSet);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarOthSet);
 
-INCLUDE_ASM("main/mbar", MbarCurSet);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarCurSet);
 
-INCLUDE_ASM("main/mbar", MbarTapSubt);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarTapSubt);
 
-INCLUDE_ASM("main/mbar", MbarPosOffsetSet);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarPosOffsetSet);
 
-INCLUDE_ASM("main/mbar", mbar_othon_frame_set);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", mbar_othon_frame_set);
 
-INCLUDE_ASM("main/mbar", MbarDisp);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarDisp);
 
-INCLUDE_ASM("main/mbar", MbarDispScene);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarDispScene);
 
-INCLUDE_ASM("main/mbar", MbarDispSceneDraw);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarDispSceneDraw);
 
-INCLUDE_ASM("main/mbar", MbarDispSceneVsDraw);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarDispSceneVsDraw);
 
 void MbarDispSceneVsDrawInit(void) {
     vs_mouse_disp_flag = 0;
 }
 
-INCLUDE_ASM("main/mbar", guidisp_init_pr);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", guidisp_init_pr);
 
-INCLUDE_ASM("main/mbar", guidisp_draw_quit);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", guidisp_draw_quit);
 
-INCLUDE_ASM("main/mbar", MbarDispGuiScene);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarDispGuiScene);
 
-INCLUDE_ASM("main/mbar", MbarDispGuiSceneMbarArea);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarDispGuiSceneMbarArea);
 
 TIM2_DAT* lessonTim2InfoGet(void) {
     return &tim2spr_tbl_tmp1[52];
 }
 
 #ifndef NON_MATCHING
-INCLUDE_ASM("main/mbar", lessonCl2InfoGet);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", lessonCl2InfoGet);
 #else /* requires .rodata migration */
 TIM2_DAT* lessonCl2InfoGet(SCRRJ_LESSON_ROUND_ENUM type) {
     u_short le_num[10] = {
@@ -599,8 +599,8 @@ TIM2_DAT* lessonCl2InfoGet(SCRRJ_LESSON_ROUND_ENUM type) {
 }
 #endif
 
-INCLUDE_ASM("main/mbar", MbarDemoCharDisp);
+INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarDemoCharDisp);
 
-INCLUDE_RODATA("main/mbar", D_003934E8);
+INCLUDE_RODATA("asm/nonmatchings/main/mbar", D_003934E8);
 
-INCLUDE_RODATA("main/mbar", D_00393500);
+INCLUDE_RODATA("asm/nonmatchings/main/mbar", D_00393500);

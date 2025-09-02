@@ -115,4 +115,4 @@ PrDmaStripForSetGifRegister* PrGetDmaStripGifRegister(PrSetGifRegisterMode mode)
     return &setGifRegisterMode[mode];
 }
 
-INCLUDE_RODATA("prlib/gifreg", D_00396748);
+INCLUDE_RODATA("asm/nonmatchings/prlib/gifreg", D_00396748);

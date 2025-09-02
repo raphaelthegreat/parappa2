@@ -133,6 +133,9 @@ DrawGetFbpPos                       = 0x00102fb8; // type:func
 DrawGetTbpPos                       = 0x00103030; // type:func
 
 sysPad                              = 0x0017bb40; // size:0x80
+
+D_00391128                          = 0x00391128; // type:u16 size:0x18
+
 pad_dma_buf                         = 0x003ba100; // size:0x200
 ChangeDrawAreaPacket                = 0x003ba300; // size:0xC0
 exl_dmatag                          = 0x003ba3c0; // size:0x10
@@ -675,6 +678,9 @@ mentitle_dat                        = 0x00185cc8; // size:0x40
 mentitle_dat_dera                   = 0x00185d08; // size:0x540
 draw_dbg_str                        = 0x00186248; // size:0x3C
 
+D_00393128                          = 0x00393128; // type:u16 size:0x18
+D_00393140                          = 0x00393140; // type:u16 size:0x18
+
 vclr_black_tmp                      = 0x00399518; // size:0x4
 bthrow_ctrl_time                    = 0x0039951c; // size:0x4
 mend_title_req                      = 0x00399528;
@@ -723,6 +729,9 @@ CG_FadeDisp                         = 0x001179f8; // type:func
 UG_NoodlesDisp                      = 0x00117a58; // type:func
 CG_NoodlesDisp                      = 0x00117e20; // type:func
 FD_MonocroDisp                      = 0x00117e90; // type:func
+
+D_00393400                          = 0x00393400; // type:u64
+D_00393408                          = 0x00393408; // type:u64 can_reference:false
 
 // TODO: use original name (gs_simage) once it's defined on the C side
 gs_simage_EFFECTTMP                 = 0x01c6fef0; // size:0x70
@@ -833,6 +842,9 @@ guimap_single                       = 0x00186ee0; // size:0x10
 guimap_vs                           = 0x00186ef0; // size:0x10
 guimap_sr                           = 0x00186f00; // size:0x8
 guimap_hk                           = 0x00186f08; // size:0x8
+
+D_003934E8                          = 0x003934e8; // type:u16 size:0x14
+D_00393500                          = 0x00393500; // can_reference:false
 
 niko_chan_str_pp                    = 0x00399558;
 niko_chan_str_cnt                   = 0x0039955c;
@@ -971,6 +983,8 @@ jimaku_str                          = 0x001872a8; // size:0x8
 wipe_para_str                       = 0x001872b0; // size:0x10
 sceGsDrawEnv1_tmp                   = 0x001872c0; // size:0x80
 
+D_00393680                          = 0x00393680; // type:u32 size:0x10 can_reference:false
+
 wipe_type                           = 0x00399598;
 wipe_end_flag                       = 0x0039959c;
 loading_wipe_switch                 = 0x003995a0;
@@ -1039,6 +1053,9 @@ dbg_mode_str                        = 0x00187460; // size:0x50
 
 // TODO: migrate .data (and .sdata) and remove the temp name
 tim2spr_tbl_tmp0                    = 0x001874b0; // size:0x40 allow_duplicated:true can_reference:false
+
+D_00393AA0                          = 0x00393aa0; // type:s16 size:0x10
+D_00393AB0                          = 0x00393ab0; // type:s16 size:0x10
 
 urawaza_skip_bottun                 = 0x003995d0;
 urawaza_levelsel_bottun             = 0x003995d4;
@@ -1440,10 +1457,18 @@ MapBgmTbl                           = 0x0018b880; // size:0x84
 TsVoiceTbl                          = 0x0018b908; // size:0x1c0
 VSNDSEQ_Tbl                         = 0x0018baf8; // size:0x18
 TexTable                            = 0x0018bb10; // size:0x1a0
+CellCusPos                          = 0x0018bd98; // size:0x1c
+MNOptMiniFrm                        = 0x0018c038; // size:0x30 can_reference:false
+MNOptLRBtn                          = 0x0018c068; // size:0x60 can_reference:false
+Ranking_PatScroll                   = 0x0018c180; // type:s32 size:0x18 can_reference:false
+JUKEBOX_Pos                         = 0x0018c588; // size:0x28 can_reference:false
+HosiColor                           = 0x0018c6e8; // size:0x60 can_reference:false
 RPPadBit                            = 0x0018c8e0; // size:0x10
 McVoiceTbl                          = 0x0018c8f0; // size:0xb8
 McFaceTbl                           = 0x0018c9a8; // size:0xb8
 MNS_StageMap                        = 0x0018cc38; // size:0x1154
+
+D_00395F20                          = 0x00395f20; // type:asciz
 
 tblTex                              = 0x003997bc;
 UserList_Sw                         = 0x003997c0;
@@ -1535,6 +1560,8 @@ _P3MC_proc                          = 0x0013a940; // type:func
 _P3MC_dataCheckFunc                 = 0x0013ac78; // type:func
 _P3MC_CheckUserData                 = 0x0013ac80; // type:func
 _P3MC_CheckUserDataHead             = 0x0013acc0; // type:func
+
+D_00396190                          = 0x00396190; // type:asciz
 
 HedderID                            = 0x00399830; // size:0x4
 FooterID                            = 0x00399834; // size:0x4
@@ -2185,6 +2212,8 @@ sceGsSetHalfOffset2                 = 0x00156148; // type:func
 sceGsSetDefDBuffDc                  = 0x001561d0; // type:func
 sceGsSwapDBuffDc                    = 0x001564b8; // type:func
 
+init_vif_regs.3                     = 0x0038cf10; // size:0x20 can_reference:false
+
 // libdma.c
 sceDmaGetChan                       = 0x00156b28; // type:func
 sceDmaReset                         = 0x00156b50; // type:func
@@ -2227,7 +2256,8 @@ scePadInfoPressMode                 = 0x00159080; // type:func
 scePadEnterPressMode                = 0x001590e0; // type:func
 
 // intr.c
-srcfile                             = 0x0038d060; // type:s32 size:0x740 can_reference:false
+srcfile                             = 0x0038d060; // size:0x740 can_reference:false
+eenull                              = 0x0038d7a0; // size:0x28 can_reference:false
 
 // klib.s
 StartThread                         = 0x00159640; // type:func
@@ -2291,6 +2321,8 @@ _RotMatrixY_01                      = 0x00161bb8; // type:label
 _RotMatrixY_02                      = 0x00161bc0; // type:label
 _loopRotMatrixY                     = 0x00161c08; // type:label
 
+init_vif_regs.126                   = 0x0038d8d0; // size:0x30 can_reference:false
+
 // eecdvd.c
 sceCdSearchFile                     = 0x001629b0; // type:func
 sceCdSync                           = 0x00162eb8; // type:func
@@ -2322,6 +2354,9 @@ atan2f                              = 0x00165730; // type:func
 // sce/ee/gcc/src/newlib/libm/math/wf_fmod.c
 fmodf                               = 0x00165858; // type:func
 
+// sce/ee/gcc/src/newlib/libm/math/e_atan2.c
+tiny                                = 0x00397820; // type:f64
+
 // sce/ee/gcc/src/gcc/libgcc2.c
 __main                              = 0x001680b0; // type:func
 __divdi3                            = 0x001680d0; // type:func
@@ -2330,6 +2365,8 @@ __fixsfdi                           = 0x00169760; // type:func
 __floatdisf                         = 0x00169a20; // type:func
 __udivdi3                           = 0x0016a1c8; // type:func
 __umoddi3                           = 0x0016a798; // type:func
+
+__DTOR_LIST__                       = 0x0017a950;
 
 // sce/ee/gcc/src/gcc/build/gcc/dp-bit.c
 dpadd                               = 0x0016b0e8; // type:func
@@ -2354,6 +2391,9 @@ memalign                            = 0x0016f7e8; // type:func
 // sce/ee/gcc/src/newlib/libc/stdlib/malloc.c
 malloc                              = 0x0016f9e8; // type:func
 free                                = 0x0016fa10; // type:func
+
+// sce/ee/gcc/src/newlib/libc/stdlib/mallocr.c
+__malloc_av_                        = 0x00390a60; // size:0x408
 
 // sce/ee/gcc/src/newlib/libc/machine/r5900/memcpy.S
 memcpy                              = 0x00170484; // type:func

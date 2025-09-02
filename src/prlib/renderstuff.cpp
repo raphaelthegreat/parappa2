@@ -189,7 +189,7 @@ void PrRenderStuff::SortTransmitDmaArray() {
 }
 
 #ifndef NON_MATCHING
-INCLUDE_ASM("prlib/renderstuff", MergeRender__13PrRenderStuff);
+INCLUDE_ASM("asm/nonmatchings/prlib/renderstuff", MergeRender__13PrRenderStuff);
 #else
 void PrRenderStuff::MergeRender() {
     bool s4 = false;
@@ -211,9 +211,9 @@ void PrRenderStuff::MergeRender() {
 }
 #endif
 
-INCLUDE_ASM("prlib/renderstuff", _GLOBAL_$D$prRenderStuff);
+INCLUDE_ASM("asm/nonmatchings/prlib/renderstuff", _GLOBAL_$D$prRenderStuff);
 
-INCLUDE_ASM("prlib/renderstuff", _GLOBAL_$I$prRenderStuff);
+INCLUDE_ASM("asm/nonmatchings/prlib/renderstuff", _GLOBAL_$I$prRenderStuff);
 
 /* prlib/renderstuff.h */
-INCLUDE_ASM("prlib/renderstuff", func_00141650);
+INCLUDE_ASM("asm/nonmatchings/prlib/renderstuff", func_00141650);

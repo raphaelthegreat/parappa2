@@ -188,7 +188,7 @@ static void memc_clearMEMCINFO(MEMC_INFO *info) {
     info->savefile = 0;
 }
 
-INCLUDE_ASM("menu/memc", memc_searchDirTbl);
+INCLUDE_ASM("asm/nonmatchings/menu/memc", memc_searchDirTbl);
 
 extern char D_00399880[]; // sdata - "/*"
 
@@ -481,7 +481,7 @@ int memc_get_dir_continue(sceMcTblGetDir *dir, int max) {
     return re;
 }
 
-INCLUDE_ASM("menu/memc", memc_mansub_ErrChk);
+INCLUDE_ASM("asm/nonmatchings/menu/memc", memc_mansub_ErrChk);
 int memc_mansub_ErrChk(/* a0 4 */ int result);
 
 static int memc_mansub_Open(char *name, u_int type) {
@@ -508,7 +508,7 @@ static int memc_mansub_Close(void) {
     return re;
 }
 
-INCLUDE_ASM("menu/memc", memcsub_fileChk);
+INCLUDE_ASM("asm/nonmatchings/menu/memc", memcsub_fileChk);
 /* static */ int memcsub_fileChk(/* a0 4 */ sceMcTblGetDir *dir, /* a1 5 */ unsigned char *name, /* a2 6 */ int max);
 
 extern char D_00399888[]; /* sdata - "SAVE" */
@@ -649,9 +649,9 @@ static int memc_mansub_load(int result) {
     return 16;
 }
 
-INCLUDE_ASM("menu/memc", memc_manager_save);
+INCLUDE_ASM("asm/nonmatchings/menu/memc", memc_manager_save);
 
-INCLUDE_ASM("menu/memc", memc_manager_overwrite);
+INCLUDE_ASM("asm/nonmatchings/menu/memc", memc_manager_overwrite);
 
 static int memc_manager_chk(int mode) {
     int        re;

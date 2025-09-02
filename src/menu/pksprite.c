@@ -372,7 +372,7 @@ u_int GetDToneColor(u_int sbgr, u_int dbgr, int ton) {
 }
 
 #ifndef NON_MATCHING
-INCLUDE_ASM("menu/pksprite", GetToneColorA);
+INCLUDE_ASM("asm/nonmatchings/menu/pksprite", GetToneColorA);
 #else
 u_int GetToneColorA(/* 0x0(sp) */ u_int abgr, /* a1 5 */ int tona, /* a2 6 */ int tonb, /* a3 7 */ int tong, /* t0 8 */ int tonr) {
     u_char *pa;
@@ -413,7 +413,7 @@ u_int GetToneColorA(/* 0x0(sp) */ u_int abgr, /* a1 5 */ int tona, /* a2 6 */ in
 }
 #endif
 
-INCLUDE_ASM("menu/pksprite", GetToneColorH);
+INCLUDE_ASM("asm/nonmatchings/menu/pksprite", GetToneColorH);
 
 void SetSprDefOfsXY(SPR_PRM *spr) {
     spr->ofsx = 2048.0f - _PkScrW * 0.5f;
@@ -480,20 +480,20 @@ void PkZBUFMask_Add(SPR_PKT pkt, int bMsk) {
     ((sceGsZbuf*)*pk)[2].ZMSK = (bMsk != 0);
 }
 
-INCLUDE_ASM("menu/pksprite", PkSprPkt_SetTexVram);
+INCLUDE_ASM("asm/nonmatchings/menu/pksprite", PkSprPkt_SetTexVram);
 
-INCLUDE_ASM("menu/pksprite", PkSprPkt_SetDefault);
+INCLUDE_ASM("asm/nonmatchings/menu/pksprite", PkSprPkt_SetDefault);
 
-INCLUDE_ASM("menu/pksprite", PkNSprite_Add);
+INCLUDE_ASM("asm/nonmatchings/menu/pksprite", PkNSprite_Add);
 
-INCLUDE_ASM("menu/pksprite", PkNSprite_Add2);
+INCLUDE_ASM("asm/nonmatchings/menu/pksprite", PkNSprite_Add2);
 
-INCLUDE_ASM("menu/pksprite", PkNSprite_AddAdj);
+INCLUDE_ASM("asm/nonmatchings/menu/pksprite", PkNSprite_AddAdj);
 
-INCLUDE_ASM("menu/pksprite", PkCRect_Add);
+INCLUDE_ASM("asm/nonmatchings/menu/pksprite", PkCRect_Add);
 
 #if 1
-INCLUDE_ASM("menu/pksprite", PkCGRect_Add);
+INCLUDE_ASM("asm/nonmatchings/menu/pksprite", PkCGRect_Add);
 void PkCGRect_Add(/* t4 12 */ SPR_PKT pk, /* a1 5 */ SPR_PRM *ppspr, /* a2 6 */ int flg);
 #else
 {
@@ -639,7 +639,7 @@ void _pkVU0RotMatrixZ(float rz) {
 }
 
 #if 1
-INCLUDE_ASM("menu/pksprite", PkRSprite_Add);
+INCLUDE_ASM("asm/nonmatchings/menu/pksprite", PkRSprite_Add);
 #else
 void PkRSprite_Add(/* s3 19 */ SPR_PKT pk, /* s0 16 */ SPR_PRM *ppspr, /* s2 18 */ int flg)
 {
@@ -795,15 +795,15 @@ void PkRSprite_Add(/* s3 19 */ SPR_PKT pk, /* s0 16 */ SPR_PRM *ppspr, /* s2 18 
 }
 #endif
 
-INCLUDE_ASM("menu/pksprite", PkCLine2_Add);
+INCLUDE_ASM("asm/nonmatchings/menu/pksprite", PkCLine2_Add);
 
-INCLUDE_ASM("menu/pksprite", PkCLineS_AddStart);
+INCLUDE_ASM("asm/nonmatchings/menu/pksprite", PkCLineS_AddStart);
 
-INCLUDE_ASM("menu/pksprite", PkCLineS_AddNext);
+INCLUDE_ASM("asm/nonmatchings/menu/pksprite", PkCLineS_AddNext);
 
-INCLUDE_ASM("menu/pksprite", PkPolyF3_Add);
+INCLUDE_ASM("asm/nonmatchings/menu/pksprite", PkPolyF3_Add);
 
-INCLUDE_ASM("menu/pksprite", PkPolyF4_Add);
+INCLUDE_ASM("asm/nonmatchings/menu/pksprite", PkPolyF4_Add);
 void PkPolyF4_Add(/* t3 11 */ SPR_PKT pk, /* a1 5 */ SPR_PRM *ppspr, /* a2 6 */ int flg);
 
 void PkPolyFT4_Add(SPR_PKT pk, SPR_PRM *ppspr, int flg) {

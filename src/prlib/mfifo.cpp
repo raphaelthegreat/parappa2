@@ -26,7 +26,7 @@ void PrCleanupMfifo() {
 }
 
 #ifndef NON_MATCHING
-INCLUDE_ASM("prlib/mfifo", PrStartMfifo__Fv);
+INCLUDE_ASM("asm/nonmatchings/prlib/mfifo", PrStartMfifo__Fv);
 #else
 void PrStartMfifo() {
     if (mfifoProcessing) {
@@ -73,7 +73,7 @@ void PrWaitMfifo() {
 }
 
 #ifndef NON_MATCHING
-INCLUDE_ASM("prlib/mfifo", PrSendMfifo__FPC10_sceDmaTag);
+INCLUDE_ASM("asm/nonmatchings/prlib/mfifo", PrSendMfifo__FPC10_sceDmaTag);
 #else
 void PrSendMfifo(const sceDmaTag* tag) {
     u_int a0 = tag->qwc + 1;

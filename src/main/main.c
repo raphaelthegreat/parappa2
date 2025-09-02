@@ -101,23 +101,23 @@ extern MENU_STR menu_str;
 
 extern int first_f; /* mainStart */
 
-INCLUDE_RODATA("main/main", D_00393810);
-INCLUDE_RODATA("main/main", D_00393820);
+INCLUDE_RODATA("asm/nonmatchings/main/main", D_00393810);
+INCLUDE_RODATA("asm/nonmatchings/main/main", D_00393820);
 
-INCLUDE_ASM("main/main", dbg_select_disp);
+INCLUDE_ASM("asm/nonmatchings/main/main", dbg_select_disp);
 void dbg_select_disp(void);
 
-INCLUDE_RODATA("main/main", D_00393840);
-INCLUDE_RODATA("main/main", D_00393860);
-INCLUDE_RODATA("main/main", D_00393880);
-INCLUDE_RODATA("main/main", D_003938A8);
-INCLUDE_RODATA("main/main", D_003938D0);
-INCLUDE_RODATA("main/main", D_003938F8);
+INCLUDE_RODATA("asm/nonmatchings/main/main", D_00393840);
+INCLUDE_RODATA("asm/nonmatchings/main/main", D_00393860);
+INCLUDE_RODATA("asm/nonmatchings/main/main", D_00393880);
+INCLUDE_RODATA("asm/nonmatchings/main/main", D_003938A8);
+INCLUDE_RODATA("asm/nonmatchings/main/main", D_003938D0);
+INCLUDE_RODATA("asm/nonmatchings/main/main", D_003938F8);
 
-INCLUDE_RODATA("main/main", D_00393910);
+INCLUDE_RODATA("asm/nonmatchings/main/main", D_00393910);
 
 #ifndef NON_MATCHING
-INCLUDE_ASM("main/main", dummyPlay);
+INCLUDE_ASM("asm/nonmatchings/main/main", dummyPlay);
 void dummyPlay(/* s0 16 */ int retTitle);
 #else
 static void dummyPlay(/* s0 16 */ int retTitle)
@@ -453,7 +453,7 @@ int selPlayDisp(int sel_stage, int sel_disp, int firstf) {
 }
 
 #ifndef NON_MATCHING
-INCLUDE_ASM("main/main", SpHatChangeSub);
+INCLUDE_ASM("asm/nonmatchings/main/main", SpHatChangeSub);
 void SpHatChangeSub(void);
 #else // TODO: fix rodata
 static void SpHatChangeSub(void)
@@ -664,14 +664,14 @@ void logoDispOne(SPR_PRIM *sprm_pp, TIM2_DAT *tmd_pp) {
     }
 }
 
-INCLUDE_RODATA("main/main", D_00393A00);
-INCLUDE_RODATA("main/main", D_00393A18);
+INCLUDE_RODATA("asm/nonmatchings/main/main", D_00393A00);
+INCLUDE_RODATA("asm/nonmatchings/main/main", D_00393A18);
 
 // From SpHatChangeSub
-INCLUDE_RODATA("main/main", D_00393A38);
-INCLUDE_RODATA("main/main", D_00393A48);
-INCLUDE_RODATA("main/main", D_00393A58);
-INCLUDE_RODATA("main/main", D_00393A68);
+INCLUDE_RODATA("asm/nonmatchings/main/main", D_00393A38);
+INCLUDE_RODATA("asm/nonmatchings/main/main", D_00393A48);
+INCLUDE_RODATA("asm/nonmatchings/main/main", D_00393A58);
+INCLUDE_RODATA("asm/nonmatchings/main/main", D_00393A68);
 
 static void uramenFileSearchTask(void *x) {
     printf("file search in\n");
@@ -730,13 +730,13 @@ void startUpDisp(void) {
     SpuBankSet();
 }
 
-INCLUDE_ASM("main/main", selPlayDispType);
+INCLUDE_ASM("asm/nonmatchings/main/main", selPlayDispType);
 
-INCLUDE_ASM("main/main", selPlayDispSetPlay);
+INCLUDE_ASM("asm/nonmatchings/main/main", selPlayDispSetPlay);
 
-INCLUDE_ASM("main/main", selPlayDispSetPlayOne);
+INCLUDE_ASM("asm/nonmatchings/main/main", selPlayDispSetPlayOne);
 
-INCLUDE_ASM("main/main", gamePlayDisp);
+INCLUDE_ASM("asm/nonmatchings/main/main", gamePlayDisp);
 int gamePlayDisp(void);
 
 void titleDisp(int firstf) {
@@ -798,9 +798,9 @@ void titleDisp(int firstf) {
     }
 }
 
-INCLUDE_RODATA("main/main", D_00393AD0);
+INCLUDE_RODATA("asm/nonmatchings/main/main", D_00393AD0);
 
-INCLUDE_ASM("main/main", urawazaKeyCheck);
+INCLUDE_ASM("asm/nonmatchings/main/main", urawazaKeyCheck);
 int urawazaKeyCheck(void);
 
 extern char D_003996D0[]; /* sdata - "ura:%d" */

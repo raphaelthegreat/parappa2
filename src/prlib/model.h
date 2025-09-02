@@ -36,7 +36,7 @@ public:
     PR_PADDING(unk80, 0xc0);
     NaVECTOR<float, 4> unk140;
     int unk150;
-    int unk154;
+    u_int unk154;
     SpmFileHeader* unk158;
     SpmNode* unk15C;
     SpmNode* unk160;

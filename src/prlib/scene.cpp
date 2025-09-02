@@ -4,9 +4,9 @@
 
 #include <float.h>
 
-INCLUDE_ASM("prlib/scene", __13PrSceneObjectP13sceGsDrawEnv1PCcUi);
+INCLUDE_ASM("asm/nonmatchings/prlib/scene", __13PrSceneObjectP13sceGsDrawEnv1PCcUi);
 
-INCLUDE_ASM("prlib/scene", _$_13PrSceneObject);
+INCLUDE_ASM("asm/nonmatchings/prlib/scene", _$_13PrSceneObject);
 
 void PrSceneObject::SelectCamera(SpcFileHeader* camera) {
     mCamera = camera;
@@ -21,7 +21,7 @@ PrPERSPECTIVE_CAMERA* PrSceneObject::GetCurrentCamera() {
     }
 }
 
-INCLUDE_ASM("prlib/scene", SetAppropriateDefaultCamera__13PrSceneObject);
+INCLUDE_ASM("asm/nonmatchings/prlib/scene", SetAppropriateDefaultCamera__13PrSceneObject);
 
 float PrSceneObject::GetFocalLength() const {
     SpcFileHeader* camera = mCamera;
@@ -167,9 +167,9 @@ void PrSceneObject::PreprocessModel() {
 }
 
 /* nalib/navector.h */
-INCLUDE_ASM("prlib/scene", func_0014B988);
+INCLUDE_ASM("asm/nonmatchings/prlib/scene", func_0014B988);
 
-INCLUDE_ASM("prlib/scene", func_0014B9B0);
+INCLUDE_ASM("asm/nonmatchings/prlib/scene", func_0014B9B0);
 
 /* prlib/objectset.h */
-INCLUDE_ASM("prlib/scene", _$_t11PrObjectSet1Z13PrModelObject);
+INCLUDE_ASM("asm/nonmatchings/prlib/scene", _$_t11PrObjectSet1Z13PrModelObject);

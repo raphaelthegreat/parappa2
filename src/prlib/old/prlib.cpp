@@ -68,7 +68,7 @@ void PrInitializeSceneDBuff(sceGsDBuff *buff, char *name, u_int fbp)
     scene->m_pDBuff = buff;
 }
 
-INCLUDE_ASM("prlib/prlib", PrCleanupScene);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrCleanupScene);
 
 PR_EXTERN
 void PrSetSceneFrame(PrSceneObject *scene, sceGsFrame frame)
@@ -83,21 +83,21 @@ void PrSetSceneEnv(PrSceneObject *scene, sceGsDrawEnv1 *drawEnv)
     scene->m_xyOffset = drawEnv->xyoffset1;
 }
 
-INCLUDE_ASM("prlib/prlib", PrPreprocessSceneModel);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrPreprocessSceneModel);
 
-INCLUDE_ASM("prlib/prlib", PrInitializeModel);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrInitializeModel);
 
-INCLUDE_ASM("prlib/prlib", PrInitializeAnimation);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrInitializeAnimation);
 
-INCLUDE_ASM("prlib/prlib", PrInitializeCamera);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrInitializeCamera);
 
-INCLUDE_ASM("prlib/prlib", PrCleanupModel);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrCleanupModel);
 
-INCLUDE_ASM("prlib/prlib", PrCleanupAnimation);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrCleanupAnimation);
 
-INCLUDE_ASM("prlib/prlib", PrCleanupCamera);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrCleanupCamera);
 
-INCLUDE_ASM("prlib/prlib", PrCleanupAllSceneModel);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrCleanupAllSceneModel);
 
 PR_EXTERN
 float PrGetAnimationStartFrame(SpaFileHeader *animation)
@@ -213,11 +213,11 @@ void* PrGetCurrentCamera(PrSceneObject *scene)
     return scene->GetCurrentCamera();
 }
 
-INCLUDE_ASM("prlib/prlib", PrSetDefaultCamera);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrSetDefaultCamera);
 
-INCLUDE_ASM("prlib/prlib", PrSetAppropriateDefaultCamera);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrSetAppropriateDefaultCamera);
 
-INCLUDE_ASM("prlib/prlib", PrShowModel);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrShowModel);
 
 PR_EXTERN
 NaMATRIX<float, 4, 4>* PrGetModelMatrix(PrModelObject *model)
@@ -282,7 +282,7 @@ void PrAnimateSceneCamera(PrSceneObject *scene, float time)
     scene->m_animTime = time * prInverseFrameRate;
 }
 
-INCLUDE_ASM("prlib/prlib", PrRender);
+INCLUDE_ASM("asm/nonmatchings/prlib/prlib", PrRender);
 
 PR_EXTERN
 void PrWaitRender()

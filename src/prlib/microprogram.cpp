@@ -57,13 +57,13 @@ u_int PrGetMicroProgramAddress(PrMICRO_PROGRAM_MODULE module) {
     return MicroProgramEntryPoint[module];
 }
 
-INCLUDE_ASM("prlib/microprogram", PrGetInputVertexParameterNum__F22PrMICRO_PROGRAM_MODULE);
+INCLUDE_ASM("asm/nonmatchings/prlib/microprogram", PrGetInputVertexParameterNum__F22PrMICRO_PROGRAM_MODULE);
 
-INCLUDE_ASM("prlib/microprogram", PrGetInputVertexParameterSet__F22PrMICRO_PROGRAM_MODULE);
+INCLUDE_ASM("asm/nonmatchings/prlib/microprogram", PrGetInputVertexParameterSet__F22PrMICRO_PROGRAM_MODULE);
 
-INCLUDE_ASM("prlib/microprogram", PrGetOutputVertexParameterNum__F22PrMICRO_PROGRAM_MODULE);
+INCLUDE_ASM("asm/nonmatchings/prlib/microprogram", PrGetOutputVertexParameterNum__F22PrMICRO_PROGRAM_MODULE);
 
-INCLUDE_ASM("prlib/microprogram", PrGetOutputVertexParameterSet__F22PrMICRO_PROGRAM_MODULE);
+INCLUDE_ASM("asm/nonmatchings/prlib/microprogram", PrGetOutputVertexParameterSet__F22PrMICRO_PROGRAM_MODULE);
 
 u_int PrGetMendererCreateTextureAddress() {
     return MendererCreateTextureEntryPoint;

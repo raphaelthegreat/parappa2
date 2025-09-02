@@ -59,7 +59,7 @@ int MenuMemCardCheck(void) {
 }
 
 #if 1
-INCLUDE_ASM("menu/menu", MenuCtrl);
+INCLUDE_ASM("asm/nonmatchings/menu/menu", MenuCtrl);
 #else
 int MenuCtrl(/* s0 16 */ MENU_STR *menu_str_ptr)
 {

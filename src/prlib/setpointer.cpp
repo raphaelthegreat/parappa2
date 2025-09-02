@@ -69,9 +69,9 @@ void SpmNode::ChangePointer(SpmFileHeader* arg0, SpmNode* arg1) {
     }
 }
 
-INCLUDE_ASM("prlib/setpointer", ChangePointer__13SpaFileHeader);
+INCLUDE_ASM("asm/nonmatchings/prlib/setpointer", ChangePointer__13SpaFileHeader);
 
-INCLUDE_ASM("prlib/setpointer", ChangePointer__16SpaNodeAnimationP13SpaFileHeader);
+INCLUDE_ASM("asm/nonmatchings/prlib/setpointer", ChangePointer__16SpaNodeAnimationP13SpaFileHeader);
 
 void SpcFileHeader::ChangePointer() {
     if (this->flags & 0x1) {

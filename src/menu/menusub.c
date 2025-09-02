@@ -343,13 +343,13 @@ static void TSSNDPLAY(int n) {
     }
 }
 
-INCLUDE_ASM("menu/menusub", TSSNDSTOP);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TSSNDSTOP);
 
-INCLUDE_ASM("menu/menusub", TSSNDMASK_CHAN);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TSSNDMASK_CHAN);
 
-INCLUDE_ASM("menu/menusub", TSSND_SKIPSTOP);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TSSND_SKIPSTOP);
 
-INCLUDE_ASM("menu/menusub", TSSND_SKIPPLAY);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TSSND_SKIPPLAY);
 
 static int TSSND_CHANISSTOP(int chan) {
     TSSND_CHAN *pchan = &TsSndChan[chan];
@@ -362,7 +362,7 @@ static int TSSND_CHANISSTOP(int chan) {
     return ret;
 }
 
-INCLUDE_ASM("menu/menusub", tsBGMONEPlay);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", tsBGMONEPlay);
 
 static void tsBGMONEStop(int no) {
     BGMONE *wbgm = &TsBGMState.wbgm[no];
@@ -384,17 +384,17 @@ static void tsBGMONEVol(int no, int vol) {
     }
 }
 
-INCLUDE_ASM("menu/menusub", tsBGMONETop);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", tsBGMONETop);
 
-INCLUDE_ASM("menu/menusub", tsBGMONEflow);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", tsBGMONEflow);
 
-INCLUDE_ASM("menu/menusub", tsBGMONEPause);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", tsBGMONEPause);
 
 void TsBGMInit(void) {
     memset(&TsBGMState, 0, sizeof(TsBGMState));
 }
 
-INCLUDE_ASM("menu/menusub", TsBGMPlay);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsBGMPlay);
 
 static void TsBGMStop(int time) {
     BGMSTATE *pbgm = &TsBGMState;
@@ -428,25 +428,25 @@ static void TsBGMStop(int time) {
     }
 }
 
-INCLUDE_ASM("menu/menusub", TsBGMMute);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsBGMMute);
 
-INCLUDE_ASM("menu/menusub", TsBGMLoadCheck);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsBGMLoadCheck);
 
-INCLUDE_ASM("menu/menusub", TsBGMPause);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsBGMPause);
 
-INCLUDE_ASM("menu/menusub", TsBGMChangePos);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsBGMChangePos);
 
-INCLUDE_ASM("menu/menusub", TsBGMPoll);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsBGMPoll);
 
-INCLUDE_ASM("menu/menusub", TsCmnPkOpen);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCmnPkOpen);
 
-INCLUDE_ASM("menu/menusub", TsCmnPkClose);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCmnPkClose);
 
-INCLUDE_ASM("menu/menusub", _P3DATA_SIZE);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", _P3DATA_SIZE);
 
-INCLUDE_ASM("menu/menusub", TsGetTm2Tex);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsGetTm2Tex);
 
-INCLUDE_ASM("menu/menusub", TsGetTm2HedTex);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsGetTm2HedTex);
 
 static void TsClearMenuPad(int no) {
     if (no >= 2) {
@@ -581,9 +581,9 @@ static void TsSndFlow(int flg) {
     }
 }
 
-INCLUDE_ASM("menu/menusub", TSNumMov);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TSNumMov);
 
-INCLUDE_ASM("menu/menusub", TSNumRBack);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TSNumRBack);
 
 static int TSLOOP(int no, int max) {
     return (no + max) % max;
@@ -599,7 +599,7 @@ static int TSLIMIT(int no, int min, int max) {
     return no;
 }
 
-INCLUDE_ASM("menu/menusub", TsMENU_GetMapNo);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsMENU_GetMapNo);
 
 static inline int PrBcdInt(u_int n) {
     return (((n / 16) * 10) + (n % 16));
@@ -681,17 +681,17 @@ static void TsMENU_GetMapTimeState(int flg) {
     CurMapBakFlg = state;
 }
 
-INCLUDE_ASM("menu/menusub", TsSetScene_Map);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsSetScene_Map);
 
-INCLUDE_ASM("menu/menusub", TsSet_ParappaCapColor);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsSet_ParappaCapColor);
 
-INCLUDE_RODATA("menu/menusub", D_00395F10);
+INCLUDE_RODATA("asm/nonmatchings/menu/menusub", D_00395F10);
+INCLUDE_RODATA("asm/nonmatchings/menu/menusub", D_00395F20);
+INCLUDE_RODATA("asm/nonmatchings/menu/menusub", D_00395F30);
 
-INCLUDE_RODATA("menu/menusub", D_00395F30);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsClearSet);
 
-INCLUDE_ASM("menu/menusub", TsClearSet);
-
-INCLUDE_ASM("menu/menusub", TsCheckEnding);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCheckEnding);
 
 void TsMENU_InitSystem(void) {
     int i;
@@ -725,7 +725,7 @@ void TsMENU_InitSystem(void) {
     CurFileInfo.repFileNo = -1;
 }
 
-INCLUDE_ASM("menu/menusub", TsMENU_EndSystem);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsMENU_EndSystem);
 
 void TsMenu_RankingClear(void) {
     int             i;
@@ -857,7 +857,7 @@ void TsMenu_End(void) {
     }
 }
 
-INCLUDE_ASM("menu/menusub", TsMenu_InitFlow);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsMenu_InitFlow);
 
 int TsMenuMemcChk_Flow(void) {
     u_int tpad, tpad2;
@@ -875,7 +875,7 @@ int TsMenuMemcChk_Flow(void) {
     return ret;
 }
 
-INCLUDE_ASM("menu/menusub", TsMenu_Flow);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsMenu_Flow);
 
 void TsMenu_Draw(void) {
     SPR_PRM    SprPrm;
@@ -966,13 +966,13 @@ void TsMenu_Draw(void) {
     TsCmnPkClose(&FPacket, pkt, 0xf);
 }
 
-INCLUDE_ASM("menu/menusub", TsSetRankingName);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsSetRankingName);
 
-INCLUDE_ASM("menu/menusub", TsSetRanking2UData);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsSetRanking2UData);
 
-INCLUDE_ASM("menu/menusub", TsSetSaveData);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsSetSaveData);
 
-INCLUDE_ASM("menu/menusub", TsRestoreSaveData);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsRestoreSaveData);
 
 int DateChgInt(u_int n) {
     /* Convert BCD to decimal */
@@ -983,13 +983,13 @@ int DateChgInt(u_int n) {
     );
 }
 
-INCLUDE_ASM("menu/menusub", GetRankScoreID);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", GetRankScoreID);
 
-INCLUDE_ASM("menu/menusub", TsRanking_Set);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsRanking_Set);
 
-INCLUDE_ASM("menu/menusub", TsMENU_SetMapScreen);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsMENU_SetMapScreen);
 
-INCLUDE_ASM("menu/menusub", TsCheckTimeMapChange);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCheckTimeMapChange);
 
 int TsAnimeWait_withKeySkip(u_int tpad, MN_SCENE *scene, int ltim, u_int bnk) {
     if (bnk == -1) {
@@ -1061,33 +1061,33 @@ static int TsMemCardCheck_Flow(int flg, u_int tpad) {
     return 0;
 }
 
-INCLUDE_ASM("menu/menusub", TsMap_Flow);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsMap_Flow);
 
-INCLUDE_ASM("menu/menusub", TsMakeUserWork);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsMakeUserWork);
 
-INCLUDE_ASM("menu/menusub", TsSaveSuccessProc);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsSaveSuccessProc);
 
-INCLUDE_ASM("menu/menusub", MpSave_Flow);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", MpSave_Flow);
 
-INCLUDE_ASM("menu/menusub", MpCityHall_Flow);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", MpCityHall_Flow);
 
-INCLUDE_ASM("menu/menusub", MpCityHallParaStart);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", MpCityHallParaStart);
 
-INCLUDE_ASM("menu/menusub", MpCityHallFPHSSoundMask);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", MpCityHallFPHSSoundMask);
 
-INCLUDE_ASM("menu/menusub", MpCityHallFPHSMove);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", MpCityHallFPHSMove);
 
-INCLUDE_ASM("menu/menusub", MpCityHallFPHOK);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", MpCityHallFPHOK);
 
-INCLUDE_ASM("menu/menusub", MpCityHallCharPosSet);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", MpCityHallCharPosSet);
 
-INCLUDE_ASM("menu/menusub", MpPopMenu_Flow);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", MpPopMenu_Flow);
 
-INCLUDE_ASM("menu/menusub", MpMapMenu_Flow);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", MpMapMenu_Flow);
 
-INCLUDE_ASM("menu/menusub", _MapGetMovableDir);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", _MapGetMovableDir);
 
-INCLUDE_ASM("menu/menusub", McErrorMess);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", McErrorMess);
 
 static void McInitFlow(void) {
     subStatus = 0;
@@ -1097,7 +1097,7 @@ static void McInitFlow(void) {
 }
 
 #ifndef NON_MATCHING /* .rodata JPT */
-INCLUDE_ASM("menu/menusub", McStartCheckFlow);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", McStartCheckFlow);
 #else
 static int McStartCheckFlow(/* a0 4 */ int flg) {
     /* v1 3 */ int ret;
@@ -1200,11 +1200,11 @@ static int McStartCheckFlow(/* a0 4 */ int flg) {
 }
 #endif
 
-INCLUDE_ASM("menu/menusub", McUserCheckFlow);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", McUserCheckFlow);
 
-INCLUDE_ASM("menu/menusub", McUserSaveFlow);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", McUserSaveFlow);
 
-INCLUDE_ASM("menu/menusub", McUserLoadFlow);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", McUserLoadFlow);
 
 static void TsMCAMes_Init(void) {
     memset(&MCMesWork, 0, sizeof(MCMesWork));
@@ -1223,9 +1223,9 @@ static int TsMCAMes_GetSelect(void) {
     return 1;
 }
 
-INCLUDE_ASM("menu/menusub", TsMCAMes_IsON);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsMCAMes_IsON);
 
-INCLUDE_ASM("menu/menusub", TsMCAMes_SetPos);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsMCAMes_SetPos);
 
 void TsMCAMes_SetMes(int no) {
     MCMES_WORK *pmesw;
@@ -1284,11 +1284,11 @@ void TsMCAMes_SetMes(int no) {
     pmesw->line = _PkMCMsgGetLine(pmesw->mesflg & 0xffff);
 }
 
-INCLUDE_ASM("menu/menusub", TsMCAMes_Flow);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsMCAMes_Flow);
 
-INCLUDE_ASM("menu/menusub", TsMCAMes_Draw);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsMCAMes_Draw);
 
-INCLUDE_ASM("menu/menusub", TsCMPMes_SetPos);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCMPMes_SetPos);
 
 void TsCMPMes_SetMes(int no) {
     CMPMES_WORK *pmesw = &CmpMesWork;
@@ -1308,123 +1308,123 @@ void TsCMPMes_SetMes(int no) {
     }
 }
 
-INCLUDE_ASM("menu/menusub", TsCMPMes_Draw);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCMPMes_Draw);
 
-INCLUDE_ASM("menu/menusub", TsANIME_Init);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsANIME_Init);
 
-INCLUDE_ASM("menu/menusub", TsANIME_Poll);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsANIME_Poll);
 
-INCLUDE_ASM("menu/menusub", TsANIME_Start);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsANIME_Start);
 
-INCLUDE_ASM("menu/menusub", TsANIME_GetRate);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsANIME_GetRate);
 
-INCLUDE_ASM("menu/menusub", _TsSortSetRanking);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", _TsSortSetRanking);
 
-INCLUDE_ASM("menu/menusub", TsGetRankingList);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsGetRankingList);
 
-INCLUDE_ASM("menu/menusub", TsPopCusAOff);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPopCusAOff);
 
-INCLUDE_ASM("menu/menusub", TsPopCusDim);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPopCusDim);
 
-INCLUDE_ASM("menu/menusub", TsPopCusInit);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPopCusInit);
 
-INCLUDE_ASM("menu/menusub", TsPopCusFlow);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPopCusFlow);
 
-INCLUDE_ASM("menu/menusub", TsPopCusPut);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPopCusPut);
 
-INCLUDE_ASM("menu/menusub", TsPUPCheckMove);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPUPCheckMove);
 
-INCLUDE_RODATA("menu/menusub", D_00396068);
+INCLUDE_RODATA("asm/nonmatchings/menu/menusub", D_00396068);
 
-INCLUDE_RODATA("menu/menusub", D_00396070);
+INCLUDE_RODATA("asm/nonmatchings/menu/menusub", D_00396070);
 
-INCLUDE_RODATA("menu/menusub", D_00396078);
+INCLUDE_RODATA("asm/nonmatchings/menu/menusub", D_00396078);
 
-INCLUDE_ASM("menu/menusub", TsPopMenu_Flow);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPopMenu_Flow);
 
-INCLUDE_ASM("menu/menusub", TsPopMenu_Draw);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPopMenu_Draw);
 
-INCLUDE_ASM("menu/menusub", TsPopMenCus_Draw);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPopMenCus_Draw);
 
-INCLUDE_ASM("menu/menusub", TsSaveMenu_Flow);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsSaveMenu_Flow);
 
-INCLUDE_ASM("menu/menusub", TsSaveMenu_Draw);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsSaveMenu_Draw);
 
-INCLUDE_ASM("menu/menusub", TSJukeCDObj_Init);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TSJukeCDObj_Init);
 
-INCLUDE_ASM("menu/menusub", _TsJkJacketPut);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", _TsJkJacketPut);
 
-INCLUDE_ASM("menu/menusub", _TsJkRecordPut);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", _TsJkRecordPut);
 
-INCLUDE_ASM("menu/menusub", TSJukeCDObj_Draw);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TSJukeCDObj_Draw);
 
-INCLUDE_ASM("menu/menusub", TsJukeIsObjAnime);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsJukeIsObjAnime);
 
-INCLUDE_ASM("menu/menusub", TsJukeObjAnime);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsJukeObjAnime);
 
-INCLUDE_ASM("menu/menusub", TsJukeObjAnime2);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsJukeObjAnime2);
 
-INCLUDE_ASM("menu/menusub", _TsJKMoveCus);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", _TsJKMoveCus);
 
-INCLUDE_ASM("menu/menusub", _TsJKSetPadArrow);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", _TsJKSetPadArrow);
 
-INCLUDE_ASM("menu/menusub", TsJukeMenu_Flow);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsJukeMenu_Flow);
 
-INCLUDE_ASM("menu/menusub", TsJukeMenu_Draw);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsJukeMenu_Draw);
 
-INCLUDE_ASM("menu/menusub", TsCmnCell_CusorSET);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCmnCell_CusorSET);
 
-INCLUDE_ASM("menu/menusub", TsCmnCell_CusorON);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCmnCell_CusorON);
 
-INCLUDE_ASM("menu/menusub", TsCmnCell_CusorOFF);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCmnCell_CusorOFF);
 
-INCLUDE_ASM("menu/menusub", TsCmnCell_CusorSEL);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCmnCell_CusorSEL);
 
-INCLUDE_ASM("menu/menusub", TsCmnCell_CusorMASK);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCmnCell_CusorMASK);
 
-INCLUDE_ASM("menu/menusub", TsCmnCell_CusorDraw);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCmnCell_CusorDraw);
 
-INCLUDE_ASM("menu/menusub", TsOption_Flow);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsOption_Flow);
 
-INCLUDE_ASM("menu/menusub", TsOption_Draw);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsOption_Draw);
 
-INCLUDE_ASM("menu/menusub", TsUserList_GetCurFileNo);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUserList_GetCurFileNo);
 
-INCLUDE_ASM("menu/menusub", TsUserList_IsGetFileSave);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUserList_IsGetFileSave);
 
-INCLUDE_ASM("menu/menusub", TsUserList_SortUser);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUserList_SortUser);
 
-INCLUDE_ASM("menu/menusub", TsUserList_SetCurUserData);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUserList_SetCurUserData);
 
-INCLUDE_ASM("menu/menusub", TsUserList_SetCurDispUserData);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUserList_SetCurDispUserData);
 
-INCLUDE_ASM("menu/menusub", TsUserList_SetCurFileNoCusor);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUserList_SetCurFileNoCusor);
 
-INCLUDE_ASM("menu/menusub", TsUserList_SetType);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUserList_SetType);
 
-INCLUDE_ASM("menu/menusub", TsUserList_TagChangeAble);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUserList_TagChangeAble);
 
-INCLUDE_ASM("menu/menusub", TsUserList_SetCurTag);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUserList_SetCurTag);
 
-INCLUDE_ASM("menu/menusub", TsUserList_Flow);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUserList_Flow);
 
-INCLUDE_ASM("menu/menusub", TsUserList_Draw);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUserList_Draw);
 
-INCLUDE_ASM("menu/menusub", NameSpaceCut);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", NameSpaceCut);
 
-INCLUDE_RODATA("menu/menusub", D_00396120);
+INCLUDE_RODATA("asm/nonmatchings/menu/menusub", D_00396120);
 
-INCLUDE_ASM("menu/menusub", TsUser_PanelDraw);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUser_PanelDraw);
 
-INCLUDE_ASM("menu/menusub", TsNAMEINBox_SetName);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsNAMEINBox_SetName);
 
-INCLUDE_ASM("menu/menusub", TsNAMEINBox_GetName);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsNAMEINBox_GetName);
 
-INCLUDE_ASM("menu/menusub", TsNAMEINBox_Flow);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsNAMEINBox_Flow);
 
-INCLUDE_ASM("menu/menusub", TsNAMEINBox_Draw);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsNAMEINBox_Draw);
 
-INCLUDE_ASM("menu/menusub", TsSCFADE_Set);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsSCFADE_Set);
 
 static void TsSCFADE_Flow(int flg, int prm) {
     SCFADE *pfw = &ScFade;
@@ -1459,9 +1459,9 @@ static void TsSCFADE_Flow(int flg, int prm) {
     }
 }
 
-INCLUDE_ASM("menu/menusub", TsSCFADE_Draw);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsSCFADE_Draw);
 
-INCLUDE_ASM("menu/menusub", _PkMCMsgPut);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", _PkMCMsgPut);
 
 int _PkMCMsgGetLine(int id) {
     int flg;
@@ -1475,7 +1475,7 @@ int _PkMCMsgGetLine(int id) {
     return MENUSubtGetLine(MenuMsgGetMessageMc(id, flg), flg);
 }
 
-INCLUDE_ASM("menu/menusub", _PkSubMsgPut);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", _PkSubMsgPut);
 
 void TsMenu_CleanVram(int nFrm) {
     SPR_PRM        SprPrm;
@@ -1538,17 +1538,17 @@ void TsMenu_CaptureVram(SPR_PKT pk, SPR_PRM *spr) {
     PkALPHA_Add(pk, SCE_GS_SET_ALPHA(0, 1, 0, 1, 0));
 }
 
-INCLUDE_ASM("menu/menusub", TsSetCTransSpr);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsSetCTransSpr);
 
-INCLUDE_ASM("menu/menusub", TsSetSLTransSpr);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsSetSLTransSpr);
 
-INCLUDE_ASM("menu/menusub", TsSetPNTransSpr);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsSetPNTransSpr);
 
-INCLUDE_ASM("menu/menusub", TsPatTexFnc);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPatTexFnc);
 
-INCLUDE_ASM("menu/menusub", _TsPatSetPrm);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", _TsPatSetPrm);
 
-INCLUDE_ASM("menu/menusub", TsPatPut);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPatPut);
 
 static void TsPatGetSize(PATPOS *ppos, int *x, int *y, int *w, int *h) {
     TSTEX_INF *ptex = &tblTex[ppos->texNo];
@@ -1567,18 +1567,18 @@ static void TsPatGetSize(PATPOS *ppos, int *x, int *y, int *w, int *h) {
     }
 }
 
-INCLUDE_ASM("menu/menusub", TsPatPutRZoom);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPatPutRZoom);
 
-INCLUDE_ASM("menu/menusub", TsPatPutMZoom);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPatPutMZoom);
 
-INCLUDE_ASM("menu/menusub", TsPatPutSwing);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPatPutSwing);
 
 static void TsPatPutUneri(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy, int mx, int my, float Crx, float Drt) {
     _TsPatSetPrm(pk, spr, ppos, ox, oy);
     TsSetPNTransSpr(pk, spr, mx, my, Crx, Drt);
 }
 
-INCLUDE_ASM("menu/menusub", TsCELBackInit);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCELBackInit);
 
 void TsCELBackEnd(void) {
     if (HOSIObj != NULL) {
@@ -1587,12 +1587,12 @@ void TsCELBackEnd(void) {
     }
 }
 
-INCLUDE_ASM("menu/menusub", TsCELBackDraw);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCELBackDraw);
 
-INCLUDE_ASM("menu/menusub", _TsCELBackObjDraw);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", _TsCELBackObjDraw);
 
-INCLUDE_ASM("menu/menusub", TsHosiPut);
+INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsHosiPut);
 
-INCLUDE_RODATA("menu/menusub", D_00396168);
+INCLUDE_RODATA("asm/nonmatchings/menu/menusub", D_00396168);
 
-INCLUDE_RODATA("menu/menusub", D_00396170);
+INCLUDE_RODATA("asm/nonmatchings/menu/menusub", D_00396170);

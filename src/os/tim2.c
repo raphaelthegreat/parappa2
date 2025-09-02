@@ -334,13 +334,13 @@ int Tim2LoadSetX(TIM2INFO *info_pp, TIM2INFO *infoX_pp) {
     if (Tim2SetLoadImageIX(info_pp, img_pos, &tp, infoX_pp)) {
         FlushCache(WRITEBACK_DCACHE);
         sceGsExecLoadImage(&tp, (u_long128*)infoX_pp->image_pp);
-        sceGsSyncPath(0,0);
+        sceGsSyncPath(0, 0);
     }
 
     if (Tim2SetLoadImageC(infoX_pp, col_pos, &tp, 0, 0))  {
         FlushCache(WRITEBACK_DCACHE);
         sceGsExecLoadImage(&tp, (u_long128*)infoX_pp->clut_pp);
-        sceGsSyncPath(0,0);
+        sceGsSyncPath(0, 0);
     }
 
     return 1;
