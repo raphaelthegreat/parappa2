@@ -13,6 +13,8 @@
 #include "main/sprite.h"
 #include "main/p3str.h"
 
+#include <prlib/prlib.h>
+
 #include <libpad.h>
 
 #include <limits.h>
@@ -21,8 +23,8 @@
 
 /* sdata 399518 */ extern VCLR_PARA vclr_black_tmp; /* static */
 /* data 185478 */ extern float bra_tap[10/*undef*/][2]; /* static */
-// /* data 1854c8 */ extern float bra_title[/*undef*/][2]; /* static */
-// /* data 185548 */ extern float bra_ret[/*undef*/]; /* static */
+/* data 1854c8 */ extern float bra_title[16/*undef*/][2]; /* static */
+/* data 185548 */ extern float bra_ret[49/*undef*/]; /* static */
 /* sdata 39951c */ extern int bthrow_ctrl_time; /* static */
 // /* data 185610 */ extern MOZAIKU_STR mozaiku_str_poll_00[/*undef*/]; /* static */
 // /* data 185720 */ extern MOZAIKU_STR mozaiku_str_poll_01[/*undef*/]; /* static */
@@ -195,11 +197,136 @@ float* bra_tap_GetNext(PR_MODELHANDLE model) {
     return ret;
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", bra_title_GetNext);
+float* bra_title_GetNext(PR_MODELHANDLE model) {
+    int i;
+    float tmp_f;
+    float *ret;
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", bra_ret_GetNext);
+    ret = NULL;
+    tmp_f = PrGetContourBlurAlpha(model);
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", XAnimationLinkOption);
+    if (tmp_f == -1.0f) {
+        return NULL;
+    }
+
+    for (i = 0; i < PR_ARRAYSIZEU(bra_title) - 1; i++) {
+        if (bra_title[i][0] == tmp_f) {
+            ret = &bra_title[i + 1][0];
+            break;
+        }
+    }
+
+    return ret;
+}
+
+float* bra_ret_GetNext(PR_MODELHANDLE model) {
+    int i;
+    float tmp_f;
+    float *ret;
+
+    ret = NULL;
+    tmp_f = PrGetTransactionBlendRatio(model);
+
+    if (tmp_f == -1.0f) {
+        return NULL;
+    }
+
+    for (i = 0; i < PR_ARRAYSIZEU(bra_ret) - 1; i++) {
+        if (bra_ret[i] == tmp_f) {
+            ret = &bra_ret[i + 1];
+            break;
+        }
+    }
+
+    return ret;
+}
+
+void XAnimationLinkOption(PR_MODELHANDLE model, PR_ANIMATIONHANDLE animation, int first, int blumove, float time) {
+    PR_ANIMATIONHANDLE anim_tmp;
+    float *tmp_dat;
+
+    if (blumove == BLMV_MOVE) {
+        first = FALSE;
+    }
+
+    anim_tmp = PrGetLinkedAnimation(model);
+    if (anim_tmp != animation) {
+        if (anim_tmp != NULL) {
+            first = TRUE;
+        } else {
+            first = FALSE;
+            PrLinkAnimation(model, animation);
+            PrSetTransactionBlendRatio(model, -1.0f);
+            PrSetContourBlurAlpha(model, -1.0f, -1.0f);
+        }
+    }
+
+    if (first) {
+        switch (blumove) {
+        case BLMV_NONE:
+            PrResetPosture(model);
+            PrSetTransactionBlendRatio(model, -1.0f);
+            PrResetContour(model);
+            PrSetContourBlurAlpha(model, -1.0f, -1.0f);
+            break;
+        case BLMV_BLUR:
+            PrResetPosture(model);
+            PrSetTransactionBlendRatio(model, -1.0f);
+            PrSaveContour(model);
+            PrSetContourBlurAlpha(model, bra_tap[0][0], bra_tap[0][1]);
+            break;
+        case BLMV_BLUR2:
+            PrResetPosture(model);
+            PrSetTransactionBlendRatio(model, -1.0f);
+            PrSaveContour(model);
+            PrSetContourBlurAlpha(model, bra_title[0][0], bra_title[0][1]);
+            break;
+        case BLMV_MOVE:
+            PrResetContour(model);
+            PrSetContourBlurAlpha(model, -1.0f, -1.0f);
+            PrSavePosture(model);
+            PrSetTransactionBlendRatio(model, bra_ret[0]);
+            break;
+        }
+
+        PrLinkAnimation(model, animation);
+    } else {
+        switch (blumove) {
+        case BLMV_NONE:
+            break;
+        case BLMV_BLUR:
+            tmp_dat = bra_tap_GetNext(model);
+            if (tmp_dat == NULL) {
+                PrResetContour(model);
+                PrSetContourBlurAlpha(model, -1.0f, -1.0f);
+            } else {
+                PrSetContourBlurAlpha(model, tmp_dat[0], tmp_dat[1]);
+            }
+            break;
+        case BLMV_BLUR2:
+            tmp_dat = bra_title_GetNext(model);
+            if (tmp_dat == NULL) {
+                PrResetContour(model);
+                PrSetContourBlurAlpha(model, -1.0f, -1.0f);
+            } else {
+                PrSetContourBlurAlpha(model, tmp_dat[0], tmp_dat[1]);
+            }
+            break;
+        case BLMV_MOVE:
+            tmp_dat = bra_ret_GetNext(model);
+            if (tmp_dat == NULL) {
+                PrResetPosture(model);
+                PrSetTransactionBlendRatio(model, -1.0f);
+            } else {
+                PrSetTransactionBlendRatio(model, tmp_dat[0]);
+            }
+            break;
+        }
+    }
+
+    PrAnimateModel(model, time + 0.0f);
+    PrShowModel(model, NULL);
+}
 
 void XAnimationPositionLink(PR_MODELHANDLE model, PR_ANIMATIONHANDLE animation, float time) {
     PrLinkPositionAnimation(model, animation);
@@ -451,13 +578,11 @@ void DrawTmpBuffQuit(void *adrs) {
     int i;
 
     for (i = 0; i < PR_ARRAYSIZE(tmp_buf_adrs); i++) {
-        if (tmp_buf_adrs[i] == NULL) {
-            continue;
-        }
-
-        if (adrs == NULL || adrs == tmp_buf_adrs[i]) {
-            usrFree(tmp_buf_adrs[i]);
-            tmp_buf_adrs[i] = NULL;
+        if (tmp_buf_adrs[i] != NULL) {
+            if (adrs == NULL || adrs == tmp_buf_adrs[i]) {
+                usrFree(tmp_buf_adrs[i]);
+                tmp_buf_adrs[i] = NULL;
+            }
         }
     }
 }
@@ -467,13 +592,11 @@ void* DrawTmpBuffGetArea(int size) {
     void *ret = NULL;
 
     for (i = 0; i < PR_ARRAYSIZE(tmp_buf_adrs); i++) {
-        if (tmp_buf_adrs[i] != NULL) {
-            continue;
+        if (tmp_buf_adrs[i] == NULL) {
+            ret = usrMalloc(size);
+            tmp_buf_adrs[i] = ret;
+            break;
         }
-
-        ret = usrMalloc(size);
-        tmp_buf_adrs[i] = ret;
-        break;
     }
 
     return ret;

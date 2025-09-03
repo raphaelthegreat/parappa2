@@ -12,6 +12,14 @@
 
 typedef int (*OVL_FUNC)(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
 
+enum ANI_BLUMOVE_ENUM {
+    BLMV_NONE = 0,
+    BLMV_BLUR = 1,
+    BLMV_MOVE = 2,
+    BLMV_BLUR2 = 3,
+    BLMV_MAX = 4
+};
+
 typedef enum {
     MEN_CTRL_BtoG = 0,
     MEN_CTRL_AtoAB = 1,

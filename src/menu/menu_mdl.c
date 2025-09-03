@@ -139,7 +139,7 @@ static void SetDrawEnv12(sceGsDrawEnv1 *pdenv) {
         return;
     }
 
-    ((u_long*)&denvTag.giftag)[0] = SCE_GIF_SET_TAG(8, 1, 0, SCE_GS_PRIM_POINT, 0, 1);
+    ((u_long*)&denvTag.giftag)[0] = SCE_GIF_SET_TAG(8, 1, 0, 0, 0, 1);
     ((u_long*)&denvTag.giftag)[1] = SCE_GIF_PACKED_AD;
     denvTag.denv1 = *pdenv;
 
