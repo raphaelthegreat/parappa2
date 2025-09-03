@@ -1,5 +1,6 @@
 #include "menu/menusub.h"
 
+#include "common.h"
 #include "main/cdctrl.h"
 #include "main/etc.h"
 
@@ -110,8 +111,8 @@
 // /* data 18c650 */ static PATPOS JUKEJKT_PatS[0];
 // /* data 18c660 */ static PATPOS JUKEREC_Pat[0];
 // /* data 18c6d8 */ static PATPOS JUKEREC_PatS[0];
-// /* data 18c6e8 */ static u_int HosiColor[0][8];
-// /* data 18c748 */ HOSI_TYPE hTypeTable[0];
+/* data 18c6e8 */ extern u_int HosiColor[][8]; /* static */
+/* data 18c748 */ extern HOSI_TYPE hTypeTable[17];
 /* sdata 3997bc */ extern TSTEX_INF *tblTex; /* static */
 /* data 18c8e0 */ extern u_int RPPadBit[]; /* static */
 /* data 18c8f0 */ extern MCDATA_TBL McVoiceTbl[23]; /* static */
@@ -134,7 +135,7 @@
 // /* data 18cb58 */ static int JukeMenu_CmpMesNo[0];
 // /* data 18cb80 */ static MNOPT_SELINF OptionSelTbl[0];
 // /* data 18cbc0 */ static USERLIST_TYPE UserListTbl[0];
-// /* sdata 399820 */ static int _TexFunc;
+/* sdata 399820 */ extern int _TexFunc; /* static */
 /* sdata 399824 */ extern HOSI_OBJ *HOSIObj; /* static */
 /* bss 1c77ac0 */ extern TSREPPAD menuPadState[2][4]; /* static */
 /* bss 1c77ae0 */ extern TSSND_CHAN TsSndChan[15]; /* static */
@@ -180,19 +181,19 @@
 // /* bss 1c80fb0 */ static USERLIST_MENU UserListMenu;
 /* bss 1c810c8 */ extern SCFADE ScFade; /* static */
 
-static int TsGetMenuPadIsRepeat(int no, int npad);
-static void TSSNDPLAY(int n);
-/* static */ void  TSSNDSTOP(int chan);
-/* static */ void  TSSNDMASK_CHAN(int chan, int mskflag);
-/* static */ void  TSSND_SKIPSTOP(int n);
-/* static */ void  TSSND_SKIPPLAY(int n);
-static int TSSND_CHANISSTOP(int chan);
-/* static */ void  tsBGMONEPlay(int no);
-static void tsBGMONEStop(int no);
-static void tsBGMONEVol(int no, int vol);
-/* static */ void  tsBGMONETop(int no, int vol);
+static int   TsGetMenuPadIsRepeat(int no, int npad);
+static void  TSSNDPLAY(int n);
+static void  TSSNDSTOP(int chan);
+static void  TSSNDMASK_CHAN(int chan, int mskflag);
+static void  TSSND_SKIPSTOP(int n);
+static void  TSSND_SKIPPLAY(int n);
+static int   TSSND_CHANISSTOP(int chan);
+static void  tsBGMONEPlay(int no);
+static void  tsBGMONEStop(int no);
+static void  tsBGMONEVol(int no, int vol);
+static void  tsBGMONETop(int no, int vol);
 /* static */ void  tsBGMONEflow(void);
-/* static */ void  tsBGMONEPause(int flg);
+static void  tsBGMONEPause(int flg);
 /* static */ void  TsBGMInit(void);
 /* static */ void  TsBGMPlay(int no, int time);
 static void TsBGMStop(int time);
@@ -294,15 +295,15 @@ static int  TsMCAMes_GetSelect(void);
 /* static */ void  TsNAMEINBox_Draw(SPR_PKT pk, SPR_PRM *spr, int px, int py, int isLog, NAMEINW *pfw, int side);
 static void TsSCFADE_Flow(int flg, int prm);
 /* static */ void  TsSCFADE_Draw(SPR_PKT pk, SPR_PRM *spr, int prio);
-/* static */ void  TsPatTexFnc(int flg);
+static void TsPatTexFnc(int flg);
 /* static */ void  _TsPatSetPrm(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy);
-/* static */ void  TsPatPut(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy);
+static void TsPatPut(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy);
 static void TsPatGetSize(PATPOS *ppos, int *x, int *y, int *w, int *h);
 /* static */ void  TsPatPutRZoom(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy, float zrate, float rot);
 /* static */ void  TsPatPutMZoom(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy, float Zrx, float Zry, int mx, int my, float Crx, float Cry);
-/* static */ void  TsPatPutSwing(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy, int mx, int my, float Crx);
+static void TsPatPutSwing(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy, int mx, int my, float Crx);
 static void TsPatPutUneri(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy, int mx, int my, float Crx, float Drt);
-/* static */ void  TsCELBackInit(void);
+static void TsCELBackInit(void);
 /* static */ void  _TsCELBackObjDraw(SPR_PKT pk, SPR_PRM *spr, int sw, int sh, u_int *colTbl);
 /* static */ void  TsHosiPut(SPR_PKT pk, SPR_PRM *spr, TSTEX_INF *ptex, float px, float py, float zrate, float rot);
 
@@ -343,13 +344,52 @@ static void TSSNDPLAY(int n) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TSSNDSTOP);
+static void TSSNDSTOP(int chan) {
+    memset(&TsSndChan[chan], 0, sizeof(TSSND_CHAN));
+    MenuVoiceStop(chan);
+}
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TSSNDMASK_CHAN);
+static void TSSNDMASK_CHAN(int chan, int mskflag) {
+    TSSND_CHAN *pchan = &TsSndChan[chan];
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TSSND_SKIPSTOP);
+    pchan->bMsk = mskflag;
+    if (pchan->pTap != NULL || pchan->pSeq != NULL) {
+        MenuVoiceStop(chan);
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TSSND_SKIPPLAY);
+static void TSSND_SKIPSTOP(int n) {
+    TSVOICE_TBL *ptap;
+    TSSND_CHAN  *pchan;
+
+    if (n >= 0x38) {
+        return;
+    }
+
+    ptap  = &TsVoiceTbl[n];
+    pchan = &TsSndChan[ptap->chanNo];
+
+    if (pchan->pTap == ptap) {
+        memset(pchan, 0, sizeof(*pchan));
+        MenuVoiceStop(ptap->chanNo);
+    }
+}
+
+static void TSSND_SKIPPLAY(int n) {
+    TSVOICE_TBL *ptap;
+    TSSND_CHAN  *pchan;
+
+    if (n >= 0x38) {
+        return;
+    }
+
+    ptap  = &TsVoiceTbl[n];
+    pchan = &TsSndChan[ptap->chanNo];
+
+    if (pchan->pTap == ptap && !pchan->isOn) {
+        pchan->tim = ptap->ontim;
+    }
+}
 
 static int TSSND_CHANISSTOP(int chan) {
     TSSND_CHAN *pchan = &TsSndChan[chan];
@@ -362,7 +402,18 @@ static int TSSND_CHANISSTOP(int chan) {
     return ret;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", tsBGMONEPlay);
+static void tsBGMONEPlay(int no) {
+    BGMONE *wbgm  = &TsBGMState.wbgm[no];
+    MAPBGM *mpbgm = &MapBgmTbl[no];
+
+    wbgm->pbgm = mpbgm;
+    wbgm->vol  = 0;
+    
+    if (mpbgm->lpTimeF != 0) {
+        wbgm->tim = mpbgm->lpTimeF;
+        MenuVoicePlayVol(mpbgm->chan, mpbgm->tapNo, 0);
+    }
+}
 
 static void tsBGMONEStop(int no) {
     BGMONE *wbgm = &TsBGMState.wbgm[no];
@@ -384,11 +435,26 @@ static void tsBGMONEVol(int no, int vol) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", tsBGMONETop);
+static void tsBGMONETop(int no, int vol) {
+    BGMONE *wbgm = &TsBGMState.wbgm[no];
+    MAPBGM *mpbgm = &MapBgmTbl[no];
+
+    wbgm->pbgm = mpbgm;
+    wbgm->vol  = vol;
+    wbgm->tim  = mpbgm->lpTimeF;
+    MenuVoicePlayVol(mpbgm->chan, mpbgm->tapNo, vol);
+}
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", tsBGMONEflow);
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", tsBGMONEPause);
+static void tsBGMONEPause(int flg) {
+    BGMONE *wbgm = TsBGMState.wbgm;
+    int     i;
+
+    for (i = 0; i < PR_ARRAYSIZE(TsBGMState.wbgm); i++, wbgm++) {
+        wbgm->bPause = (flg != 0);
+    }
+}
 
 void TsBGMInit(void) {
     memset(&TsBGMState, 0, sizeof(TsBGMState));
@@ -412,7 +478,7 @@ static void TsBGMStop(int time) {
                 tsBGMONEVol(pbgm->sndno, 0x100);
             }
 
-            do {} while (0);
+            do {} while (0); /* TODO: Get rid of this? */
         } else {
             pbgm->chgReq = 0;
             pbgm->cstate = 0;
@@ -897,7 +963,7 @@ void TsMenu_Draw(void) {
     flg |= TsCELBackDraw(&MnPkt, spr, MNS_RepCounter.isDisp, 1);
     MNScene_Draw(&MNS_RepCounter);
 
-    for (i = 0; i < 2; i++) {
+    for (i = 0; i < PR_ARRAYSIZE(MNS_StgCounter); i++) {
         flg |= TsCELBackDraw(&MnPkt, spr, MNS_StgCounter[i].isDisp, 2);
         MNScene_Draw(&MNS_StgCounter[i]);
     }
@@ -1461,7 +1527,17 @@ static void TsSCFADE_Flow(int flg, int prm) {
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsSCFADE_Draw);
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", _PkMCMsgPut);
+void _PkMCMsgPut(SPR_PKT pk, SPR_PRM *spr, int id, int x, int y, u_int abgr) {
+	int flg;
+
+    if (pP3GameState != NULL) {
+        flg = pP3GameState->pGameStatus->language_type;
+    } else {
+        flg = LANG_JAPANESE;
+    }
+
+    MENUSubtPut(pk, spr, x, y, abgr, 1, MenuMsgGetMessageMc(id, flg), flg);
+}
 
 int _PkMCMsgGetLine(int id) {
     int flg;
@@ -1475,7 +1551,17 @@ int _PkMCMsgGetLine(int id) {
     return MENUSubtGetLine(MenuMsgGetMessageMc(id, flg), flg);
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", _PkSubMsgPut);
+void _PkSubMsgPut(SPR_PKT pk, SPR_PRM *spr, int id, int x, int y, u_int abgr) {
+    int flg;
+
+    if (pP3GameState != NULL) {
+        flg = pP3GameState->pGameStatus->language_type;
+    } else {
+        flg = LANG_JAPANESE;
+    }
+
+    MENUSubtPut(pk, spr, x, y, abgr, 1, MenuMsgGetMessageSub(id, flg), flg);
+}
 
 void TsMenu_CleanVram(int nFrm) {
     SPR_PRM        SprPrm;
@@ -1544,11 +1630,16 @@ INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsSetSLTransSpr);
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsSetPNTransSpr);
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPatTexFnc);
+static void TsPatTexFnc(int flg) {
+    _TexFunc = flg;
+}
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", _TsPatSetPrm);
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPatPut);
+static void TsPatPut(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy) {
+    _TsPatSetPrm(pk, spr, ppos, ox, oy);
+    PkNSprite_Add(pk, spr, 3);
+}
 
 static void TsPatGetSize(PATPOS *ppos, int *x, int *y, int *w, int *h) {
     TSTEX_INF *ptex = &tblTex[ppos->texNo];
@@ -1571,14 +1662,52 @@ INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPatPutRZoom);
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPatPutMZoom);
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPatPutSwing);
+static void TsPatPutSwing(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy, int mx, int my, float Crx) {
+    _TsPatSetPrm(pk, spr, ppos, ox, oy);
+    TsSetSLTransSpr(pk, spr, mx,my, Crx);
+}
 
 static void TsPatPutUneri(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy, int mx, int my, float Crx, float Drt) {
     _TsPatSetPrm(pk, spr, ppos, ox, oy);
     TsSetPNTransSpr(pk, spr, mx, my, Crx, Drt);
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCELBackInit);
+static void TsCELBackInit(void) {
+    int        i, l;
+    HOSI_TYPE *type;
+    int        num;
+
+    type = hTypeTable;
+    num  = 0;
+    for (l = 0; l < PR_ARRAYSIZEU(hTypeTable); l++, type++) {
+        num += type->num;
+    }
+
+    if (HOSIObj != NULL) {
+        free(HOSIObj);
+        HOSIObj = NULL;
+    }
+
+    if (num != 0) {
+        HOSIObj = malloc(num * sizeof(HOSI_TYPE));
+    } else {
+        HOSIObj = NULL;
+    }
+
+    if (HOSIObj != NULL) {
+        HOSI_OBJ *obj;
+        memset(HOSIObj, 0, num * sizeof(HOSI_TYPE));
+
+        type = hTypeTable;
+        obj  = HOSIObj;
+
+        for (l = 0; l < PR_ARRAYSIZEU(hTypeTable); l++, type++) {
+            for (i = 0; i < type->num; i++, obj++) {
+                obj->wtim = (rand() % (type->dispTime >> 3)) * 2;
+            }
+        }
+    }
+}
 
 void TsCELBackEnd(void) {
     if (HOSIObj != NULL) {
@@ -1587,7 +1716,58 @@ void TsCELBackEnd(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCELBackDraw);
+int TsCELBackDraw(TsUSERPKT *UPacket, SPR_PRM *spr, int dispSw, int colNo) {
+    u_int      bkabgr;
+    u_int     *colTbl;
+    u_long128 *pkt;
+    SPR_PKT    pk;
+    int        bDrawVram;
+
+    pk = &pkt;
+
+    if (dispSw != 0 && (colNo >= 0 && colNo < 3)) {
+        if (HOSIObj == NULL) {
+            TsCELBackInit();
+            if (HOSIObj == NULL) {
+                return 0;
+            }
+        }
+    } else {
+        return 0;
+    }
+
+    bDrawVram = (dispSw ^ 0x1);
+    bDrawVram &= 1;
+
+    (u_int)pkt = UPacket->ptop = PR_UNCACHED(UPacket->pkt[UPacket->idx].PaketTop);
+    PkSprPkt_SetDefault(pk, spr, DrawGetDrawEnvP((bDrawVram) ? DNUM_VRAM2 : DNUM_DRAW));
+
+    if (bDrawVram) {
+        PkSprPkt_SetDrawEnv(pk, spr, DrawGetDrawEnvP(DNUM_VRAM2));
+    }
+
+    colTbl = HosiColor[colNo];
+    bkabgr = colTbl[0];
+    PkALPHA_Add(pk, 0x44);
+
+    spr->zx = spr->zy = 1.0f;
+    SetSprScreenXYWH(spr);
+    spr->rgba0 = bkabgr;
+
+    PkCRect_Add(pk, spr, 0);
+    _TsCELBackObjDraw(pk, spr, spr->sw, spr->sh, colTbl);
+
+    if (bDrawVram) {
+        PkSprPkt_SetDrawEnv(pk, spr, DrawGetDrawEnvP(DNUM_DRAW));
+    }
+
+    UPacket->ptop = (u_int)pkt;
+    sceGsSyncPath(0, 0);
+    TsDrawUPacket(UPacket);
+    sceGsSyncPath(0, 0);
+
+    return 1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", _TsCELBackObjDraw);
 

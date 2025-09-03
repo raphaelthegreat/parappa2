@@ -1,15 +1,15 @@
 {
   "measures": {
-    "fuzzy_match_percent": 37.943344,
+    "fuzzy_match_percent": 38.451694,
     "total_code": "342284",
-    "matched_code": "127784",
-    "matched_code_percent": 37.33274,
+    "matched_code": "129524",
+    "matched_code_percent": 37.84109,
     "total_data": "223328",
     "matched_data": "179344",
     "matched_data_percent": 80.3052,
     "total_functions": 1429,
-    "matched_functions": 840,
-    "matched_functions_percent": 58.782364,
+    "matched_functions": 854,
+    "matched_functions_percent": 59.762074,
     "total_units": 70
   },
   "units": [
@@ -6547,14 +6547,14 @@
     {
       "name": "menu/menusub",
       "measures": {
-        "fuzzy_match_percent": 8.841281,
+        "fuzzy_match_percent": 11.206569,
         "total_code": "73564",
-        "matched_code": "6504",
-        "matched_code_percent": 8.841281,
+        "matched_code": "8244",
+        "matched_code_percent": 11.206569,
         "total_data": "624",
         "total_functions": 165,
-        "matched_functions": 34,
-        "matched_functions_percent": 20.60606,
+        "matched_functions": 48,
+        "matched_functions_percent": 29.090908,
         "total_units": 1
       },
       "sections": [
@@ -6576,7 +6576,7 @@
         {
           "name": ".text",
           "size": "73904",
-          "fuzzy_match_percent": 8.841281,
+          "fuzzy_match_percent": 11.206569,
           "metadata": {}
         }
       ],
@@ -6598,24 +6598,28 @@
         {
           "name": "TSSNDSTOP",
           "size": "68",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "272"
         },
         {
           "name": "TSSNDMASK_CHAN",
           "size": "64",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "344"
         },
         {
           "name": "TSSND_SKIPSTOP",
           "size": "112",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "408"
         },
         {
           "name": "TSSND_SKIPPLAY",
           "size": "88",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "520"
         },
@@ -6629,6 +6633,7 @@
         {
           "name": "tsBGMONEPlay",
           "size": "76",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "656"
         },
@@ -6649,6 +6654,7 @@
         {
           "name": "tsBGMONETop",
           "size": "68",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "888"
         },
@@ -6661,6 +6667,7 @@
         {
           "name": "tsBGMONEPause",
           "size": "52",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "1096"
         },
@@ -7476,6 +7483,7 @@
         {
           "name": "_PkMCMsgPut",
           "size": "156",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "67360"
         },
@@ -7489,6 +7497,7 @@
         {
           "name": "_PkSubMsgPut",
           "size": "156",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "67592"
         },
@@ -7527,6 +7536,7 @@
         {
           "name": "TsPatTexFnc",
           "size": "8",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "70040"
         },
@@ -7539,6 +7549,7 @@
         {
           "name": "TsPatPut",
           "size": "60",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "70456"
         },
@@ -7564,6 +7575,7 @@
         {
           "name": "TsPatPutSwing",
           "size": "104",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "71312"
         },
@@ -7577,6 +7589,7 @@
         {
           "name": "TsCELBackInit",
           "size": "312",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "71536"
         },
@@ -7590,6 +7603,7 @@
         {
           "name": "TsCELBackDraw",
           "size": "416",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "71888"
         },
@@ -12782,16 +12796,16 @@
     {
       "id": "menu",
       "measures": {
-        "fuzzy_match_percent": 23.887264,
+        "fuzzy_match_percent": 25.402256,
         "total_code": "114852",
-        "matched_code": "26188",
-        "matched_code_percent": 22.801517,
+        "matched_code": "27928",
+        "matched_code_percent": 24.316511,
         "total_data": "11048",
         "matched_data": "12",
         "matched_data_percent": 0.10861694,
         "total_functions": 374,
-        "matched_functions": 184,
-        "matched_functions_percent": 49.19786,
+        "matched_functions": 198,
+        "matched_functions_percent": 52.941177,
         "total_units": 9
       }
     },

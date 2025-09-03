@@ -20,6 +20,15 @@ typedef struct { // 0x18
     /* 0x14 */ float vy;
 } HOSI_OBJ;
 
+typedef struct { // 0x18
+    /* 0x00 */ int num;
+    /* 0x04 */ u_int patNo;
+    /* 0x08 */ int patW;
+    /* 0x0c */ int dispTime;
+    /* 0x10 */ u_int colIdx;
+    /* 0x14 */ u_int rate;
+} HOSI_TYPE;
+
 typedef struct { // 0x4
     /* 0x0 */ u_short state;
     /* 0x2 */ u_short time;
