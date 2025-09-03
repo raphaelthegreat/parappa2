@@ -39,7 +39,7 @@
 /* sdata 399538 */ extern int ddbg_tap_num; /* static */
 /* sdata 39953c */ extern int ddbg_bmp_frame; /* static */
 /* data 186248 */ extern DRAW_DBG_STR draw_dbg_str[5/*undef*/]; /* static */
-// /* bss 1c6e030 */ extern DR_TAP_REQ dr_tap_req[16]; /* static */
+/* bss 1c6e030 */ extern DR_TAP_REQ dr_tap_req[16]; /* static */
 /* sbss 399a4c */ extern int dr_tap_req_num; /* static */
 // /* bss 1c6e0f0 */ extern int octst_time[8]; /* static */
 // /* bss 1c6e110 */ extern int octst_timeLoad[8]; /* static */
@@ -1204,7 +1204,19 @@ void DrawCtrlTblChange(int ctrlTbl) {
     drawCurrentLine = ctrlTbl;
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawTapReqTbl);
+int DrawTapReqTbl(int atap, PLAYER_INDEX pindx, u_char *prs_pp) {
+    if (dr_tap_req_num >= 16) {
+        printf("TAP REQ OVER ERROR!!\n");
+        return 1;
+    }
+
+    dr_tap_req[dr_tap_req_num].tap_id = (u_int)(atap & 0xff00) >> 0x8;
+    dr_tap_req[dr_tap_req_num].req_no = atap & 0xff;
+    dr_tap_req[dr_tap_req_num].player_index = pindx;
+    dr_tap_req[dr_tap_req_num].pad_prs_pp = prs_pp;
+    dr_tap_req_num++;
+    return 0;
+}
 
 /* static */ int ddbg_event_sel(int pad) {
     ddbg_event_num += pad;
@@ -1424,7 +1436,55 @@ static void ddbg_event_sub_bmp(void) {
     ddbg_bmp_frame++;
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", ddbg_tap_check);
+static void ddbg_tap_check(void) {
+    SCENECTRL *scenectrl_pp;
+    SCENE_OBJDATA *scene_objdata_pp;
+    int tid;
+    int req_num;
+    u_short paddata;
+    u_char *prs_adr;
+
+    req_num = -1;
+    prs_adr = NULL;
+
+    if (drawEventrec->scenestr_pp[drawCurrentLine].scenectrl_pp == NULL) {
+        return;
+    }
+
+    scenectrl_pp = &drawEventrec->scenestr_pp[drawCurrentLine].scenectrl_pp[ddbg_scene_num];
+    if (scenectrl_pp->prg_pp == DrawSceneObjData) {
+        scene_objdata_pp = scenectrl_pp->param_pp;
+        if (scene_objdata_pp->tapstr_size != 0) {
+            paddata = pad[0].one;
+            tid = scene_objdata_pp->tap_id;
+            if (paddata & SCE_PADLup) {
+                req_num = ddbg_tap_num;
+                prs_adr = &pad[0].press[2];
+            } else if (paddata & SCE_PADLdown) {
+                req_num = ddbg_tap_num;
+                prs_adr = &pad[0].press[3];
+            } else if (paddata & SCE_PADLright) {
+                req_num = ddbg_tap_num;
+                prs_adr = &pad[0].press[0];
+                ddbg_tap_num++;
+            } else if (paddata & SCE_PADLleft) {
+                req_num = ddbg_tap_num;
+                prs_adr = &pad[0].press[1];
+                ddbg_tap_num--; 
+            }
+
+            if (ddbg_tap_num >= scene_objdata_pp->objtapstr_size) {
+                ddbg_tap_num = 0;
+            }
+            if (ddbg_tap_num < 0) {
+                ddbg_tap_num = scene_objdata_pp->objtapstr_size - 1;
+            }
+            if (req_num >= 0) {
+                DrawTapReqTbl(req_num + (tid << 0x8), PINDEX_NONE, prs_adr);
+            }
+        }
+    }
+}
 
 static void ddbg_scene_sub(void) {
     SCENECTRL *scenectrl_pp;
