@@ -46,7 +46,7 @@ jobs:
       run: python3 -m pip install --upgrade -r requirements.txt
 
     - name: Configure
-      run: python3 ./configure.py -c
+      run: python3 ./configure.py
 
     - name: Compile
       run: ninja
