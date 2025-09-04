@@ -1,15 +1,15 @@
 {
   "measures": {
-    "fuzzy_match_percent": 38.451694,
+    "fuzzy_match_percent": 38.611797,
     "total_code": "342284",
-    "matched_code": "129524",
-    "matched_code_percent": 37.84109,
+    "matched_code": "130072",
+    "matched_code_percent": 38.00119,
     "total_data": "223328",
     "matched_data": "179344",
     "matched_data_percent": 80.3052,
     "total_functions": 1429,
-    "matched_functions": 854,
-    "matched_functions_percent": 59.762074,
+    "matched_functions": 863,
+    "matched_functions_percent": 60.391884,
     "total_units": 70
   },
   "units": [
@@ -6547,14 +6547,14 @@
     {
       "name": "menu/menusub",
       "measures": {
-        "fuzzy_match_percent": 11.206569,
+        "fuzzy_match_percent": 11.951498,
         "total_code": "73564",
-        "matched_code": "8244",
-        "matched_code_percent": 11.206569,
+        "matched_code": "8792",
+        "matched_code_percent": 11.951498,
         "total_data": "624",
         "total_functions": 165,
-        "matched_functions": 48,
-        "matched_functions_percent": 29.090908,
+        "matched_functions": 57,
+        "matched_functions_percent": 34.545456,
         "total_units": 1
       },
       "sections": [
@@ -6576,7 +6576,7 @@
         {
           "name": ".text",
           "size": "73904",
-          "fuzzy_match_percent": 11.206569,
+          "fuzzy_match_percent": 11.951498,
           "metadata": {}
         }
       ],
@@ -7003,6 +7003,7 @@
         {
           "name": "MpCityHallFPHSSoundMask",
           "size": "12",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "24112"
         },
@@ -7096,12 +7097,14 @@
         {
           "name": "TsMCAMes_IsON",
           "size": "20",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "31736"
         },
         {
           "name": "TsMCAMes_SetPos",
           "size": "20",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "31760"
         },
@@ -7158,12 +7161,14 @@
         {
           "name": "TsANIME_Start",
           "size": "28",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "33872"
         },
         {
           "name": "TsANIME_GetRate",
           "size": "192",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "33904"
         },
@@ -7194,12 +7199,14 @@
         {
           "name": "TsPopCusInit",
           "size": "60",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "35272"
         },
         {
           "name": "TsPopCusFlow",
           "size": "128",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "35336"
         },
@@ -7362,12 +7369,14 @@
         {
           "name": "TsUserList_GetCurFileNo",
           "size": "76",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "56136"
         },
         {
           "name": "TsUserList_IsGetFileSave",
           "size": "12",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "56216"
         },
@@ -12796,16 +12805,16 @@
     {
       "id": "menu",
       "measures": {
-        "fuzzy_match_percent": 25.402256,
+        "fuzzy_match_percent": 25.879393,
         "total_code": "114852",
-        "matched_code": "27928",
-        "matched_code_percent": 24.316511,
+        "matched_code": "28476",
+        "matched_code_percent": 24.793648,
         "total_data": "11048",
         "matched_data": "12",
         "matched_data_percent": 0.10861694,
         "total_functions": 374,
-        "matched_functions": 198,
-        "matched_functions_percent": 52.941177,
+        "matched_functions": 207,
+        "matched_functions_percent": 55.34759,
         "total_units": 9
       }
     },

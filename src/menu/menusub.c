@@ -178,7 +178,7 @@
 // /* bss 1c7fa88 */ static SAVE_MENU SaveMenu;
 // /* bss 1c7fb48 */ static JUKE_MENU JukeMenu;
 // /* bss 1c80f60 */ static OPTION_MENU OptionMenu;
-// /* bss 1c80fb0 */ static USERLIST_MENU UserListMenu;
+/* bss 1c80fb0 */ extern USERLIST_MENU UserListMenu; /* static */
 /* bss 1c810c8 */ extern SCFADE ScFade; /* static */
 
 static int   TsGetMenuPadIsRepeat(int no, int npad);
@@ -196,21 +196,21 @@ static void  tsBGMONETop(int no, int vol);
 static void  tsBGMONEPause(int flg);
 /* static */ void  TsBGMInit(void);
 /* static */ void  TsBGMPlay(int no, int time);
-static void TsBGMStop(int time);
+static void  TsBGMStop(int time);
 /* static */ void  TsBGMMute(int time);
 /* static */ int   TsBGMLoadCheck(void);
 /* static */ void  TsBGMPause(int flg);
 /* static */ void  TsBGMPoll(void);
 /* static */ void* TsCmnPkOpen(sceGifPacket *pgifpk);
 /* static */ void  TsCmnPkClose(sceGifPacket *pgifpk, void *pk, int pri);
-static void TsClearMenuPad(int no);
-static void TsGetMenuPad(int no, u_int *getpad);
-static void TsSndFlow(int flg);
+static void  TsClearMenuPad(int no);
+static void  TsGetMenuPad(int no, u_int *getpad);
+static void  TsSndFlow(int flg);
 /* static */ int   TSNumMov(int cn, int dn, int scale);
-static int TSLOOP(int no, int max);
-static int TSLIMIT(int no, int min, int max);
+static int   TSLOOP(int no, int max);
+static int   TSLIMIT(int no, int min, int max);
 /* static */ int   TsMENU_GetMapNo(int *psize);
-static void TsMENU_GetMapTimeState(int flg);
+static void  TsMENU_GetMapTimeState(int flg);
 /* static */ void  TsSetScene_Map(MN_SCENE *pScene, int mapNo, int tflg, int bFocus);
 /* static */ void  TsSet_ParappaCapColor(void);
 /* static */ void  TsClearSet(P3GAMESTATE *pstate);
@@ -221,14 +221,14 @@ static void TsMENU_GetMapTimeState(int flg);
 /* static */ void  TsRestoreSaveData(MCRWDATA_HDL *pDataW, int mode);
 /* static */ int   TsRanking_Set(void);
 /* static */ int   TsCheckTimeMapChange(void);
-static int TsMemCardCheck_Flow(int flg, u_int tpad);
+static int   TsMemCardCheck_Flow(int flg, u_int tpad);
 /* static */ int   TsMap_Flow(int flg, u_int tpad, u_int tpad2);
 /* static */ void  TsMakeUserWork(int mode);
 /* static */ void  TsSaveSuccessProc(void);
 /* static */ int   MpSave_Flow(int flg, u_int tpad, u_int tpad2);
 /* static */ int   MpCityHall_Flow(int flg, u_int tpad, u_int tpad2);
 /* static */ void  MpCityHallParaStart(int pos);
-/* static */ void  MpCityHallFPHSSoundMask(int flg);
+static void  MpCityHallFPHSSoundMask(int flg);
 /* static */ int   MpCityHallFPHSMove(int pos, int fpos);
 /* static */ void  MpCityHallFPHOK(int flg);
 /* static */ void  MpCityHallCharPosSet(int pos);
@@ -236,21 +236,21 @@ static int TsMemCardCheck_Flow(int flg, u_int tpad);
 /* static */ int   MpMapMenu_Flow(int flg, MAPPOS *mpw, u_int tpad);
 /* static */ int   _MapGetMovableDir(MAPPOS *mpw);
 /* static */ int   McErrorMess(int err);
-static void McInitFlow(void);
+static void  McInitFlow(void);
 /* static */ int   McStartCheckFlow(int flg);
 /* static */ int   McUserCheckFlow(int type, int mode, int *bError);
 /* static */ int   McUserSaveFlow(USER_DATA *puser);
 /* static */ int   McUserLoadFlow(int fileNo, int mode, int bBroken);
-static void TsMCAMes_Init(void);
-static int  TsMCAMes_GetSelect(void);
-/* static */ int   TsMCAMes_IsON(void);
+static void  TsMCAMes_Init(void);
+static int   TsMCAMes_GetSelect(void);
+static int   TsMCAMes_IsON(void);
 /* static */ void  TsMCAMes_Flow(u_int tpad);
 /* static */ void  TsMCAMes_Draw(SPR_PKT pk, SPR_PRM *spr);
 /* static */ void  TsCMPMes_Draw(SPR_PKT pk, SPR_PRM *spr);
 /* static */ void  TsANIME_Init(ANIME_WK *wk);
 /* static */ int   TsANIME_Poll(ANIME_WK *wk);
-/* static */ void  TsANIME_Start(ANIME_WK *wk, int state, int tim);
-/* static */ int   TsANIME_GetRate(ANIME_WK *wk, float *rt0, float *rt1, float *rt2);
+static void  TsANIME_Start(ANIME_WK *wk, int state, int tim);
+static int   TsANIME_GetRate(ANIME_WK *wk, float *rt0, float *rt1, float *rt2);
 /* static */ void  _TsSortSetRanking(P3MC_RANKSCORE **ptRank, int n, P3MC_RANKSCORE *pRank, int bNameCmp);
 /* static */ RANKLIST* TsGetRankingList(int flag, int vsLev, int stageNo, int *nrank);
 /* static */ int   TsPopMenu_Flow(int flg, u_int tpad);
@@ -276,8 +276,8 @@ static int  TsMCAMes_GetSelect(void);
 /* static */ void  TsCmnCell_CusorDraw(SPR_PKT pk, SPR_PRM *spr, int n, CELLOBJ *obj, int ox, int oy, int CurColor);
 /* static */ int   TsOption_Flow(int flg, u_int tpad);
 /* static */ void  TsOption_Draw(SPR_PKT pk, SPR_PRM *spr);
-/* static */ int   TsUserList_GetCurFileNo(int *isBroken);
-/* static */ int   TsUserList_IsGetFileSave(void);
+static int   TsUserList_GetCurFileNo(int *isBroken);
+static int   TsUserList_IsGetFileSave(void);
 /* static */ int   TsUserList_SortUser(void);
 /* static */ void  TsUserList_SetCurUserData(USER_DATA *psrc);
 /* static */ void  TsUserList_SetCurDispUserData(USER_DATA *psrc);
@@ -293,17 +293,17 @@ static int  TsMCAMes_GetSelect(void);
 /* static */ void  TsNAMEINBox_GetName(NAMEINW *pfw, u_char *name);
 /* static */ int   TsNAMEINBox_Flow(int flg, NAMEINW *pfw, u_int tpad);
 /* static */ void  TsNAMEINBox_Draw(SPR_PKT pk, SPR_PRM *spr, int px, int py, int isLog, NAMEINW *pfw, int side);
-static void TsSCFADE_Flow(int flg, int prm);
+static void  TsSCFADE_Flow(int flg, int prm);
 /* static */ void  TsSCFADE_Draw(SPR_PKT pk, SPR_PRM *spr, int prio);
-static void TsPatTexFnc(int flg);
+static void  TsPatTexFnc(int flg);
 /* static */ void  _TsPatSetPrm(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy);
-static void TsPatPut(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy);
-static void TsPatGetSize(PATPOS *ppos, int *x, int *y, int *w, int *h);
+static void  TsPatPut(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy);
+static void  TsPatGetSize(PATPOS *ppos, int *x, int *y, int *w, int *h);
 /* static */ void  TsPatPutRZoom(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy, float zrate, float rot);
 /* static */ void  TsPatPutMZoom(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy, float Zrx, float Zry, int mx, int my, float Crx, float Cry);
-static void TsPatPutSwing(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy, int mx, int my, float Crx);
-static void TsPatPutUneri(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy, int mx, int my, float Crx, float Drt);
-static void TsCELBackInit(void);
+static void  TsPatPutSwing(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy, int mx, int my, float Crx);
+static void  TsPatPutUneri(SPR_PKT pk, SPR_PRM *spr, PATPOS *ppos, int ox, int oy, int mx, int my, float Crx, float Drt);
+static void  TsCELBackInit(void);
 /* static */ void  _TsCELBackObjDraw(SPR_PKT pk, SPR_PRM *spr, int sw, int sh, u_int *colTbl);
 /* static */ void  TsHosiPut(SPR_PKT pk, SPR_PRM *spr, TSTEX_INF *ptex, float px, float py, float zrate, float rot);
 
@@ -1139,7 +1139,9 @@ INCLUDE_ASM("asm/nonmatchings/menu/menusub", MpCityHall_Flow);
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", MpCityHallParaStart);
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", MpCityHallFPHSSoundMask);
+static void MpCityHallFPHSSoundMask(int flg) {
+    TSSNDMASK_CHAN(3, flg);
+}
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", MpCityHallFPHSMove);
 
@@ -1289,9 +1291,17 @@ static int TsMCAMes_GetSelect(void) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsMCAMes_IsON);
+static int TsMCAMes_IsON(void) {
+    MCMES_WORK *pmesw = &MCMesWork;
+    return (u_int)~pmesw->mesflg >> 0x1f;
+}
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsMCAMes_SetPos);
+void TsMCAMes_SetPos(int x, int y) {
+    MCMES_WORK *pmesw = &MCMesWork;
+
+    pmesw->px = x;
+    pmesw->py = y;
+}
 
 void TsMCAMes_SetMes(int no) {
     MCMES_WORK *pmesw;
@@ -1380,9 +1390,55 @@ INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsANIME_Init);
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsANIME_Poll);
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsANIME_Start);
+static void TsANIME_Start(ANIME_WK *wk, int state, int tim) {
+    wk->atrn2 = 0x200;
+    wk->atrn  = 0x200;
+    wk->atrn3 = 0x200;
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsANIME_GetRate);
+    wk->atim = tim;
+    wk->aflg = state;
+}
+
+static int TsANIME_GetRate(ANIME_WK *wk, float *rt0, float *rt1, float *rt2) {
+    float p0, p1, p2;
+
+    if (wk->aflg) {
+        p0 = wk->atrn  * 0.001953125f;
+        p1 = wk->atrn2 * 0.001953125f;
+        p2 = wk->atrn3 * 0.001953125f;
+
+        if (!(wk->aflg & 1)) {
+            p0 = 1.0f - p0;
+            p1 = 1.0f - p1;
+        } else {
+            p2 = 1.0f - p2;
+        }
+
+        if (rt0 != NULL) {
+            *rt0 = p0;
+        }
+        if (rt1 != NULL) {
+            *rt1 = p1;
+        }
+        if (rt2 != NULL) {
+            *rt2 = p2;
+        }
+
+        return 1;
+    } else {
+        if (rt0 != NULL) {
+            *rt0 = 1.0f;
+        }
+        if (rt1 != NULL) {
+            *rt1 = 1.0f;
+        }
+        if (rt2 != NULL) {
+            *rt2 = 1.0f;
+        }
+
+        return 0;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", _TsSortSetRanking);
 
@@ -1392,9 +1448,33 @@ INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPopCusAOff);
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPopCusDim);
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPopCusInit);
+void TsPopCusInit(POPCTIM *pfw,  int curIdx) {
+    memset(pfw, 0, sizeof(POPCTIM));
+    pfw->onTNo = curIdx;
+}
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPopCusFlow);
+void TsPopCusFlow(POPCTIM *pfw) {
+    int i;
+
+    if (pfw->okTim != 0) {
+        pfw->okTim--;
+    }
+    if (pfw->onTim != 0) {
+        pfw->onTim--;
+    }
+    if (pfw->srTim != 0) {
+        pfw->srTim--;
+    }
+
+    for (i = 0; i < PR_ARRAYSIZE(pfw->offinf); i++) {
+        if (pfw->offinf[i].time) {
+            pfw->offinf[i].time--;
+        }
+        if (pfw->offinf[i].cltm) {
+            pfw->offinf[i].cltm--;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPopCusPut);
 
@@ -1454,9 +1534,21 @@ INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsOption_Flow);
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsOption_Draw);
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUserList_GetCurFileNo);
+static int TsUserList_GetCurFileNo(int *isBroken) {
+    USERLIST_MENU *pfw   = &UserListMenu;
+    USER_DATA     *puser = pfw->pusrlst->pUserTbl[pfw->curuser + pfw->curPageTop];
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUserList_IsGetFileSave);
+    if (isBroken != NULL) {
+        *isBroken = (puser->flg == 2);
+    }
+
+    return puser->fileNo;
+}
+
+static int TsUserList_IsGetFileSave(void) {
+    USERLIST_MENU *pfw = &UserListMenu;
+    return pfw->isSave;
+}
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUserList_SortUser);
 
