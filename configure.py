@@ -596,9 +596,9 @@ def fix_compile_commands():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Configure the project")
     parser.add_argument(
-        "-c",
-        "--clean",
-        help="Clean extraction and build artifacts",
+        "-noc",
+        "--noclean",
+        help="Skip cleaning of split and build artifacts",
         action="store_true",
     )
     parser.add_argument(
@@ -627,9 +627,10 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    if args.clean:
+    if not args.noclean:
         if args.objdiff:
-            print("warning: --objdiff enabled with --clean. Clean will be skipped.")
+            # No clean with objdiff
+            args.noclean = True
         else:
             clean()
 
@@ -655,16 +656,16 @@ if __name__ == "__main__":
     write_permuter_settings()
 
     if not args.no_short_loop_fix:
-        if args.clean:
-            apply_short_loop_fix()
+        if args.noclean:
+            print("warning: Not a clean build. Skipping EUC-JP conversion.")
         else:
-            print("warning: Not a clean build. Skipping short loop fix.")
+            apply_short_loop_fix()
 
     if not args.no_eucjp_converting:
-        if args.clean:
-            eucjp_convert()
-        else:
+        if args.noclean:
             print("warning: Not a clean build. Skipping EUC-JP conversion.")
+        else:
+            eucjp_convert()
 
     exec_shell(["ninja", "-t", "compdb"], open("compile_commands.json", "w"))
     fix_compile_commands()

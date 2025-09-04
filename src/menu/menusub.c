@@ -247,7 +247,7 @@ static int   TsMCAMes_IsON(void);
 /* static */ void  TsMCAMes_Flow(u_int tpad);
 /* static */ void  TsMCAMes_Draw(SPR_PKT pk, SPR_PRM *spr);
 /* static */ void  TsCMPMes_Draw(SPR_PKT pk, SPR_PRM *spr);
-/* static */ void  TsANIME_Init(ANIME_WK *wk);
+static void  TsANIME_Init(ANIME_WK *wk);
 /* static */ int   TsANIME_Poll(ANIME_WK *wk);
 static void  TsANIME_Start(ANIME_WK *wk, int state, int tim);
 static int   TsANIME_GetRate(ANIME_WK *wk, float *rt0, float *rt1, float *rt2);
@@ -1386,7 +1386,9 @@ void TsCMPMes_SetMes(int no) {
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCMPMes_Draw);
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsANIME_Init);
+void TsANIME_Init(ANIME_WK *wk) {
+    memset(wk, 0, sizeof(*wk));
+}
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsANIME_Poll);
 
@@ -1449,7 +1451,7 @@ INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPopCusAOff);
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPopCusDim);
 
 void TsPopCusInit(POPCTIM *pfw,  int curIdx) {
-    memset(pfw, 0, sizeof(POPCTIM));
+    memset(pfw, 0, sizeof(*pfw));
     pfw->onTNo = curIdx;
 }
 

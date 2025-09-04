@@ -48,7 +48,7 @@ For any questions, we have a home at the [PS1/PS2 Decompilation Discord server](
     - `SCPS_150.17`
     - `TAPCTRL.IRX` (found in the `IRX` folder)
     - `WAVE2PS2.IRX` (found in the `IRX` folder)
-3. `./configure.py` (use `-c` to do a clean split.)
+3. `./configure.py`
 4. `ninja`
 
 To generate/update the progress report:
