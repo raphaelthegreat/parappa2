@@ -28,11 +28,14 @@ options:
     rodata_string_guesser_level: 2 # Improve string detection
     disasm_unknown: True
     named_regs_for_c_funcs: False
-    gp_value: 0x3a0ef0
     subalign: null
 
     find_file_boundaries: False
-    section_order: [".text", ".data", ".rodata", ".lit4", ".sdata", ".sbss", ".bss"]
+    section_order: [".text", ".data", ".rodata", ".lit8", ".lit4", ".sdata", ".sbss", ".bss"]
+    auto_link_sections: [".data", ".rodata", ".lit8", ".lit4", ".sdata", ".sbss", ".bss"]
+
+    gp_value: 0x3a0ef0
+    ld_gp_expression: main_LIT8_START + 0x7ff0
 segments:
     - name: main
       type: code
