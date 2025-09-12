@@ -9,6 +9,7 @@
 
 #include <devvif0.h>
 #include <devvu0.h>
+#include <eekernel.h>
 #include <libcdvd.h>
 #include <limits.h>
 #include <sifcmd.h>
@@ -106,7 +107,7 @@ static void firstClrFrameBuffer(void) {
 
     sceGsSetDefDrawEnv(&vclr_dma.drEnv, SCE_GS_PSMCT32, SCREEN_WIDTH, SCREEN_HEIGHT, SCE_GS_ZNOUSE, SCE_GS_ZNOUSE);
     sceGsSetDefClear(
-        &vclr_dma.clear, SCE_GS_ZNOUSE, 2048 - (SCREEN_WIDTH >> 1), 2048 - (SCREEN_HEIGHT >> 1), SCREEN_WIDTH,
+        &vclr_dma.clear, SCE_GS_ZNOUSE, 2048 - (SCREEN_WIDTH / 2), 2048 - (SCREEN_HEIGHT / 2), SCREEN_WIDTH,
         SCREEN_HEIGHT, 0, 0, 0, 0, 0
     );
 
@@ -247,13 +248,18 @@ void systemCtrlMain(void *xx) {
     }
 }
 
-#define DUMMY_PAGE (0x1000) /* 4KB dummy page */
+#define MEM_SIZE    (0x02000000) /* PS2 memory size */
+#define DUMMY_PAGE  (0x1000)     /* 4KB dummy page  */
+#define HEADER_SIZE (0x10)       /* malloc header   */
 
+/* See the malloc() technical note */
 static int FullAllocAndFree(void) {
     int stack_sizeX = _stack_size_addr;
     int endX = _end_addr;
-
-    int heap_size = 0x01ffefe0 - ((endX + DUMMY_PAGE) + stack_sizeX);
+    int heap_size;
+    
+    heap_size = (MEM_SIZE - (HEADER_SIZE*2) - DUMMY_PAGE) -
+                (endX + DUMMY_PAGE + stack_sizeX);
 
     free(malloc(heap_size));
     return heap_size;

@@ -1453,6 +1453,9 @@ TsCELBackDraw                       = 0x00137790; // type:func
 _TsCELBackObjDraw                   = 0x00137930; // type:func
 TsHosiPut                           = 0x00137df0; // type:func
 
+mnmapMap1                           = 0x0018b0e0; // size:0x80
+mnmapMap                            = 0x0018b160; // size:0x240
+mnmapMap2                           = 0x0018b3a0; // size:0x280
 MapBgmTbl                           = 0x0018b880; // size:0x84
 TsVoiceTbl                          = 0x0018b908; // size:0x1c0
 VSNDSEQ_Tbl                         = 0x0018baf8; // size:0x18
@@ -1485,6 +1488,7 @@ MapTime                             = 0x00399828; // size:0x8
 
 state                               = 0x00399ac8;
 mesNo                               = 0x00399acc;
+state_tmp_253                       = 0x00399ad0;
 _bMapCaptureReq                     = 0x00399b1c;
 pP3GameState                        = 0x00399b18;
 _MNwaitTime                         = 0x00399b20;
@@ -1499,6 +1503,7 @@ ret                                 = 0x00399b50;
 errorNo                             = 0x00399b54;
 waitTime                            = 0x00399b58;
 
+MapCity_tmp_254                     = 0x01c77a50; // size:0x34
 menuPadState                        = 0x01c77ac0; // size:0x20
 TsSndChan                           = 0x01c77ae0; // size:0x12c
 TsBGMState                          = 0x01c77c10; // size:0xa0

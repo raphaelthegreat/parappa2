@@ -112,7 +112,7 @@ int MNScene_ModelDispSw(MN_SCENE *pshdl, int nmdl, int bsw);
 // /* data 189ee8 */ MNANM_TBL *StageMapCWptr[0];
 // /* data 189f08 */ MNANM_TBL StageMapAnimeSEA[0];
 // /* data 189f48 */ MNANM_TBL StageMapAnimeBK[0];
-// /* data 189fa8 */ MNANM_TBL StageMapAnimePA[0];
+/* data 189fa8 */ extern MNANM_TBL StageMapAnimePA[];
 // /* data 18a408 */ MNANM_TBL StageMapBGMCamera[0];
 // /* data 18a548 */ MN_MDLTBL Mdl_CityHall[0];
 // /* data 18a678 */ int Cam_CityHall[0];

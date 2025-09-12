@@ -6,6 +6,7 @@
 
 #include "menu/menudata.h"
 #include "menu/menufont.h"
+#include "menu/menu_mdl.h"
 #include "menu/p3mc.h"
 
 #include "os/syssub.h"
@@ -18,9 +19,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-// /* data 18b0e0 */ static MNMAPPOS mnmapMap1[0];
-// /* data 18b160 */ static MNMAPPOS mnmapMap[0];
-// /* data 18b3a0 */ static MNMAPPOS mnmapMap2[0];
+/* data 18b0e0 */ extern MNMAPPOS mnmapMap1[]; /* static */
+/* data 18b160 */ extern MNMAPPOS mnmapMap[]; /* static */
+/* data 18b3a0 */ extern MNMAPPOS mnmapMap2[]; /* static */
 // /* data 18b620 */ static short RShopRute0[0];
 // /* data 18b630 */ static short RShopRute1[0];
 // /* data 18b638 */ static short RShopRute2[0];
@@ -222,7 +223,7 @@ static void  TsMENU_GetMapTimeState(int flg);
 /* static */ int   TsRanking_Set(void);
 /* static */ int   TsCheckTimeMapChange(void);
 static int   TsMemCardCheck_Flow(int flg, u_int tpad);
-/* static */ int   TsMap_Flow(int flg, u_int tpad, u_int tpad2);
+static int   TsMap_Flow(int flg, u_int tpad, u_int tpad2);
 /* static */ void  TsMakeUserWork(int mode);
 /* static */ void  TsSaveSuccessProc(void);
 /* static */ int   MpSave_Flow(int flg, u_int tpad, u_int tpad2);
@@ -1127,7 +1128,424 @@ static int TsMemCardCheck_Flow(int flg, u_int tpad) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsMap_Flow);
+static int TsMap_Flow(int flg, u_int tpad, u_int tpad2) {
+    /* TODO: Fix names once made static. */
+    /* sbss 399ad0 */ extern int state_tmp_253;
+    /* bss 1c77a50 */ extern MAPPOS MapCity_tmp_254;
+    int ret;
+    int mn;
+
+    if (flg == 1) {
+        switch (tpad) {
+        case 0:
+            pP3GameState->nStage = 0;
+            MenuVoiceBankSet(0);
+            state_tmp_253 = 0;
+            break;
+        case 1:
+            MenuVoiceBankSet(0);
+            state_tmp_253 = 0x6500;
+            break;
+        case 2:
+            MenuVoiceBankSet(0);
+            TsBGMPlay(1, 0x14);
+            state_tmp_253 = 0x2000;
+            break;
+        case 3:
+            MenuVoiceBankSet(0);
+            state_tmp_253 = 0;
+            break;
+        }
+
+        TsMENU_GetMapTimeState(1);
+        return 0;
+    }
+
+    switch (state_tmp_253) {
+    case 0:
+        CurMapOldFlg = -1;
+        mn = TsMENU_GetMapNo(NULL);
+        TsMENU_SetMapScreen(mn);
+        MapCity_tmp_254.pscene = &MNS_StageMap;
+        MapCity_tmp_254.panime = StageMapAnimePA;
+        MapCity_tmp_254.lmtPos = mn + 1;
+
+        if (mn < 2) {
+            MapCity_tmp_254.mnmap = mnmapMap1;
+        } else if (pP3GameState->pLog->nRound >= 4) {
+            MapCity_tmp_254.mnmap = mnmapMap2;
+        } else {
+            MapCity_tmp_254.mnmap = mnmapMap;
+        }
+
+        MpMapMenu_Flow(1, &MapCity_tmp_254, 0);
+
+        switch (pP3GameState->nStage) {
+        case 1:
+            mn = 1;
+            break;
+        case 2:
+            mn = 2;
+            break;
+        case 3:
+            mn = 3;
+            break;
+        case 4:
+            mn = 4;
+            break;
+        case 5:
+            mn = 5;
+            break;
+        case 6:
+            mn = 6;
+            break;
+        case 7:
+            mn = 7;
+            break;
+        case 8:
+            mn = 8;
+            break;
+        case 9:
+            mn = 9;
+            break;
+        case 0:
+        default:
+            mn = 0;
+            break;
+        }
+
+        MpMapMenu_Flow(3, &MapCity_tmp_254, mn);
+        TsCMPMes_SetMes(-1);
+        TsSet_ParappaCapColor();
+        if (pP3GameState->pAutoMove == NULL) {
+            TsBGMPlay(MapCity_tmp_254.curPos + 1, 0xa);
+        }
+        state_tmp_253 = 0x1000;
+        /* fallthrough */
+    case 0x1000:
+        MNScene_DispSw(&MNS_CityHall, 0);
+        MNScene_DispSw(&MNS_StageMap, 1);
+        state_tmp_253 = 0x1010;
+        break;
+    case 0x1010:
+        if (!pP3GameState->isWipeEnd || TsBGMLoadCheck()) {
+            return 0;
+        }
+        if (TsAnimeWait_withKeySkip(tpad, &MNS_StageMap, 0, -1)) {
+            return 0;
+        }
+        /* fallthrough */
+    case 0x1018:
+        mn = 0;
+
+        if (pP3GameState->pAutoMove != NULL) {
+            switch (*pP3GameState->pAutoMove) {
+            case 1:
+                mn = 1;
+                break;
+            case 2:
+                mn = 2;
+                break;
+            case 3:
+                mn = 3;
+                break;
+            case 4:
+                mn = 4;
+                break;
+            case 5:
+                mn = 5;
+                break;
+            case 6:
+                mn = 6;
+                break;
+            case 7:
+                mn = 7;
+                break;
+            case 8:
+                mn = 8;
+                break;
+            case 9:
+                mn = 9;
+                break;
+            case 0:
+                mn = 0;
+                break;
+            case -2:
+                mn = -2;
+                pP3GameState->pAutoMove = NULL;
+                break;
+            case -1:
+            default:
+                pP3GameState->pAutoMove = NULL;
+                mn = 0;
+                break;            
+            }
+
+            if (pP3GameState->pAutoMove != NULL) {
+                MpMapMenu_Flow(4, &MapCity_tmp_254, mn);
+
+                if (MapCity_tmp_254.sndtrg == 1) {
+                    TsBGMChangePos(MapCity_tmp_254.curPos + 1);
+                }
+
+                pP3GameState->pAutoMove++;
+                if (*pP3GameState->pAutoMove == -1) {
+                    pP3GameState->pAutoMove = NULL;
+                }
+            }
+        } 
+
+        if (mn == -2) {
+            state_tmp_253 = 0x5010;
+            break;
+        }
+
+        state_tmp_253 = 0x1020;
+        /* fallthrough */
+    case 0x1020:
+        if (!MapCity_tmp_254.bMove) {
+            if (TsCheckTimeMapChange()) {
+                break;
+            }
+        }
+
+        ret = MpMapMenu_Flow(0, &MapCity_tmp_254, tpad);
+        if (MapCity_tmp_254.anmStop != 0) {
+            if (pP3GameState->pAutoMove != NULL) {
+                state_tmp_253 = 0x1018;
+                break;
+            }
+        }
+
+        switch (MapCity_tmp_254.sndtrg) {
+        case 1:
+            TsBGMChangePos(MapCity_tmp_254.curPos + 1);
+            break;
+        case 3:
+            TSSNDPLAY(9);
+            break;
+        case 2:
+            break;
+        }
+
+        if (ret == 0) {
+            break;
+        } else if (ret == 1) {
+            state_tmp_253 = 0x1100;
+        } else if (ret == -1) {
+            state_tmp_253 = 0x1200;
+            break;
+        } else {
+            break;
+        }
+
+        /* fallthrough */
+    case 0x1100:
+        if (MapCity_tmp_254.curPos == 0) {
+            MNScene_StartAnime(&MNS_StageMap, -1, &StageMapAnimePA[3]);
+            TSSNDPLAY(7);
+            state_tmp_253 = 0x6000;
+            break;
+        } else if (MapCity_tmp_254.curPos == 9) {
+            MNScene_StartAnime(&MNS_StageMap, -1, &StageMapAnimePA[3]);
+            TSSNDPLAY(7);
+            state_tmp_253 = 0x5000;
+            break;
+        }
+
+        TSSNDPLAY(7);
+        pP3GameState->nStage = MapCity_tmp_254.curPos;
+        state_tmp_253 = 0x3000;
+        break;
+    case 0x1200:
+        TsBGMStop(0x26);
+        _MNwaitTime = 40;
+        TsCMPMes_SetMes(-1);
+        pP3GameState->nStage = MapCity_tmp_254.curPos;
+        state_tmp_253 = 0x1210;
+        /* fallthrough */
+    case 0x1210:
+        if (--_MNwaitTime <= 0) {
+            return 4;
+        }
+        break;
+    case 0x2000:
+        if (pP3GameState->nStage < 1 || pP3GameState->nStage > 8) {
+            state_tmp_253 = 0;
+            return 0;
+        }
+        TsRanking_Set();
+        MpSave_Flow(1, 0, 0);
+        state_tmp_253 = 0x2010;
+        /* fallthrough */
+    case 0x2010:
+        if (!pP3GameState->isWipeEnd) {
+            break;
+        }
+        _MNwaitTime = 30;
+        state_tmp_253 = 0x2020;
+        /* fallthrough */
+    case 0x2020:
+        if (--_MNwaitTime <= 0) {
+            state_tmp_253 = 0x2100;
+        } else {
+            break;
+        }        
+        /* fallthrough */
+    case 0x2100:
+        if (!MpSave_Flow(0, tpad, tpad2)) {
+            return 0;
+        }
+        state_tmp_253 = 0x2200;
+        /* fallthrough */
+    case 0x2200:
+        if (TsSCFADE_Set(2, 0x1e, 0)) {
+            return 0;
+        }
+        TsSet_ParappaCapColor();
+        state_tmp_253 = 0x2400;
+        /* fallthrough */
+    case 0x2400:
+        TsSCFADE_Set(1, 0x1e, 0);
+        state_tmp_253 = 0;
+        break;
+    case 0x3000:
+        MNScene_StartAnime(&MNS_StageMap, -1, &StageMapAnimePA[3]);
+        MpPopMenu_Flow(1, 0);
+        state_tmp_253 = 0x3010;
+        /* fallthrough */
+    case 0x3010:
+        ret = MpPopMenu_Flow(0, tpad);
+
+        if (ret == 0) {
+            break;
+        } else if (ret == -1) {
+            MNScene_StartAnime(&MNS_StageMap, -1, &StageMapAnimePA[0]);
+            state_tmp_253 = 0x1000;
+            break;
+        }
+
+        switch (ret & 0xff) {
+        case 1:
+            pP3GameState->nMode = 0;
+            pP3GameState->vsLev = 0;
+            break;
+        case 2:
+            pP3GameState->nMode = 1;
+            pP3GameState->vsLev = 0;
+            break;
+        case 3:
+            pP3GameState->nMode = 2;
+            pP3GameState->vsLev = ret >> 0x8;
+            break;
+        }
+
+        state_tmp_253 = 0x4000;
+        break;
+    case 0x4000:
+        TsCheckEnding(pP3GameState);
+        TsBGMStop(0x20);
+        _MNwaitTime = 32;
+        TsCMPMes_SetMes(-1);
+        state_tmp_253 = 0x4010;
+        /* fallthrough */
+    case 0x4010:
+        if (--_MNwaitTime <= 0) {
+            return 2;
+        }
+        break;
+    case 0x5000:
+        pP3GameState->curRecJacket = 0;
+        state_tmp_253 = 0x5100;
+        break;
+    case 0x5010:
+        MNScene_StartAnime(&MNS_StageMap, -1, &StageMapAnimePA[0]);
+        state_tmp_253 = 0x5018;
+        _MNwaitTime = 40;
+        /* fallthrough */
+    case 0x5018:
+        if (--_MNwaitTime <= 0) {
+            TSSNDPLAY(7);
+            state_tmp_253 = 0x5100;
+        }
+        break;
+    case 0x5100:
+        pP3GameState->nStage = MapCity_tmp_254.curPos;
+        MNScene_StartAnime(&MNS_StageMap, -1, &StageMapAnimePA[3]);
+        TsJukeMenu_Flow(1, pP3GameState->curRecJacket);
+        state_tmp_253 = 0x5200;
+        /* fallthrough */
+    case 0x5200:
+        if (!TsJukeMenu_Flow(0, tpad)) {
+            return 0;
+        }
+        TsJukeMenu_Flow(2, 0);
+        MNScene_StartAnime(&MNS_StageMap, -1, &StageMapAnimePA[0]);
+        state_tmp_253 = 0x1000;
+        break;
+    case 0x6000:
+        MenuVoiceBankSet(0);
+        state_tmp_253 = 0x6001;
+        /* fallthrough */
+    case 0x6001:
+        if (TsSCFADE_Set(2, 0x14, 0)) {
+            return 0;
+        }
+        state_tmp_253 = 0x6010;
+        /* fallthrough */
+    case 0x6010:
+        TsBGMPlay(1, 0x14);
+        TsSCFADE_Set(1, 0x14, 0);
+        MpCityHall_Flow(1, 0, 0);
+        state_tmp_253 = 0x7000;
+        break;
+    case 0x6500:
+        TsBGMPlay(1, 0x14);
+        MpCityHall_Flow(1, 1, 0);
+        state_tmp_253 = 0x6510;
+        /* fallthrough */
+    case 0x6510:
+        if (!pP3GameState->isWipeEnd) {
+            break;
+        }
+        state_tmp_253 = 0x7000;
+        /* fallthrough */
+    case 0x7000:
+        ret = MpCityHall_Flow(0, tpad, tpad2);
+        if (ret == 0) {
+            break;
+        } else if (ret == 2) {
+            state_tmp_253 = 0xff00;
+            break;
+        } else if (ret == 3) {
+            state_tmp_253 = 0x7020;
+        } else {
+            state_tmp_253 = 0x7010;
+        }
+        break;
+    case 0x7010:
+        MenuVoiceBankSet(0);
+        state_tmp_253 = 0x7011;
+        /* fallthrough */
+    case 0x7011:
+        if (TsSCFADE_Set(2, 0x1e, 0)) {
+            return 0;
+        }
+        state_tmp_253 = 0x7020;
+        /* fallthrough */
+    case 0x7020:
+        if (TsBGMLoadCheck()) {
+            return 0;
+        }
+        TsMap_Flow(1, 0, 0);
+        TsSCFADE_Set(1, 0xf, 0);
+        break;
+    case 0xff00:
+        return 3;
+    }
+
+    return 0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsMakeUserWork);
 
