@@ -1,4 +1,9 @@
 ENTRY(_start);
 
+_stack_size = 0x8000;
+_stack = -1;
+_heap_size = -1;
+
+_fbss = main_SBSS_START;
 _end = 0x01dde800; /* todo */
 end = _end;

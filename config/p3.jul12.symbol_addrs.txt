@@ -4,6 +4,8 @@ _start                              = 0x00100008; // type:func
 _exit                               = 0x001000b8; // type:func
 _root                               = 0x001000c0; // type:func
 
+_args                               = 0x00399c00; // size:0x144
+
 // tmp/cc76DAYa.c
 reg_frame                           = 0x001000c8; // type:func
 dereg_frame                         = 0x00100100; // type:func
@@ -2440,6 +2442,31 @@ strlen                              = 0x00171bb4; // type:func
 D_003938F8                          = 0x003938f8; // type:s32
 
 // -- Ignored addresses --
+D_378                               = 0x00000378; // ignore:true
+D_6D8                               = 0x000006d8; // ignore:true
+D_A58                               = 0x00000a58; // ignore:true
+D_D88                               = 0x00000D88; // ignore:true
+D_11E8                              = 0x000011e8; // ignore:true
+D_1388                              = 0x00001388; // ignore:true
+D_15D8                              = 0x000015d8; // ignore:true
+D_1A90                              = 0x00001a90; // ignore:true
 D_FFFF                              = 0x0000ffff; // ignore:true
 D_8000                              = 0x00008000; // ignore:true
+D_C25B8                             = 0x000c25b8; // ignore:true
+D_C26F8                             = 0x000c26f8; // ignore:true
+D_FFFFF                             = 0x000fffff; // ignore:true
 D_00300000                          = 0x00300000; // ignore:true
+D_00168A48                          = 0x00168a48; // defined:true
+D_00168BB0                          = 0x00168bb0; // defined:true
+D_001694D8                          = 0x001694d8; // defined:true
+D_001695F4                          = 0x001695f4; // defined:true
+D_001696C0                          = 0x001696c0; // defined:true
+D_1DDE800                           = 0x01dde800; // ignore:true
+D_20000001                          = 0x20000001; // ignore:true
+D_20000010                          = 0x20000010; // ignore:true
+D_20000020                          = 0x20000020; // ignore:true
+D_20000050                          = 0x20000050; // ignore:true
+D_20000140                          = 0x20000140; // ignore:true
+D_30000010                          = 0x30000010; // ignore:true
+D_70000004                          = 0x70000004; // ignore:true
+

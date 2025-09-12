@@ -1,6 +1,20 @@
 // sdk/crt0.s: _start
+rom:0x8 symbol:_fbss reloc:MIPS_HI16
+rom:0x10 symbol:_fbss reloc:MIPS_LO16
+rom:0xC symbol:_end reloc:MIPS_HI16
+rom:0x14 symbol:_end reloc:MIPS_LO16
 rom:0x34 symbol:_gp reloc:MIPS_HI16
 rom:0x48 symbol:_gp reloc:MIPS_LO16
+rom:0x38 symbol:_stack reloc:MIPS_HI16
+rom:0x4C symbol:_stack reloc:MIPS_LO16
+rom:0x3C symbol:_stack_size reloc:MIPS_HI16
+rom:0x50 symbol:_stack_size reloc:MIPS_LO16
+rom:0x40 symbol:_args reloc:MIPS_HI16
+rom:0x54 symbol:_args reloc:MIPS_LO16
+rom:0x6C symbol:_end reloc:MIPS_HI16
+rom:0x74 symbol:_end reloc:MIPS_LO16
+rom:0x70 symbol:_heap_size reloc:MIPS_HI16
+rom:0x78 symbol:_heap_size reloc:MIPS_LO16
 
 //
 // os/mtc.c
@@ -12,6 +26,15 @@ rom:0x1664 symbol:_gp reloc:MIPS_LO16
 // MtcExec
 rom:0x178C symbol:_gp reloc:MIPS_HI16
 rom:0x1790 symbol:_gp reloc:MIPS_LO16
+
+//
+// os/system.c
+//
+
+// _end_addr
+rom:0x299334 symbol:_end reloc:MIPS_32
+// _stack_size_addr
+rom:0x299338 symbol:_stack_size reloc:MIPS_32
 
 //
 // os/usrmem.c
@@ -113,8 +136,24 @@ rom:0x299834 symbol:D_00396190 reloc:MIPS_32
 rom:0x2998A4 symbol:none reloc:MIPS_NONE
 
 // prlib/microprogram.cpp: CalculateEntryPoint
+rom:0x46DC8 symbol:vump_normal reloc:MIPS_HI16
+rom:0x46DF0 symbol:vump_normal reloc:MIPS_LO16
 rom:0x46DCC symbol:vump_top reloc:MIPS_HI16
 rom:0x46DD0 symbol:vump_top reloc:MIPS_LO16
+rom:0x46DD4 symbol:vump_bothface reloc:MIPS_HI16
+rom:0x46DF4 symbol:vump_bothface reloc:MIPS_LO16
+rom:0x46DD8 symbol:vump_contour reloc:MIPS_HI16
+rom:0x46DFC symbol:vump_contour reloc:MIPS_LO16
+rom:0x46DDC symbol:vump_refmap reloc:MIPS_HI16
+rom:0x46E00 symbol:vump_refmap reloc:MIPS_LO16
+rom:0x46DE0 symbol:vump_screen reloc:MIPS_HI16
+rom:0x46E04 symbol:vump_screen reloc:MIPS_LO16
+rom:0x46DE4 symbol:vump_antiline reloc:MIPS_HI16
+rom:0x46E08 symbol:vump_antiline reloc:MIPS_LO16
+rom:0x46DE8 symbol:vump_menderer_create_texture reloc:MIPS_HI16
+rom:0x46E0C symbol:vump_menderer_create_texture reloc:MIPS_LO16
+rom:0x46DEC symbol:vump_menderer_draw_mesh reloc:MIPS_HI16
+rom:0x46E10 symbol:vump_menderer_draw_mesh reloc:MIPS_LO16
 
 // prlib/spram.cpp: dmaTagTemplate.1864
 rom:0x28C718 symbol:none reloc:MIPS_NONE

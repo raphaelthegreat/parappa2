@@ -215,7 +215,7 @@ def build_stuff(linker_entries: List[LinkerEntry], is_irx: bool = False, append:
 
     # Rules
     common_ld_args = "-EL -Map $mapfile -T $in -o $out"
-    ee_ld_args = f"{common_ld_args} -T config/p3.jul12.misc.txt -T config/p3.jul12.vu_syms.txt -T config/p3.jul12.undefined_syms_auto.txt -T config/p3.jul12.undefined_funcs_auto.txt -T config/p3.jul12.undefined_syms.txt"
+    ee_ld_args = f"{common_ld_args} -T config/p3.jul12.misc.txt -T config/p3.jul12.vu_syms.txt -T config/p3.jul12.undefined_syms.txt"
     wp2_ld_args = f"{common_ld_args} -T config/irx.wave2ps2.jul12.undefined_syms_auto.txt -T config/irx.wave2ps2.jul12.undefined_funcs_auto.txt -T config/irx.wave2ps2.jul12.undefined_syms.txt"
 
     if not append:
