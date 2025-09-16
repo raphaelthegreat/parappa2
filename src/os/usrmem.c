@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 /* .bss */
-extern char usrMemoryData[25690112]; /* ~25 MB */
+extern char usrMemoryData[0x1880000]; /* ~25 MB */
 extern u_int usrMemPos[2048];
 
 /* .sbss */
@@ -81,7 +81,7 @@ u_int UsrMemAlloc(int size) {
     if (usrMemPos[usrMemPosCnt] > UsrMemAllocEndNext()) {
         printf("UsrMemAlloc size over [0x%08x]\n", usrMemPos[usrMemPosCnt] - UsrMemAllocEndNext());
         usrMemPosCnt--;
-        return 0;
+        return NULL;
     }
 
     return ret;
@@ -92,7 +92,7 @@ u_int UsrMemEndAlloc(int size) {
     
     if (ret < UsrMemAllocNext()) {
         printf("UsrMemEndAlloc size over [0x%08x]\n", UsrMemAllocNext() - ret);
-        return 0;
+        return NULL;
     }
 
     usrMemPosEndCnt++;

@@ -471,6 +471,6 @@ segments:
       start: 0x29A000
       vram: 0x01C90000
       subsegments:
-        - [0x29A000, databin, mfifo/mfifo]
+        - [0x29A000, databin, prlib/mfifo]
 
     - [0x2AA000]

@@ -36,7 +36,7 @@ public:
     PR_PADDING(unk80, 0xc0);
     NaVECTOR<float, 4> unk140;
     int unk150;
-    u_int unk154;
+    u_int flags;
     SpmFileHeader* unk158;
     SpmNode* unk15C;
     SpmNode* unk160;
@@ -77,9 +77,10 @@ public:
     NaVECTOR<float, 4> unk40;
     PR_PADDING(unk50, 0x14);
     int* unk64;
-    u_int unk68;
-    PR_PADDING(unk6C, 0x8);
-    SpmNode** unk74;
+    u_int node_num;
+    PR_PADDING(unk6C, 0x4);
+    int unk70;
+    SpmNode** nodes;
     int unk78;
 
 public:
@@ -96,6 +97,7 @@ public:
 
 struct SpmComplexNode {
 public:
+    void SaveContour(PrModelObject* model);
     void RenderContour(PrModelObject* model);
 };
 
@@ -135,7 +137,10 @@ public:
     NaMATRIX<float, 4, 4> unk10;
     PR_PADDING(unk50, 0x8);
     SpmFileHeader* mSpmImage;
-    PR_PADDING(unk5C, 0x54);
+    u_int mFlags;
+    PR_PADDING(unk60, 0x24);
+    int unk84;
+    PR_PADDING(unk88, 0x28);
 };
 
 #endif /* PRLIB_MODEL_H */
