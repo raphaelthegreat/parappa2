@@ -313,15 +313,15 @@ PrRENDERING_STATISTICS* PrGetRenderingStatistics() {
 
 PR_EXTERN
 void PrSetModelVisibillity(PrModelObject* model, u_int nodeIdx, bool visible) {
-    if (nodeIdx >= model->mSpmImage->unk68) {
+    if (nodeIdx >= model->mSpmImage->node_num) {
         return;
     }
 
-    SpmNode* node = model->mSpmImage->unk74[nodeIdx];
+    SpmNode* node = model->mSpmImage->nodes[nodeIdx];
     if (visible) {
-        node->unk154 &= ~0x20000;
+        node->flags &= ~0x20000;
     } else {
-        node->unk154 |= 0x20000;
+        node->flags |= 0x20000;
     }
 }
 

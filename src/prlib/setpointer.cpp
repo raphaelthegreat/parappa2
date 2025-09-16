@@ -13,14 +13,14 @@ void SpmFileHeader::ChangePointer() {
     }
 
     this->unk64 = this->CalculatePointer<int>(this->unk64);
-    this->unk74 = this->CalculatePointer<SpmNode*>(this->unk74);
+    this->nodes = this->CalculatePointer<SpmNode*>(this->nodes);
 
-    for (int i = 0; i < this->unk68; i++) {
-        this->unk74[i] = this->CalculatePointer<SpmNode>(this->unk74[i]);
+    for (int i = 0; i < this->node_num; i++) {
+        this->nodes[i] = this->CalculatePointer<SpmNode>(this->nodes[i]);
     }
 
     /* Change node pointers starting from the first. */
-    (*this->unk74)->ChangePointer(this, NULL);
+    (*this->nodes)->ChangePointer(this, NULL);
     this->flags |= 0x1;
 }
 
@@ -45,12 +45,12 @@ void SpmNode::ChangePointer(SpmFileHeader* arg0, SpmNode* arg1) {
         }
     }
 
-    if (this->unk154 & 0xff0) {
+    if (this->flags & 0xff0) {
         this->unk198 = arg0->CalculatePointer<int>(this->unk198);
-        if (this->unk154 & 0x10) {
+        if (this->flags & 0x10) {
             this->unk1B4 = arg0->CalculatePointer<int>(this->unk1B4);
             this->unk1B8 = arg0->CalculatePointer<int>(this->unk1B8);
-        } else if (this->unk154 & 0x20) {
+        } else if (this->flags & 0x20) {
             this->unk1B4 = arg0->CalculatePointer<int>(this->unk1B4);
         }
 
