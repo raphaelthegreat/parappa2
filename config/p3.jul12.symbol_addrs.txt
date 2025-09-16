@@ -1820,6 +1820,7 @@ SortTransmitDmaArray__13PrRenderStuff                                           
 MergeRender__13PrRenderStuff                                                        = 0x00141538; // type:func
 _GLOBAL_$D$prRenderStuff                                                            = 0x00141630; // type:func
 _GLOBAL_$I$prRenderStuff                                                            = 0x00141640; // type:func
+AppendDmaTag__13PrRenderStuffPC10_sceDmaTag                                         = 0x00141650; // type:func
 
 prRenderStuff                                                                       = 0x0038c480; // size:0x58
 

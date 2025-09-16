@@ -1,8 +1,6 @@
 # This file is used by the original compiler/assembler.
 # Defines the expected assembly macros.
 
-.include "gte_macros.inc"
-
 # A function symbol.
 .macro glabel label, visibility=global
     .\visibility \label

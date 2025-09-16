@@ -11,13 +11,12 @@
 #include <stdlib.h>
 
 PrRenderStuff::PrRenderStuff() : mDmaQueue(1200) {
-    this->unk10 = 0;
-    this->unk14 = 0;
-    this->unk18 = NULL;
-
+    mTransmitArraySize = 0;
+    mTransmitArrayMax = 0;
+    mTransmitArray = NULL;
     AllocateTransmitDmaArray(600);
 
-    this->unk1C = NULL;
+    mScene = NULL;
 }
 
 PrRenderStuff::~PrRenderStuff() {
@@ -25,8 +24,8 @@ PrRenderStuff::~PrRenderStuff() {
 }
 
 void PrRenderStuff::Initialize(sceGsZbuf zbuf) {
-    this->unk20 = zbuf;
-    this->unk1C = NULL;
+    mZbuf = zbuf;
+    mScene = NULL;
     this->unk28 = 0;
 
     PrLoadMicroPrograms();
@@ -51,16 +50,16 @@ void PrRenderStuff::Initialize(sceGsZbuf zbuf) {
 void PrRenderStuff::Cleanup() {
     PrCleanupMfifo();
 
-    delete this->unk18;
+    delete mTransmitArray;
+    mTransmitArraySize = 0;
+    mTransmitArrayMax = 0;
+    mTransmitArray = NULL;
 
-    this->unk10 = 0;
-    this->unk14 = 0;
-    this->unk18 = NULL;
-    this->unk1C = NULL;
+    mScene = NULL;
 }
 
 u_int PrRenderStuff::GetZbufBits(void) const {
-    switch (this->unk20.PSM) {
+    switch (mZbuf.PSM) {
     case 0:  /* PSMZ32 */
         return 32;
     case 1:  /* PSMZ24 */
@@ -99,29 +98,28 @@ void PrRenderStuff::ResetStatistics() {
 
 void PrRenderStuff::StartRender(PrSceneObject* scene) {
     mDmaQueue.Start();
-    this->unk1C = scene;
+    mScene = scene;
 }
 
 void PrRenderStuff::WaitRender() {
-    bool s1;
+    bool s1 = false;
 
     mDmaQueue.Wait();
-    s1 = false;
     PrStopMfifo();
 
     mStatistics.render_time6 = *T3_COUNT;
 
-    if (this->unk1C->GetFocalLength() != 0.0f) {
+    if (mScene->GetFocalLength() != 0.0f) {
+        sceGsSyncPath(0, 0);
+        mScene->ApplyDepthOfField();
         sceGsSyncPath(0, 0);
         s1 = true;
-        this->unk1C->ApplyDepthOfField();
-        sceGsSyncPath(0, 0);
     }
 
-    if (this->unk1C->mScreenModelList != NULL) {
-        s1 = false;
-        this->unk1C->PrepareScreenModelRender();
+    if (mScene->mScreenModelList != NULL) {
+        mScene->PrepareScreenModelRender();
         mDmaQueue.Wait();
+        s1 = false;
     }
 
     if (!s1) {
@@ -130,44 +128,43 @@ void PrRenderStuff::WaitRender() {
 
     mStatistics.render_time7 = *T3_COUNT;
 
-    this->unk1C = NULL;
+    mScene = NULL;
 }
 
 void PrRenderStuff::AllocateTransmitDmaArray(u_int size) {
-    if (this->unk14 >= size) {
+    if (mTransmitArrayMax >= size) {
         return;
     }
 
-    int s0 = 600;
-    while (s0 < size) {
-        s0 = s0 * 2;
+    int elems = 600;
+    while (elems < size) {
+        elems *= 2;
     }
 
-    delete this->unk18;
-
-    this->unk18 = new StrUnk18[s0];
-    this->unk14 = s0;
+    delete mTransmitArray;
+    mTransmitArray = new PrTransmitEntry[elems];
+    mTransmitArrayMax = elems;
 }
 
-void PrRenderStuff::AppendTransmitDmaTag(const sceDmaTag* arg0, u_int arg1, float arg2) {
+void PrRenderStuff::AppendTransmitDmaTag(const sceDmaTag* tag, u_int arg1, float arg2) {
     extern bool warned_tmp_renderstuff;
 
-    if (this->unk10 >= this->unk14) {
+    if (mTransmitArraySize >= mTransmitArrayMax) {
         if (!warned_tmp_renderstuff) {
             warned_tmp_renderstuff = true;
             return;
         }
     } else {
-        this->unk18[this->unk10].unk0 = arg2;
-        this->unk18[this->unk10].unk4 = arg1;
-        this->unk18[this->unk10].unk8 = (sceDmaTag*)arg0;
-        this->unk10++;
+        mTransmitArray[mTransmitArraySize].unk0 = arg2;
+        mTransmitArray[mTransmitArraySize].unk4 = arg1;
+        mTransmitArray[mTransmitArraySize].tag = tag;
+        mTransmitArraySize++;
     }
 }
 
 int PrRenderStuff::CompareFunction(const void* arg0, const void* arg1) {
-    StrUnk18* a0 = (StrUnk18*)arg0;
-    StrUnk18* a1 = (StrUnk18*)arg1;
+    PrTransmitEntry* a0 = (PrTransmitEntry*)arg0;
+    PrTransmitEntry* a1 = (PrTransmitEntry*)arg1;
 
     if (a0->unk4 != a1->unk4) {
         return (a0->unk4 >= a1->unk4) ? 1 : -1;
@@ -183,25 +180,22 @@ int PrRenderStuff::CompareFunction(const void* arg0, const void* arg1) {
 }
 
 void PrRenderStuff::SortTransmitDmaArray() {
-    if (this->unk10 > 1) {
-        qsort(this->unk18, this->unk10, sizeof(StrUnk18), CompareFunction);
+    if (mTransmitArraySize > 1) {
+        qsort(mTransmitArray, mTransmitArraySize, sizeof(PrTransmitEntry), CompareFunction);
     }
 }
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("asm/nonmatchings/prlib/renderstuff", MergeRender__13PrRenderStuff);
-#else
 void PrRenderStuff::MergeRender() {
     bool s4 = false;
 
-    for (int i = 0; i < this->unk10; i++) {
-        if (!s4 && this->unk18[i].unk4 == -1) {
-            s4 = true;
+    for (int i = 0; i < mTransmitArraySize; i++) {
+        if (!s4 && mTransmitArray[i].unk4 == -1) {
             PrDmaStripForSetGifRegister* strip = PrGetDmaStripGifRegister(eGifRegisterMode_Unk1);
             AppendDmaTag(&strip->mTag);
+            s4 = true;
         }
 
-        AppendDmaTag(this->unk18[i].unk8);
+        AppendDmaTag(mTransmitArray[i].tag);
     }
 
     if (prCurrentStage == 19) {
@@ -209,11 +203,7 @@ void PrRenderStuff::MergeRender() {
         AppendDmaTag(&strip->mTag);
     }
 }
-#endif
 
 INCLUDE_ASM("asm/nonmatchings/prlib/renderstuff", _GLOBAL_$D$prRenderStuff);
 
 INCLUDE_ASM("asm/nonmatchings/prlib/renderstuff", _GLOBAL_$I$prRenderStuff);
-
-/* prlib/renderstuff.h */
-INCLUDE_ASM("asm/nonmatchings/prlib/renderstuff", func_00141650);

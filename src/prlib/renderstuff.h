@@ -10,10 +10,10 @@
 #include <eetypes.h>
 #include <eestruct.h>
 
-struct StrUnk18 {
+struct PrTransmitEntry {
     float unk0;
     u_int unk4;
-    sceDmaTag* unk8;
+    const sceDmaTag* tag;
 };
 
 class PrRenderStuff {
@@ -39,24 +39,20 @@ public:
     void MergeRender();
 
 public:
-    void AppendDmaTag(const sceDmaTag* tag);
+    void AppendDmaTag(const sceDmaTag* tag) {
+        mDmaQueue.Append((void*)tag);
+    }
 
 public:
     PrDmaQueue mDmaQueue;
-    u_int unk10;
-    int unk14;
-    StrUnk18* unk18;
-    PrSceneObject* unk1C;
-    sceGsZbuf unk20;
+    u_int mTransmitArraySize;
+    int mTransmitArrayMax;
+    PrTransmitEntry* mTransmitArray;
+    PrSceneObject* mScene;
+    sceGsZbuf mZbuf;
     int unk28;
     PrRENDERING_STATISTICS mStatistics;
 };
-
-#if 0
-void PrRenderStuff::AppendDmaTag(const sceDmaTag* tag) {
-    mDmaQueue.Append((void*)tag);
-}
-#endif
 
 extern PrRenderStuff prRenderStuff;
 
