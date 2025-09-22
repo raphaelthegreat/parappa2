@@ -1,15 +1,15 @@
 {
   "measures": {
-    "fuzzy_match_percent": 39.48709,
+    "fuzzy_match_percent": 39.669395,
     "total_code": "342284",
-    "matched_code": "133068",
-    "matched_code_percent": 38.876488,
+    "matched_code": "133692",
+    "matched_code_percent": 39.058792,
     "total_data": "223328",
     "matched_data": "179344",
     "matched_data_percent": 80.3052,
     "total_functions": 1429,
-    "matched_functions": 865,
-    "matched_functions_percent": 60.53184,
+    "matched_functions": 871,
+    "matched_functions_percent": 60.951717,
     "total_units": 70
   },
   "units": [
@@ -9297,14 +9297,14 @@
     {
       "name": "prlib/renderstuff",
       "measures": {
-        "fuzzy_match_percent": 79.47977,
+        "fuzzy_match_percent": 97.976875,
         "total_code": "1384",
-        "matched_code": "1100",
-        "matched_code_percent": 79.47977,
+        "matched_code": "1356",
+        "matched_code_percent": 97.97688,
         "matched_data_percent": 100.0,
         "total_functions": 16,
-        "matched_functions": 12,
-        "matched_functions_percent": 75.0,
+        "matched_functions": 14,
+        "matched_functions_percent": 87.5,
         "complete_data_percent": 100.0,
         "total_units": 1
       },
@@ -9322,7 +9322,7 @@
         {
           "name": ".text",
           "size": "1408",
-          "fuzzy_match_percent": 79.47977,
+          "fuzzy_match_percent": 97.976875,
           "metadata": {}
         }
       ],
@@ -9422,6 +9422,7 @@
         {
           "name": "MergeRender__13PrRenderStuff",
           "size": "248",
+          "fuzzy_match_percent": 100.0,
           "metadata": {
             "demangled_name": "PrRenderStuff::MergeRender"
           },
@@ -9440,8 +9441,9 @@
           "address": "1384"
         },
         {
-          "name": "func_00141650",
+          "name": "AppendDmaTag__13PrRenderStuffPC10_sceDmaTag",
           "size": "8",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "1400"
         }
@@ -10681,16 +10683,16 @@
     {
       "name": "prlib/mfifo",
       "measures": {
-        "fuzzy_match_percent": 48.920864,
+        "fuzzy_match_percent": 72.66187,
         "total_code": "556",
-        "matched_code": "272",
-        "matched_code_percent": 48.920864,
+        "matched_code": "404",
+        "matched_code_percent": 72.66187,
         "total_data": "8",
         "matched_data": "8",
         "matched_data_percent": 100.0,
         "total_functions": 7,
-        "matched_functions": 5,
-        "matched_functions_percent": 71.42857,
+        "matched_functions": 6,
+        "matched_functions_percent": 85.71429,
         "total_units": 1
       },
       "sections": [
@@ -10713,7 +10715,7 @@
         {
           "name": ".text",
           "size": "576",
-          "fuzzy_match_percent": 48.920864,
+          "fuzzy_match_percent": 72.66187,
           "metadata": {}
         }
       ],
@@ -10739,6 +10741,7 @@
         {
           "name": "PrStartMfifo__Fv",
           "size": "132",
+          "fuzzy_match_percent": 100.0,
           "metadata": {
             "demangled_name": "PrStartMfifo()"
           },
@@ -11563,14 +11566,14 @@
     {
       "name": "prlib/menderer",
       "measures": {
-        "fuzzy_match_percent": 0.09950249,
+        "fuzzy_match_percent": 0.6965174,
         "total_code": "8040",
-        "matched_code": "8",
-        "matched_code_percent": 0.09950249,
+        "matched_code": "56",
+        "matched_code_percent": 0.6965174,
         "total_data": "32",
         "total_functions": 28,
-        "matched_functions": 1,
-        "matched_functions_percent": 3.5714288,
+        "matched_functions": 2,
+        "matched_functions_percent": 7.1428576,
         "total_units": 1
       },
       "sections": [
@@ -11592,7 +11595,7 @@
         {
           "name": ".text",
           "size": "8080",
-          "fuzzy_match_percent": 0.09950249,
+          "fuzzy_match_percent": 0.6965174,
           "metadata": {}
         }
       ],
@@ -11746,6 +11749,7 @@
         {
           "name": "PrRenderMenderer",
           "size": "48",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "6472"
         },
@@ -12643,9 +12647,14 @@
     {
       "name": "prlib/contour",
       "measures": {
+        "fuzzy_match_percent": 13.702624,
         "total_code": "1372",
+        "matched_code": "188",
+        "matched_code_percent": 13.702623,
         "matched_data_percent": 100.0,
         "total_functions": 4,
+        "matched_functions": 2,
+        "matched_functions_percent": 50.0,
         "complete_data_percent": 100.0,
         "total_units": 1
       },
@@ -12663,6 +12672,7 @@
         {
           "name": ".text",
           "size": "1384",
+          "fuzzy_match_percent": 13.702624,
           "metadata": {}
         }
       ],
@@ -12670,6 +12680,7 @@
         {
           "name": "SaveContour__13PrModelObject",
           "size": "164",
+          "fuzzy_match_percent": 100.0,
           "metadata": {
             "demangled_name": "PrModelObject::SaveContour"
           },
@@ -12684,6 +12695,7 @@
         {
           "name": "ResetContour__13PrModelObject",
           "size": "24",
+          "fuzzy_match_percent": 100.0,
           "metadata": {
             "demangled_name": "PrModelObject::ResetContour"
           },
@@ -12839,16 +12851,16 @@
     {
       "id": "prlib",
       "measures": {
-        "fuzzy_match_percent": 17.472897,
+        "fuzzy_match_percent": 18.23132,
         "total_code": "82276",
-        "matched_code": "14376",
-        "matched_code_percent": 17.472897,
+        "matched_code": "15000",
+        "matched_code_percent": 18.23132,
         "total_data": "3548",
         "matched_data": "2324",
         "matched_data_percent": 65.50169,
         "total_functions": 360,
-        "matched_functions": 109,
-        "matched_functions_percent": 30.277777,
+        "matched_functions": 115,
+        "matched_functions_percent": 31.944445,
         "total_units": 33
       }
     }
