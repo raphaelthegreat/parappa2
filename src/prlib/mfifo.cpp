@@ -25,30 +25,23 @@ void PrCleanupMfifo() {
     PrStopMfifo();
 }
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("asm/nonmatchings/prlib/mfifo", PrStartMfifo__Fv);
-#else
 void PrStartMfifo() {
-    if (mfifoProcessing) {
-        return;
+    if (!mfifoProcessing) {
+        mfifoProcessing = true;
+        PrWaitDmaFinish(SCE_DMA_fromSPR);
+        PrWaitDmaFinish(SCE_DMA_GIF);
+
+        ((tD_CTRL*)D_CTRL)->MFD = 3;
+        ((tD_CTRL*)D_CTRL)->RELE = 0;
+        ((tD_CTRL*)D_CTRL)->RCYC = 0;
+        
+        *D8_MADR = (u_int)mfifoBase;
+        *D2_TADR = (u_int)mfifoBase;
+
+        /* MOD=1, TTE=1 */
+        *(int*)D2_CHCR = 0x104;
     }
-
-    mfifoProcessing = true;
-    PrWaitDmaFinish(SCE_DMA_fromSPR);
-    PrWaitDmaFinish(SCE_DMA_GIF);
-
-    ((tD_CTRL*)D_CTRL)->MFD = 3;
-    ((tD_CTRL*)D_CTRL)->RELE = 0;
-    ((tD_CTRL*)D_CTRL)->RCYC = 0;
-    
-    *D8_MADR = (u_int)mfifoBase;
-    *D2_TADR = (u_int)mfifoBase;
-
-    // ((tD_CHCR*)D2_CHCR)->MOD = 1;
-    // ((tD_CHCR*)D2_CHCR)->TTE = 1;
-    *D2_CHCR = 0x104;
 }
-#endif
 
 void PrStopMfifo() {
     if (mfifoProcessing) {
@@ -76,20 +69,18 @@ void PrWaitMfifo() {
 INCLUDE_ASM("asm/nonmatchings/prlib/mfifo", PrSendMfifo__FPC10_sceDmaTag);
 #else
 void PrSendMfifo(const sceDmaTag* tag) {
-    u_int a0 = tag->qwc + 1;
-    u_int a2 = a0 * 16;
+    u_int qwc = tag->qwc + 1;
+    u_int size = qwc * 16;
 
     while ( *D8_CHCR & 0x100 );
 
     *D8_SADR = (u_int)tag & 0xfff0;
-    *D8_QWC = a0;
+    *D8_QWC = qwc;
 
-    u_int v0;
-    u_int v1;
     while (1) {
-        v1 = *D2_TADR;
-        v0 = *D8_MADR;
-        if (v1 == v0 || a2 < PrMfifoGetUnsentDataSize(v0, v1)) {
+        u_int v1 = *D2_TADR;
+        u_int v0 = *D8_MADR;
+        if (v1 == v0 || size < PrMfifoGetUnsentDataSize(v0, v1)) {
             break;
         }
     }
