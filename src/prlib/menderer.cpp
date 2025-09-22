@@ -1,5 +1,13 @@
 #include "common.h"
 
+#if defined(PRD_SYORI)
+#include "dbug/syori.h"
+#endif
+
+#include "renderstuff.h"
+
+#include <eeregs.h>
+
 INCLUDE_ASM("asm/nonmatchings/prlib/menderer", InitializeNoodleStripRendering__FUiUiUiUi);
 
 INCLUDE_ASM("asm/nonmatchings/prlib/menderer", GetRandom__Fv);
@@ -27,6 +35,7 @@ INCLUDE_ASM("asm/nonmatchings/prlib/menderer", PrDecelerateMenderer);
 INCLUDE_ASM("asm/nonmatchings/prlib/menderer", PrRestartMenderer);
 
 INCLUDE_ASM("asm/nonmatchings/prlib/menderer", DrawMenderer__Fv);
+void DrawMenderer();
 
 INCLUDE_ASM("asm/nonmatchings/prlib/menderer", PrSetMendererRatio);
 
@@ -42,7 +51,14 @@ INCLUDE_ASM("asm/nonmatchings/prlib/menderer", PrIsMendererColorModulation);
 
 INCLUDE_ASM("asm/nonmatchings/prlib/menderer", PrInitializeMenderer);
 
-INCLUDE_ASM("asm/nonmatchings/prlib/menderer", PrRenderMenderer);
+PR_EXTERN
+void PrRenderMenderer() {
+    DrawMenderer();
+    prRenderStuff.mStatistics.render_time8 = *T3_COUNT;
+#if defined(PRD_SYORI)
+    SyoriUpdateStats(&prRenderStuff.mStatistics);
+#endif
+}
 
 /* nalib/navector.h */
 INCLUDE_ASM("asm/nonmatchings/prlib/menderer", func_0014F3B8);
