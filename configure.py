@@ -214,6 +214,7 @@ def build_stuff(linker_entries: List[LinkerEntry], is_irx: bool = False, append:
     ninja = ninja_syntax.Writer(open(str(ROOT / "build.ninja"), open_mode), width=9999)
 
     # Rules
+    slinky_args = "--omit-version-comment"
     common_ld_args = "-EL -Map $mapfile -T $in -o $out"
     ee_ld_args = f"{common_ld_args} -T config/p3.jul12.misc.txt -T config/p3.jul12.vu_syms.txt -T config/p3.jul12.undefined_syms.txt"
     wp2_ld_args = f"{common_ld_args} -T config/irx.wave2ps2.jul12.undefined_syms_auto.txt -T config/irx.wave2ps2.jul12.undefined_funcs_auto.txt -T config/irx.wave2ps2.jul12.undefined_syms.txt"
@@ -267,14 +268,20 @@ def build_stuff(linker_entries: List[LinkerEntry], is_irx: bool = False, append:
         )
 
         ninja.rule(
+            "slink",
+            description="slink $out",
+            command=f"./tools/slinky/slinky-cli -o $out {slinky_args} $in",
+        )
+
+        ninja.rule(
             "ee_ld",
-            description="link $out",
+            description="ee_ld $out",
             command=f"{CROSS}ld {ee_ld_args}",
         )
 
         ninja.rule(
             "iop_ld",
-            description="link $out",
+            description="iop_ld $out",
             command=f"{CROSS}ld {wp2_ld_args}",
         )
 
@@ -341,6 +348,13 @@ def build_stuff(linker_entries: List[LinkerEntry], is_irx: bool = False, append:
     map_path = P3_MAP_PATH if not is_irx else WP2_MAP_PATH
 
     ld_rule = "ee_ld" if not is_irx else "iop_ld"
+
+    if not is_irx:
+        ninja.build(
+            ld_path,
+            "slink",
+            "config/p3.jul12.slinky.yaml",
+        )
 
     ninja.build(
         elf_path,
@@ -602,6 +616,10 @@ def prepare_rom_from_elfs(elfs: list[Path]):
         assert elf.exists(), f"{elf} must exist!"
         command = f"{CROSS}objcopy -O binary --gap-fill=0x00 {elf} {elf}.rom"
         subprocess.run(command, shell=True, check=True)
+
+        if elf == Path(f"iso/{P3_BASENAME}"):
+            with open(f"{elf}.rom", "rb+") as f:
+                f.truncate(0x1b9e034) # Remove .mfifo end alignment
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Configure the project")

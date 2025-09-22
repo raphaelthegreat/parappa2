@@ -10,14 +10,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-PAD_SYSD sysPad[2] PR_ALIGNED(64) = {};
+#define PAD_NUM (2)
 
-static u_long128 pad_dma_buf[2][16];
+PAD_SYSD sysPad[PAD_NUM] PR_ALIGNED(64) = {};
+
+static u_long128 pad_dma_buf[PAD_NUM][scePadDmaBufferMax] PR_ALIGNED(64);
 static u_long128 ChangeDrawAreaPacket[12];
 static sceDmaTag exl_dmatag;
 static USR_MALLOC_STR usr_malloc_str[256];
-
-#define PAD_NUM (2)
 
 void WorkClear(void *clr_adrs, int size) {
     u_char *clr_pp = (u_char*)clr_adrs;

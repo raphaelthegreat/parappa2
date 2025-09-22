@@ -43,7 +43,7 @@ def firstDiffMain():
 
     buildFolder = Path("build")
 
-    BUILTROM = buildFolder / f"SCPS_150.17"
+    BUILTROM = buildFolder / f"SCPS_150.17.rom"
     BUILTMAP = buildFolder / f"SCPS_150.17.map"
 
     EXPECTEDROM = "expected" / BUILTROM

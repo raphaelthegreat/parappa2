@@ -31,7 +31,7 @@ public:
     void WaitRender();
 
     void AllocateTransmitDmaArray(u_int size);
-    void AppendTransmitDmaTag(const sceDmaTag* arg0, u_int arg1, float arg2);
+    void AppendTransmitDmaTag(const sceDmaTag* tag, u_int arg1, float arg2);
 
     static int CompareFunction(const void* arg0, const void* arg1);
     void SortTransmitDmaArray();

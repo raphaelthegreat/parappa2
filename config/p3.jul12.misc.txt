@@ -4,6 +4,8 @@ _stack_size = 0x8000;
 _stack = -1;
 _heap_size = -1;
 
-_fbss = main_SBSS_START;
+_fbss = sbss_VRAM;
+_gp = gcc_except_table_VRAM_END + 0x7ff0;
+
 _end = 0x01dde800; /* todo */
 end = _end;

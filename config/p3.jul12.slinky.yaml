@@ -1,0 +1,1091 @@
+settings:
+  base_path: build
+  noload_sections: []
+
+  # sections_allowlist: [.reginfo]
+
+  sections_allowlist_extra:
+    - .shstrtab
+    - .symtab
+    - .strtab
+  
+  #sections_start_alignment: {
+  #  .vutext: 64,
+  #  .reginfo: 16,
+  #  .data: 128,
+  #  .rodata: 128,
+  #  .rdata: 128,
+  #  .gcc_except_table: 128,
+  #  .lit8: 128,
+  #  .lit4: 128,
+  #  .sdata: 128,
+  #  .sbss: 128,
+  #  .bss: 128,
+  #  .mfifo: 0x10000,
+  #}
+
+segments:
+  - name: text
+    fixed_vram: 0x00100000 # EE kernel end.
+    alloc_sections: [.text]
+    files:
+      - { path: asm/sdk/crt0.s.o }
+      - { path: asm/sdk/tmp.s.o }
+
+      - { path: src/dbug/dbgmsg.c.o }
+      - { path: src/dbug/syori.c.o }
+      - { path: src/dbug/vramsave.c.o }
+
+      - { path: src/os/mtc.c.o }
+      - { path: src/os/syssub.c.o }
+      - { path: src/os/system.c.o }
+      - { path: src/os/cmngifpk.c.o }
+      - { path: src/os/usrmem.c.o }
+      - { path: src/os/tim2.c.o }
+
+      - { path: src/main/cdctrl.c.o }
+      - { path: src/main/stdat.c.o }
+      - { path: src/main/scrctrl.c.o }
+      - { path: src/main/sprite.c.o }
+      - { path: src/main/fadectrl.c.o }
+      - { path: src/main/subt.c.o }
+      - { path: src/main/drawctrl.c.o }
+      - { path: src/main/effect.c.o }
+      - { path: src/main/mbar.c.o }
+      - { path: src/main/pack.c.o }
+      - { path: src/main/etc.c.o }
+      - { path: src/main/wipe.c.o }
+      - { path: src/main/mcctrl.c.o }
+      - { path: src/main/main.c.o }
+      - { path: src/main/cmnfile.c.o }
+      - { path: src/main/p3str.c.o }
+      - { path: src/main/commake.c.o }
+
+      - { path: src/menu/menu.c.o }
+      - { path: src/menu/menudata.c.o }
+      - { path: src/menu/menu_mdl.c.o }
+      - { path: src/menu/menusub.c.o }
+      - { path: src/menu/p3mc.c.o }
+      - { path: src/menu/memc.c.o }
+      - { path: src/menu/mntm2hed.c.o }
+      - { path: src/menu/menufont.c.o }
+      - { path: src/menu/pksprite.c.o }
+
+      - { path: src/iop_mdl/wp2cd_rpc.c.o }
+      - { path: src/iop_mdl/tapctrl_rpc.c.o }
+
+      - { path: src/prlib/gifreg.cpp.o }
+      - { path: src/prlib/model.cpp.o }
+      - { path: src/prlib/database.cpp.o }
+      - { path: src/prlib/renderstuff.cpp.o }
+      - { path: src/prlib/prlib.cpp.o }
+      - { path: src/prlib/setpointer.cpp.o }
+      - { path: src/prlib/render.cpp.o }
+      - { path: src/prlib/renderee.cpp.o }
+      - { path: src/prlib/transition.cpp.o }
+      - { path: src/prlib/microprogram.cpp.o }
+      - { path: src/prlib/spram.cpp.o }
+      - { path: src/prlib/mfifo.cpp.o }
+      - { path: src/prlib/spadata.cpp.o }
+      - { path: src/prlib/scene.cpp.o }
+      - { path: src/prlib/cluster.cpp.o }
+      - { path: src/prlib/shape.cpp.o }
+      - { path: src/prlib/billboard.cpp.o }
+      - { path: src/prlib/depthfield.cpp.o }
+      - { path: src/prlib/vram.cpp.o }
+      - { path: src/prlib/random.cpp.o }
+      - { path: src/prlib/menderer.cpp.o }
+      - { path: src/prlib/menderercreate.cpp.o }
+      - { path: src/prlib/mendererawful.cpp.o }
+      - { path: src/prlib/mendereralpha.cpp.o }
+      - { path: src/prlib/mendererdata.cpp.o }
+      - { path: src/prlib/wave.cpp.o }
+      - { path: src/prlib/dmaqueue.cpp.o }
+      - { path: src/prlib/utility.cpp.o }
+      - { path: src/prlib/tim2.cpp.o }
+      - { path: src/prlib/animation.cpp.o }
+      - { path: src/prlib/camera.cpp.o }
+      - { path: src/prlib/contour.cpp.o }
+      - { path: src/prlib/dma.cpp.o }
+
+      - { path: src/nalib/navector.cpp.o }
+
+      - { path: asm/sdk/graphdev.s.o }
+      - { path: asm/sdk/libdma.s.o }
+      - { path: asm/sdk/devvu0.s.o }
+      - { path: asm/sdk/devvif0.s.o }
+      - { path: asm/sdk/libgifpk.s.o }
+      - { path: asm/sdk/libpad.s.o }
+      - { path: asm/sdk/klib.s.o }
+      - { path: asm/sdk/glue.s.o }
+      - { path: asm/sdk/cache.s.o }
+      - { path: asm/sdk/intr.s.o }
+      - { path: asm/sdk/tty.s.o }
+      - { path: asm/sdk/kprintf.s.o }
+      - { path: asm/sdk/sifcmd.s.o }
+      - { path: asm/sdk/sifrpc.s.o }
+      - { path: asm/sdk/filestub.s.o }
+      - { path: asm/sdk/eeloadfile.s.o }
+      - { path: asm/sdk/iopreset.s.o }
+      - { path: asm/sdk/diei.s.o }
+      - { path: asm/sdk/initsys.s.o }
+      - { path: asm/sdk/thread.s.o }
+      - { path: asm/sdk/deci2.s.o }
+      - { path: asm/sdk/libvu0.s.o }
+      - { path: asm/sdk/eecdvd.s.o }
+      - { path: asm/sdk/libmc.s.o }
+
+      - { path: asm/sdk/newlib.s.o }
+  
+  #- name: vutext
+  #  alloc_sections: [.vutext]
+  #  subalign: 16
+  #  files:
+  #    - { path: asm/data/vutext.s.o }
+  
+  # # TODO: .reginfo should go here.
+  # - name: reginfo
+  #   #alloc_sections: [.reginfo]
+  #   alloc_sections: [.reginfo]
+  #   #noload_sections: [.reginfo]
+  #   keep_sections: True
+  #   files:
+  #     - { path: asm/sdk/crt0.s.o }
+  #     - { path: asm/sdk/tmp.s.o }
+
+  #     - { path: src/dbug/dbgmsg.c.o }
+  #     - { path: src/dbug/syori.c.o }
+  #     - { path: src/dbug/vramsave.c.o }
+
+  #     - { path: src/os/mtc.c.o }
+  #     - { path: src/os/syssub.c.o }
+  #     - { path: src/os/system.c.o }
+  #     - { path: src/os/cmngifpk.c.o }
+  #     - { path: src/os/usrmem.c.o }
+  #     - { path: src/os/tim2.c.o }
+
+  #     - { path: src/main/cdctrl.c.o }
+  #     - { path: src/main/stdat.c.o }
+  #     - { path: src/main/scrctrl.c.o }
+  #     - { path: src/main/sprite.c.o }
+  #     - { path: src/main/fadectrl.c.o }
+  #     - { path: src/main/subt.c.o }
+  #     - { path: src/main/drawctrl.c.o }
+  #     - { path: src/main/effect.c.o }
+  #     - { path: src/main/mbar.c.o }
+  #     - { path: src/main/pack.c.o }
+  #     - { path: src/main/etc.c.o }
+  #     - { path: src/main/wipe.c.o }
+  #     - { path: src/main/mcctrl.c.o }
+  #     - { path: src/main/main.c.o }
+  #     - { path: src/main/cmnfile.c.o }
+  #     - { path: src/main/p3str.c.o }
+  #     - { path: src/main/commake.c.o }
+
+  #     - { path: src/menu/menu.c.o }
+  #     - { path: src/menu/menudata.c.o }
+  #     - { path: src/menu/menu_mdl.c.o }
+  #     - { path: src/menu/menusub.c.o }
+  #     - { path: src/menu/p3mc.c.o }
+  #     - { path: src/menu/memc.c.o }
+  #     - { path: src/menu/mntm2hed.c.o }
+  #     - { path: src/menu/menufont.c.o }
+  #     - { path: src/menu/pksprite.c.o }
+
+  #     - { path: src/iop_mdl/wp2cd_rpc.c.o }
+  #     - { path: src/iop_mdl/tapctrl_rpc.c.o }
+
+  #     - { path: src/prlib/gifreg.cpp.o }
+  #     - { path: src/prlib/model.cpp.o }
+  #     - { path: src/prlib/database.cpp.o }
+  #     - { path: src/prlib/renderstuff.cpp.o }
+  #     - { path: src/prlib/prlib.cpp.o }
+  #     - { path: src/prlib/setpointer.cpp.o }
+  #     - { path: src/prlib/render.cpp.o }
+  #     - { path: src/prlib/renderee.cpp.o }
+  #     - { path: src/prlib/transition.cpp.o }
+  #     - { path: src/prlib/microprogram.cpp.o }
+  #     - { path: src/prlib/spram.cpp.o }
+  #     - { path: src/prlib/mfifo.cpp.o }
+  #     - { path: src/prlib/spadata.cpp.o }
+  #     - { path: src/prlib/scene.cpp.o }
+  #     - { path: src/prlib/cluster.cpp.o }
+  #     - { path: src/prlib/shape.cpp.o }
+  #     - { path: src/prlib/billboard.cpp.o }
+  #     - { path: src/prlib/depthfield.cpp.o }
+  #     - { path: src/prlib/vram.cpp.o }
+  #     - { path: src/prlib/random.cpp.o }
+  #     - { path: src/prlib/menderer.cpp.o }
+  #     - { path: src/prlib/menderercreate.cpp.o }
+  #     - { path: src/prlib/mendererawful.cpp.o }
+  #     - { path: src/prlib/mendereralpha.cpp.o }
+  #     - { path: src/prlib/mendererdata.cpp.o }
+  #     - { path: src/prlib/wave.cpp.o }
+  #     - { path: src/prlib/dmaqueue.cpp.o }
+  #     - { path: src/prlib/utility.cpp.o }
+  #     - { path: src/prlib/tim2.cpp.o }
+  #     - { path: src/prlib/animation.cpp.o }
+  #     - { path: src/prlib/camera.cpp.o }
+  #     - { path: src/prlib/contour.cpp.o }
+  #     - { path: src/prlib/dma.cpp.o }
+
+  #     - { path: src/nalib/navector.cpp.o }
+
+  #     - { path: asm/sdk/graphdev.s.o }
+  #     - { path: asm/sdk/libdma.s.o }
+  #     - { path: asm/sdk/devvu0.s.o }
+  #     - { path: asm/sdk/devvif0.s.o }
+  #     - { path: asm/sdk/libgifpk.s.o }
+  #     - { path: asm/sdk/libpad.s.o }
+  #     - { path: asm/sdk/klib.s.o }
+  #     - { path: asm/sdk/glue.s.o }
+  #     - { path: asm/sdk/cache.s.o }
+  #     - { path: asm/sdk/intr.s.o }
+  #     - { path: asm/sdk/tty.s.o }
+  #     - { path: asm/sdk/kprintf.s.o }
+  #     - { path: asm/sdk/sifcmd.s.o }
+  #     - { path: asm/sdk/sifrpc.s.o }
+  #     - { path: asm/sdk/filestub.s.o }
+  #     - { path: asm/sdk/eeloadfile.s.o }
+  #     - { path: asm/sdk/iopreset.s.o }
+  #     - { path: asm/sdk/diei.s.o }
+  #     - { path: asm/sdk/initsys.s.o }
+  #     - { path: asm/sdk/thread.s.o }
+  #     - { path: asm/sdk/deci2.s.o }
+  #     - { path: asm/sdk/libvu0.s.o }
+  #     - { path: asm/sdk/eecdvd.s.o }
+  #     - { path: asm/sdk/libmc.s.o }
+
+  #     - { path: asm/sdk/newlib.s.o }
+
+  - name: data
+    alloc_sections: [.data]
+    files:
+      - { path: asm/sdk/crt0.s.o }
+      - { path: asm/sdk/tmp.s.o }
+
+      - { path: asm/data/vutext.s.o }
+      - { path: asm/data/7A900.data.s.o } # frame_table
+
+      - { path: src/dbug/dbgmsg.c.o }
+      - { path: src/dbug/syori.c.o }
+      - { path: src/dbug/vramsave.c.o }
+
+      - { path: src/os/mtc.c.o }
+      - { path: src/os/syssub.c.o }
+      - { path: src/os/system.c.o }
+      - { path: src/os/cmngifpk.c.o }
+      - { path: src/os/usrmem.c.o }
+      - { path: src/os/tim2.c.o }
+
+      - { path: src/main/cdctrl.c.o }
+      - { path: asm/data/main/stdat.data.s.o }
+      - { path: asm/data/main/scrctrl.data.s.o }
+      - { path: src/main/sprite.c.o }
+      - { path: src/main/fadectrl.c.o }
+      - { path: asm/data/main/subt.data.s.o }
+      - { path: asm/data/main/drawctrl.data.s.o }
+      - { path: src/main/effect.c.o }
+      - { path: asm/data/main/mbar.data.s.o }
+      - { path: src/main/pack.c.o }
+      - { path: asm/data/main/etc.data.s.o }
+      - { path: asm/data/main/wipe.data.s.o }
+      - { path: src/main/mcctrl.c.o }
+      - { path: asm/data/main/main.data.s.o }
+      - { path: src/main/cmnfile.c.o }
+      - { path: src/main/p3str.c.o }
+      - { path: src/main/commake.c.o }
+
+      - { path: src/menu/menu.c.o }
+      - { path: asm/data/menu/menudata.data.s.o }
+      - { path: asm/data/menu/menu_mdl.data.s.o }
+      - { path: asm/data/menu/menusub.data.s.o }
+      - { path: asm/data/menu/p3mc.data.s.o }
+      - { path: asm/data/menu/memc.data.s.o }
+      - { path: asm/data/menu/mntm2hed.data.s.o }
+      - { path: asm/data/menu/menufont.data.s.o }
+      - { path: asm/data/menu/pksprite.data.s.o }
+
+      - { path: src/iop_mdl/wp2cd_rpc.c.o }
+      - { path: src/iop_mdl/tapctrl_rpc.c.o }
+
+      #
+      # In splat's generated LD script, `common_ipk`
+      # is after prlib's `gifreg` and `model` for whatever reason.
+      #
+      - { path: asm/data/common_ipk.s.o }
+
+      - { path: src/prlib/gifreg.cpp.o }
+      - { path: src/prlib/model.cpp.o }
+      - { path: asm/data/prlib/database.data.s.o }
+      - { path: asm/data/prlib/renderstuff.data.s.o }
+      - { path: src/prlib/prlib.cpp.o }
+      - { path: src/prlib/setpointer.cpp.o }
+      - { path: asm/data/prlib/render.data.s.o }
+      - { path: asm/data/prlib/renderee.data.s.o }
+      - { path: src/prlib/transition.cpp.o }
+      - { path: asm/data/prlib/microprogram.data.s.o }
+      - { path: asm/data/prlib/spram.data.s.o }
+      - { path: src/prlib/mfifo.cpp.o }
+      - { path: src/prlib/spadata.cpp.o }
+      - { path: asm/data/prlib/scene.data.s.o }
+      - { path: src/prlib/cluster.cpp.o }
+      - { path: src/prlib/shape.cpp.o }
+      - { path: src/prlib/billboard.cpp.o }
+      - { path: src/prlib/depthfield.cpp.o }
+      - { path: src/prlib/vram.cpp.o }
+      - { path: src/prlib/random.cpp.o }
+      - { path: asm/data/prlib/menderer.data.s.o }
+      - { path: src/prlib/menderercreate.cpp.o }
+      - { path: asm/data/prlib/mendererawful.data.s.o }
+      - { path: asm/data/prlib/mendereralpha.data.s.o }
+      - { path: src/prlib/mendererdata.cpp.o }
+      - { path: src/prlib/wave.cpp.o }
+      - { path: src/prlib/dmaqueue.cpp.o }
+      - { path: src/prlib/utility.cpp.o }
+      - { path: src/prlib/tim2.cpp.o }
+      - { path: src/prlib/animation.cpp.o }
+      - { path: src/prlib/camera.cpp.o }
+      - { path: src/prlib/contour.cpp.o }
+      - { path: src/prlib/dma.cpp.o }
+
+      - { path: asm/data/nalib/napacket.data.s.o }
+      - { path: asm/data/nalib/navector.data.s.o }
+      - { path: asm/data/nalib/namatrix.data.s.o }
+
+      - { path: asm/data/sdk/graphdev.data.s.o }
+      - { path: asm/data/sdk/libdma.data.s.o }
+      - { path: asm/sdk/devvu0.s.o }
+      - { path: asm/sdk/devvif0.s.o }
+      - { path: asm/data/sdk/libgifpk.data.s.o }
+      - { path: asm/data/sdk/libpad.data.s.o }
+      - { path: asm/data/sdk/klib.data.s.o }
+      - { path: asm/data/sdk/glue.data.s.o }
+      - { path: asm/sdk/cache.s.o }
+      - { path: asm/data/sdk/intr.data.s.o }
+      - { path: asm/sdk/tty.s.o }
+      - { path: asm/data/sdk/kprintf.data.s.o }
+      - { path: asm/data/sdk/sifcmd.data.s.o }
+      - { path: asm/data/sdk/sifrpc.data.s.o }
+      - { path: asm/data/sdk/filestub.data.s.o }
+      - { path: asm/data/sdk/eeloadfile.data.s.o }
+      - { path: asm/sdk/iopreset.s.o }
+      - { path: asm/sdk/diei.s.o }
+      - { path: asm/data/sdk/initsys.data.s.o }
+      - { path: asm/data/sdk/thread.data.s.o }
+      - { path: asm/sdk/deci2.s.o }
+      - { path: asm/data/sdk/libvu0.data.s.o }
+      - { path: asm/data/sdk/eecdvd.data.s.o }
+      - { path: asm/data/sdk/libmc.data.s.o }
+
+      - { path: asm/data/sdk/newlib.data.s.o }
+
+      - { path: asm/data/vudata.s.o }
+
+  - name: rodata
+    alloc_sections: [.rodata]
+    files:
+      - { path: asm/sdk/crt0.s.o }
+      - { path: asm/sdk/tmp.s.o }
+
+      - { path: src/dbug/dbgmsg.c.o }
+      - { path: src/dbug/syori.c.o }
+      - { path: src/dbug/vramsave.c.o }
+
+      - { path: src/os/mtc.c.o }
+      - { path: src/os/syssub.c.o }
+      - { path: src/os/system.c.o }
+      - { path: src/os/cmngifpk.c.o }
+      - { path: src/os/usrmem.c.o }
+      - { path: src/os/tim2.c.o }
+
+      - { path: src/main/cdctrl.c.o }
+      - { path: src/main/stdat.c.o }
+      - { path: src/main/scrctrl.c.o }
+      - { path: src/main/sprite.c.o }
+      - { path: src/main/fadectrl.c.o }
+      - { path: src/main/subt.c.o }
+      - { path: src/main/drawctrl.c.o }
+      - { path: src/main/effect.c.o }
+      - { path: src/main/mbar.c.o }
+      - { path: src/main/pack.c.o }
+      - { path: src/main/etc.c.o }
+      - { path: src/main/wipe.c.o }
+      - { path: src/main/mcctrl.c.o }
+      - { path: src/main/main.c.o }
+      - { path: src/main/cmnfile.c.o }
+      - { path: src/main/p3str.c.o }
+      - { path: src/main/commake.c.o }
+
+      - { path: src/menu/menu.c.o }
+      - { path: src/menu/menudata.c.o }
+      - { path: src/menu/menu_mdl.c.o }
+      - { path: src/menu/menusub.c.o }
+      - { path: src/menu/p3mc.c.o }
+      - { path: src/menu/memc.c.o }
+      - { path: src/menu/mntm2hed.c.o }
+      - { path: src/menu/menufont.c.o }
+      - { path: src/menu/pksprite.c.o }
+
+      - { path: src/iop_mdl/wp2cd_rpc.c.o }
+      - { path: src/iop_mdl/tapctrl_rpc.c.o }
+
+      - { path: src/prlib/gifreg.cpp.o }
+      - { path: src/prlib/model.cpp.o }
+      - { path: src/prlib/database.cpp.o }
+      - { path: src/prlib/renderstuff.cpp.o }
+      - { path: src/prlib/prlib.cpp.o }
+      - { path: src/prlib/setpointer.cpp.o }
+      - { path: src/prlib/render.cpp.o }
+      - { path: src/prlib/renderee.cpp.o }
+      - { path: src/prlib/transition.cpp.o }
+      - { path: src/prlib/microprogram.cpp.o }
+      - { path: src/prlib/spram.cpp.o }
+      - { path: src/prlib/mfifo.cpp.o }
+      - { path: src/prlib/spadata.cpp.o }
+      - { path: src/prlib/scene.cpp.o }
+      - { path: src/prlib/cluster.cpp.o }
+      - { path: src/prlib/shape.cpp.o }
+      - { path: src/prlib/billboard.cpp.o }
+      - { path: src/prlib/depthfield.cpp.o }
+      - { path: src/prlib/vram.cpp.o }
+      - { path: src/prlib/random.cpp.o }
+      - { path: src/prlib/menderer.cpp.o }
+      - { path: src/prlib/menderercreate.cpp.o }
+      - { path: src/prlib/mendererawful.cpp.o }
+      - { path: src/prlib/mendereralpha.cpp.o }
+      - { path: src/prlib/mendererdata.cpp.o }
+      - { path: src/prlib/wave.cpp.o }
+      - { path: src/prlib/dmaqueue.cpp.o }
+      - { path: src/prlib/utility.cpp.o }
+      - { path: src/prlib/tim2.cpp.o }
+      - { path: src/prlib/animation.cpp.o }
+      - { path: src/prlib/camera.cpp.o }
+      - { path: src/prlib/contour.cpp.o }
+      - { path: src/prlib/dma.cpp.o }
+
+      - { path: src/nalib/navector.cpp.o }
+
+      - { path: asm/data/sdk/graphdev.rodata.s.o }
+      - { path: asm/data/sdk/libdma.rodata.s.o }
+      - { path: asm/data/sdk/devvu0.rodata.s.o }
+      - { path: asm/sdk/devvif0.s.o }
+      - { path: asm/sdk/libgifpk.s.o }
+      - { path: asm/data/sdk/libpad.rodata.s.o }
+      - { path: asm/sdk/klib.s.o }
+      - { path: asm/sdk/glue.s.o }
+      - { path: asm/sdk/cache.s.o }
+      - { path: asm/sdk/intr.s.o }
+      - { path: asm/data/sdk/tty.rodata.s.o }
+      - { path: asm/data/sdk/kprintf.rodata.s.o }
+      - { path: asm/sdk/sifcmd.s.o }
+      - { path: asm/sdk/sifrpc.s.o }
+      - { path: asm/data/sdk/filestub.rodata.s.o }
+      - { path: asm/data/sdk/eeloadfile.rodata.s.o }
+      - { path: asm/data/sdk/iopreset.rodata.s.o }
+      - { path: asm/sdk/diei.s.o }
+      - { path: asm/sdk/initsys.s.o }
+      - { path: asm/data/sdk/thread.rodata.s.o }
+      - { path: asm/sdk/deci2.s.o }
+      - { path: asm/sdk/libvu0.s.o }
+      - { path: asm/data/sdk/eecdvd.rodata.s.o }
+      - { path: asm/data/sdk/libmc.rodata.s.o }
+
+      - { path: asm/data/sdk/newlib.rodata.s.o }
+
+  - name: gcc_except_table
+    alloc_sections: [.rodata]
+    files:
+      - { path: asm/data/gcc_except_table.rodata.s.o }
+
+  - name: lit8
+    alloc_sections: [.lit8]
+    files:
+      - { path: asm/sdk/crt0.s.o }
+      - { path: asm/sdk/tmp.s.o }
+
+      - { path: src/dbug/dbgmsg.c.o }
+      - { path: src/dbug/syori.c.o }
+      - { path: src/dbug/vramsave.c.o }
+
+      - { path: src/os/mtc.c.o }
+      - { path: src/os/syssub.c.o }
+      - { path: src/os/system.c.o }
+      - { path: src/os/cmngifpk.c.o }
+      - { path: src/os/usrmem.c.o }
+      - { path: src/os/tim2.c.o }
+
+      - { path: src/main/cdctrl.c.o }
+      - { path: src/main/stdat.c.o }
+      - { path: src/main/scrctrl.c.o }
+      - { path: src/main/sprite.c.o }
+      - { path: src/main/fadectrl.c.o }
+      - { path: src/main/subt.c.o }
+      - { path: src/main/drawctrl.c.o }
+      - { path: src/main/effect.c.o }
+      - { path: src/main/mbar.c.o }
+      - { path: src/main/pack.c.o }
+      - { path: src/main/etc.c.o }
+      - { path: src/main/wipe.c.o }
+      - { path: src/main/mcctrl.c.o }
+      - { path: src/main/main.c.o }
+      - { path: src/main/cmnfile.c.o }
+      - { path: src/main/p3str.c.o }
+      - { path: src/main/commake.c.o }
+
+      - { path: src/menu/menu.c.o }
+      - { path: src/menu/menudata.c.o }
+      - { path: src/menu/menu_mdl.c.o }
+      - { path: src/menu/menusub.c.o }
+      - { path: src/menu/p3mc.c.o }
+      - { path: src/menu/memc.c.o }
+      - { path: src/menu/mntm2hed.c.o }
+      - { path: src/menu/menufont.c.o }
+      - { path: src/menu/pksprite.c.o }
+
+      - { path: src/iop_mdl/wp2cd_rpc.c.o }
+      - { path: src/iop_mdl/tapctrl_rpc.c.o }
+
+      - { path: src/prlib/gifreg.cpp.o }
+      - { path: src/prlib/model.cpp.o }
+      - { path: src/prlib/database.cpp.o }
+      - { path: src/prlib/renderstuff.cpp.o }
+      - { path: src/prlib/prlib.cpp.o }
+      - { path: src/prlib/setpointer.cpp.o }
+      - { path: src/prlib/render.cpp.o }
+      - { path: src/prlib/renderee.cpp.o }
+      - { path: src/prlib/transition.cpp.o }
+      - { path: src/prlib/microprogram.cpp.o }
+      - { path: src/prlib/spram.cpp.o }
+      - { path: src/prlib/mfifo.cpp.o }
+      - { path: src/prlib/spadata.cpp.o }
+      - { path: src/prlib/scene.cpp.o }
+      - { path: src/prlib/cluster.cpp.o }
+      - { path: src/prlib/shape.cpp.o }
+      - { path: src/prlib/billboard.cpp.o }
+      - { path: src/prlib/depthfield.cpp.o }
+      - { path: src/prlib/vram.cpp.o }
+      - { path: src/prlib/random.cpp.o }
+      - { path: src/prlib/menderer.cpp.o }
+      - { path: src/prlib/menderercreate.cpp.o }
+      - { path: src/prlib/mendererawful.cpp.o }
+      - { path: src/prlib/mendereralpha.cpp.o }
+      - { path: src/prlib/mendererdata.cpp.o }
+      - { path: src/prlib/wave.cpp.o }
+      - { path: src/prlib/dmaqueue.cpp.o }
+      - { path: src/prlib/utility.cpp.o }
+      - { path: src/prlib/tim2.cpp.o }
+      - { path: src/prlib/animation.cpp.o }
+      - { path: src/prlib/camera.cpp.o }
+      - { path: src/prlib/contour.cpp.o }
+      - { path: src/prlib/dma.cpp.o }
+
+      - { path: src/nalib/navector.cpp.o }
+
+      - { path: asm/sdk/graphdev.s.o }
+      - { path: asm/sdk/libdma.s.o }
+      - { path: asm/sdk/devvu0.s.o }
+      - { path: asm/sdk/devvif0.s.o }
+      - { path: asm/sdk/libgifpk.s.o }
+      - { path: asm/sdk/libpad.s.o }
+      - { path: asm/sdk/klib.s.o }
+      - { path: asm/sdk/glue.s.o }
+      - { path: asm/sdk/cache.s.o }
+      - { path: asm/sdk/intr.s.o }
+      - { path: asm/sdk/tty.s.o }
+      - { path: asm/sdk/kprintf.s.o }
+      - { path: asm/sdk/sifcmd.s.o }
+      - { path: asm/sdk/sifrpc.s.o }
+      - { path: asm/sdk/filestub.s.o }
+      - { path: asm/sdk/eeloadfile.s.o }
+      - { path: asm/sdk/iopreset.s.o }
+      - { path: asm/sdk/diei.s.o }
+      - { path: asm/sdk/initsys.s.o }
+      - { path: asm/sdk/thread.s.o }
+      - { path: asm/sdk/deci2.s.o }
+      - { path: asm/sdk/libvu0.s.o }
+      - { path: asm/sdk/eecdvd.s.o }
+      - { path: asm/sdk/libmc.s.o }
+
+      - { path: asm/sdk/newlib.s.o }
+
+  - name: lit4
+    alloc_sections: [.lit4]
+    files:
+      - { path: asm/sdk/crt0.s.o }
+      - { path: asm/sdk/tmp.s.o }
+
+      - { path: src/dbug/dbgmsg.c.o }
+      - { path: src/dbug/syori.c.o }
+      - { path: src/dbug/vramsave.c.o }
+
+      - { path: src/os/mtc.c.o }
+      - { path: src/os/syssub.c.o }
+      - { path: src/os/system.c.o }
+      - { path: src/os/cmngifpk.c.o }
+      - { path: src/os/usrmem.c.o }
+      - { path: src/os/tim2.c.o }
+
+      - { path: src/main/cdctrl.c.o }
+      - { path: src/main/stdat.c.o }
+      - { path: src/main/scrctrl.c.o }
+      - { path: src/main/sprite.c.o }
+      - { path: src/main/fadectrl.c.o }
+      - { path: src/main/subt.c.o }
+      - { path: src/main/drawctrl.c.o }
+      - { path: asm/data/298F14.lit4.s.o }
+      - { path: asm/data/main/effect.lit4.s.o }
+      - { path: src/main/mbar.c.o }
+      - { path: src/main/pack.c.o }
+      - { path: src/main/etc.c.o }
+      - { path: src/main/wipe.c.o }
+      - { path: src/main/mcctrl.c.o }
+      - { path: src/main/main.c.o }
+      - { path: src/main/cmnfile.c.o }
+      - { path: src/main/p3str.c.o }
+      - { path: src/main/commake.c.o }
+
+      - { path: src/menu/menu.c.o }
+      - { path: src/menu/menudata.c.o }
+      - { path: asm/data/298F40.lit4.s.o }
+      - { path: src/menu/menu_mdl.c.o }
+      - { path: src/menu/menusub.c.o }
+      - { path: src/menu/p3mc.c.o }
+      - { path: src/menu/memc.c.o }
+      - { path: src/menu/mntm2hed.c.o }
+      - { path: src/menu/menufont.c.o }
+      - { path: src/menu/pksprite.c.o }
+
+      - { path: src/iop_mdl/wp2cd_rpc.c.o }
+      - { path: src/iop_mdl/tapctrl_rpc.c.o }
+
+      - { path: src/prlib/gifreg.cpp.o }
+      - { path: src/prlib/model.cpp.o }
+      - { path: src/prlib/database.cpp.o }
+      - { path: src/prlib/renderstuff.cpp.o }
+      - { path: src/prlib/prlib.cpp.o }
+      - { path: src/prlib/setpointer.cpp.o }
+      - { path: src/prlib/render.cpp.o }
+      - { path: src/prlib/renderee.cpp.o }
+      - { path: src/prlib/transition.cpp.o }
+      - { path: src/prlib/microprogram.cpp.o }
+      - { path: src/prlib/spram.cpp.o }
+      - { path: src/prlib/mfifo.cpp.o }
+      - { path: src/prlib/spadata.cpp.o }
+      - { path: src/prlib/scene.cpp.o }
+      - { path: src/prlib/cluster.cpp.o }
+      - { path: src/prlib/shape.cpp.o }
+      - { path: src/prlib/billboard.cpp.o }
+      - { path: src/prlib/depthfield.cpp.o }
+      - { path: src/prlib/vram.cpp.o }
+      - { path: src/prlib/random.cpp.o }
+      - { path: src/prlib/menderer.cpp.o }
+      - { path: src/prlib/menderercreate.cpp.o }
+      - { path: src/prlib/mendererawful.cpp.o }
+      - { path: src/prlib/mendereralpha.cpp.o }
+      - { path: src/prlib/mendererdata.cpp.o }
+      - { path: src/prlib/wave.cpp.o }
+      - { path: src/prlib/dmaqueue.cpp.o }
+      - { path: src/prlib/utility.cpp.o }
+      - { path: src/prlib/tim2.cpp.o }
+      - { path: src/prlib/animation.cpp.o }
+      - { path: src/prlib/camera.cpp.o }
+      - { path: src/prlib/contour.cpp.o }
+      - { path: src/prlib/dma.cpp.o }
+
+      - { path: src/nalib/navector.cpp.o }
+
+      - { path: asm/sdk/graphdev.s.o }
+      - { path: asm/sdk/libdma.s.o }
+      - { path: asm/sdk/devvu0.s.o }
+      - { path: asm/sdk/devvif0.s.o }
+      - { path: asm/sdk/libgifpk.s.o }
+      - { path: asm/sdk/libpad.s.o }
+      - { path: asm/sdk/klib.s.o }
+      - { path: asm/sdk/glue.s.o }
+      - { path: asm/sdk/cache.s.o }
+      - { path: asm/sdk/intr.s.o }
+      - { path: asm/sdk/tty.s.o }
+      - { path: asm/sdk/kprintf.s.o }
+      - { path: asm/sdk/sifcmd.s.o }
+      - { path: asm/sdk/sifrpc.s.o }
+      - { path: asm/sdk/filestub.s.o }
+      - { path: asm/sdk/eeloadfile.s.o }
+      - { path: asm/sdk/iopreset.s.o }
+      - { path: asm/sdk/diei.s.o }
+      - { path: asm/sdk/initsys.s.o }
+      - { path: asm/sdk/thread.s.o }
+      - { path: asm/sdk/deci2.s.o }
+      - { path: asm/sdk/libvu0.s.o }
+      - { path: asm/sdk/eecdvd.s.o }
+      - { path: asm/sdk/libmc.s.o }
+
+      - { path: asm/sdk/newlib.s.o }
+
+      # TODO: What's this?
+      - { path: asm/data/298F60.lit4.s.o }
+  
+  - name: sdata
+    alloc_sections: [.sdata]
+    files:
+      - { path: asm/sdk/crt0.s.o }
+      - { path: asm/sdk/tmp.s.o }
+
+      - { path: src/dbug/dbgmsg.c.o }
+      - { path: src/dbug/syori.c.o }
+      - { path: asm/data/299300.sdata.s.o }
+      - { path: src/dbug/vramsave.c.o }
+
+      - { path: src/os/mtc.c.o }
+      - { path: src/os/syssub.c.o }
+      - { path: asm/data/os/system.sdata.s.o }
+      - { path: src/os/cmngifpk.c.o }
+      - { path: src/os/usrmem.c.o }
+      - { path: src/os/tim2.c.o }
+
+      - { path: src/main/cdctrl.c.o }
+      - { path: asm/data/main/stdat.sdata.s.o }
+      - { path: asm/data/main/scrctrl.sdata.s.o }
+      - { path: src/main/sprite.c.o }
+      - { path: src/main/fadectrl.c.o }
+      - { path: src/main/subt.c.o }
+      - { path: asm/data/main/drawctrl.sdata.s.o }
+      - { path: src/main/effect.c.o }
+      - { path: asm/data/main/mbar.sdata.s.o }
+      - { path: src/main/pack.c.o }
+      - { path: asm/data/main/etc.sdata.s.o }
+      - { path: asm/data/main/wipe.sdata.s.o }
+      - { path: src/main/mcctrl.c.o }
+      - { path: asm/data/main/main.sdata.s.o }
+      - { path: src/main/cmnfile.c.o }
+      - { path: src/main/p3str.c.o }
+      - { path: src/main/commake.c.o }
+
+      - { path: src/menu/menu.c.o }
+      - { path: asm/data/menu/menudata.sdata.s.o }
+      - { path: src/menu/menu_mdl.c.o }
+      - { path: asm/data/menu/menusub.sdata.s.o }
+      - { path: asm/data/menu/p3mc.sdata.s.o }
+      - { path: asm/data/menu/memc.sdata.s.o }
+      - { path: src/menu/mntm2hed.c.o }
+      - { path: asm/data/menu/menufont.sdata.s.o }
+      - { path: asm/data/menu/pksprite.sdata.s.o }
+
+      - { path: src/iop_mdl/wp2cd_rpc.c.o }
+      - { path: src/iop_mdl/tapctrl_rpc.c.o }
+
+      - { path: src/prlib/gifreg.cpp.o }
+      - { path: asm/data/prlib/model.sdata.s.o }
+      - { path: asm/data/prlib/database.sdata.s.o }
+      - { path: asm/data/prlib/renderstuff.sdata.s.o }
+      - { path: src/prlib/prlib.cpp.o }
+      - { path: src/prlib/setpointer.cpp.o }
+      - { path: asm/data/prlib/render.sdata.s.o }
+      - { path: asm/data/prlib/renderee.sdata.s.o }
+      - { path: asm/data/prlib/transition.sdata.s.o }
+      - { path: src/prlib/microprogram.cpp.o }
+      - { path: src/prlib/spram.cpp.o }
+      - { path: src/prlib/mfifo.cpp.o }
+      - { path: asm/data/prlib/spadata.sdata.s.o }
+      - { path: asm/data/prlib/scene.sdata.s.o }
+      - { path: asm/data/prlib/cluster.sdata.s.o }
+      - { path: asm/data/prlib/shape.sdata.s.o }
+      - { path: asm/data/prlib/billboard.sdata.s.o }
+      - { path: asm/data/prlib/depthfield.sdata.s.o }
+      - { path: asm/data/prlib/vram.sdata.s.o }
+      - { path: src/prlib/random.cpp.o }
+      - { path: asm/data/prlib/menderer.sdata.s.o }
+      - { path: asm/data/prlib/menderercreate.sdata.s.o }
+      - { path: asm/data/prlib/mendererawful.sdata.s.o }
+      - { path: asm/data/prlib/mendereralpha.sdata.s.o }
+      - { path: src/prlib/mendererdata.cpp.o }
+      - { path: src/prlib/wave.cpp.o }
+      - { path: src/prlib/dmaqueue.cpp.o }
+      - { path: src/prlib/utility.cpp.o }
+      - { path: src/prlib/tim2.cpp.o }
+      - { path: src/prlib/animation.cpp.o }
+      - { path: asm/data/prlib/camera.sdata.s.o }
+      - { path: asm/data/prlib/contour.sdata.s.o }
+      - { path: src/prlib/dma.cpp.o }
+
+      - { path: asm/data/nalib/navector.sdata.s.o }
+
+      - { path: asm/sdk/graphdev.s.o }
+      - { path: asm/sdk/libdma.s.o }
+      - { path: asm/sdk/devvu0.s.o }
+      - { path: asm/sdk/devvif0.s.o }
+      - { path: asm/sdk/libgifpk.s.o }
+      - { path: asm/sdk/libpad.s.o }
+      - { path: asm/sdk/klib.s.o }
+      - { path: asm/sdk/glue.s.o }
+      - { path: asm/sdk/cache.s.o }
+      - { path: asm/sdk/intr.s.o }
+      - { path: asm/sdk/tty.s.o }
+      - { path: asm/sdk/kprintf.s.o }
+      - { path: asm/sdk/sifcmd.s.o }
+      - { path: asm/sdk/sifrpc.s.o }
+      - { path: asm/sdk/filestub.s.o }
+      - { path: asm/sdk/eeloadfile.s.o }
+      - { path: asm/sdk/iopreset.s.o }
+      - { path: asm/sdk/diei.s.o }
+      - { path: asm/sdk/initsys.s.o }
+      - { path: asm/sdk/thread.s.o }
+      - { path: asm/sdk/deci2.s.o }
+      - { path: asm/sdk/libvu0.s.o }
+      - { path: asm/sdk/eecdvd.s.o }
+      - { path: asm/sdk/libmc.s.o }
+
+      - { path: asm/sdk/newlib.s.o }
+
+  - name: sbss
+    alloc_sections: [.sbss, .scommon]
+    noload_sections: [.sbss, .scommon]
+    files:
+      - { path: asm/sdk/crt0.s.o }
+      - { path: asm/sdk/tmp.s.o }
+
+      - { path: asm/data/dbug/dbgmsg.sbss.s.o }
+      - { path: src/dbug/syori.c.o }
+      - { path: src/dbug/vramsave.c.o }
+
+      - { path: src/os/mtc.c.o }
+      - { path: src/os/syssub.c.o }
+      - { path: src/os/system.c.o }
+      - { path: src/os/cmngifpk.c.o }
+      - { path: src/os/usrmem.c.o }
+      - { path: src/os/tim2.c.o }
+
+      - { path: src/main/cdctrl.c.o }
+      - { path: src/main/stdat.c.o }
+      - { path: asm/data/main/scrctrl.sbss.s.o }
+      - { path: src/main/sprite.c.o }
+      - { path: src/main/fadectrl.c.o }
+      - { path: src/main/subt.c.o }
+      - { path: asm/data/main/drawctrl.sbss.s.o }
+      - { path: src/main/effect.c.o }
+      - { path: asm/data/main/mbar.sbss.s.o }
+      - { path: src/main/pack.c.o }
+      - { path: src/main/etc.c.o }
+      - { path: asm/data/main/wipe.sbss.s.o }
+      - { path: src/main/mcctrl.c.o }
+      - { path: src/main/main.c.o }
+      - { path: src/main/cmnfile.c.o }
+      - { path: src/main/p3str.c.o }
+      - { path: src/main/commake.c.o }
+
+      - { path: src/menu/menu.c.o }
+      - { path: src/menu/menudata.c.o }
+      - { path: src/menu/menu_mdl.c.o }
+      - { path: asm/data/menu/menusub.sbss.s.o }
+      - { path: asm/data/menu/p3mc.sbss.s.o }
+      - { path: src/menu/memc.c.o }
+      - { path: src/menu/mntm2hed.c.o }
+      - { path: asm/data/menu/menufont.sbss.s.o }
+      - { path: src/menu/pksprite.c.o }
+
+      - { path: src/iop_mdl/wp2cd_rpc.c.o }
+      - { path: src/iop_mdl/tapctrl_rpc.c.o }
+
+      - { path: src/prlib/gifreg.cpp.o }
+      - { path: asm/data/prlib/model.sbss.s.o }
+      - { path: src/prlib/database.cpp.o }
+      - { path: src/prlib/renderstuff.cpp.o }
+      - { path: asm/data/prlib/prlib.sbss.s.o }
+      - { path: src/prlib/setpointer.cpp.o }
+      - { path: asm/data/prlib/render.sbss.s.o }
+      - { path: src/prlib/renderee.cpp.o }
+      - { path: src/prlib/transition.cpp.o }
+      - { path: asm/data/prlib/microprogram.sbss.s.o }
+      - { path: src/prlib/spram.cpp.o }
+      - { path: src/prlib/mfifo.cpp.o }
+      - { path: asm/data/prlib/spadata.sbss.s.o }
+      - { path: src/prlib/scene.cpp.o }
+      - { path: src/prlib/cluster.cpp.o }
+      - { path: src/prlib/shape.cpp.o }
+      - { path: src/prlib/billboard.cpp.o }
+      - { path: src/prlib/depthfield.cpp.o }
+      - { path: src/prlib/vram.cpp.o }
+      - { path: src/prlib/random.cpp.o }
+      - { path: asm/data/prlib/menderer.sbss.s.o }
+      - { path: src/prlib/menderercreate.cpp.o }
+      - { path: asm/data/prlib/mendererawful.sbss.s.o }
+      - { path: src/prlib/mendereralpha.cpp.o }
+      - { path: src/prlib/mendererdata.cpp.o }
+      - { path: asm/data/prlib/wave.sbss.s.o }
+      - { path: src/prlib/dmaqueue.cpp.o }
+      - { path: src/prlib/utility.cpp.o }
+      - { path: src/prlib/tim2.cpp.o }
+      - { path: src/prlib/animation.cpp.o }
+      - { path: src/prlib/camera.cpp.o }
+      - { path: src/prlib/contour.cpp.o }
+      - { path: src/prlib/dma.cpp.o }
+
+      - { path: src/nalib/navector.cpp.o }
+
+      - { path: asm/sdk/graphdev.s.o }
+      - { path: asm/sdk/libdma.s.o }
+      - { path: asm/sdk/devvu0.s.o }
+      - { path: asm/sdk/devvif0.s.o }
+      - { path: asm/sdk/libgifpk.s.o }
+      - { path: asm/sdk/libpad.s.o }
+      - { path: asm/sdk/klib.s.o }
+      - { path: asm/sdk/glue.s.o }
+      - { path: asm/sdk/cache.s.o }
+      - { path: asm/sdk/intr.s.o }
+      - { path: asm/sdk/tty.s.o }
+      - { path: asm/sdk/kprintf.s.o }
+      - { path: asm/sdk/sifcmd.s.o }
+      - { path: asm/sdk/sifrpc.s.o }
+      - { path: asm/sdk/filestub.s.o }
+      - { path: asm/sdk/eeloadfile.s.o }
+      - { path: asm/sdk/iopreset.s.o }
+      - { path: asm/sdk/diei.s.o }
+      - { path: asm/sdk/initsys.s.o }
+      - { path: asm/sdk/thread.s.o }
+      - { path: asm/sdk/deci2.s.o }
+      - { path: asm/sdk/libvu0.s.o }
+      - { path: asm/sdk/eecdvd.s.o }
+      - { path: asm/sdk/libmc.s.o }
+
+      - { path: asm/data/sdk/newlib.sbss.s.o }
+
+  - name: bss
+    alloc_sections: [.bss]
+    noload_sections: [.bss, COMMON]
+    files:
+      - { path: asm/data/sdk/crt0.bss.s.o }
+      - { path: asm/sdk/tmp.s.o }
+
+      - { path: src/dbug/dbgmsg.c.o }
+      - { path: src/dbug/syori.c.o }
+      - { path: src/dbug/vramsave.c.o }
+
+      - { path: src/os/mtc.c.o }
+      - { path: src/os/syssub.c.o }
+      - { path: asm/data/os/system.bss.s.o }
+      - { path: asm/data/os/cmngifpk.bss.s.o }
+      - { path: asm/data/os/usrmem.bss.s.o }
+      - { path: src/os/tim2.c.o }
+
+      - { path: asm/data/main/cdctrl.bss.s.o }
+      - { path: src/main/stdat.c.o }
+      - { path: asm/data/main/scrctrl.bss.s.o }
+      - { path: src/main/sprite.c.o }
+      - { path: src/main/fadectrl.c.o }
+      - { path: src/main/subt.c.o }
+      - { path: asm/data/main/drawctrl.bss.s.o }
+      - { path: asm/data/main/effect.bss.s.o }
+      - { path: asm/data/main/mbar.bss.s.o }
+      - { path: asm/data/main/pack.bss.s.o }
+      - { path: asm/data/main/etc.bss.s.o }
+      - { path: src/main/wipe.c.o }
+      - { path: asm/data/main/mcctrl.bss.s.o }
+      - { path: asm/data/main/main.bss.s.o }
+      - { path: src/main/cmnfile.c.o }
+      - { path: asm/data/main/p3str.bss.s.o }
+      - { path: asm/data/main/commake.bss.s.o }
+
+      - { path: asm/data/menu/menu.bss.s.o }
+      - { path: src/menu/menudata.c.o }
+      - { path: src/menu/menu_mdl.c.o }
+      - { path: asm/data/menu/menusub.bss.s.o }
+      - { path: asm/data/menu/p3mc.bss.s.o }
+      - { path: asm/data/menu/memc.bss.s.o }
+      - { path: src/menu/mntm2hed.c.o }
+      - { path: asm/data/menu/menufont.bss.s.o }
+      - { path: src/menu/pksprite.c.o }
+
+      - { path: src/iop_mdl/wp2cd_rpc.c.o }
+      - { path: src/iop_mdl/tapctrl_rpc.c.o }
+
+      - { path: src/prlib/gifreg.cpp.o }
+      - { path: src/prlib/model.cpp.o }
+      - { path: src/prlib/database.cpp.o }
+      - { path: src/prlib/renderstuff.cpp.o }
+      - { path: asm/data/prlib/prlib.bss.s.o }
+      - { path: src/prlib/setpointer.cpp.o }
+      - { path: src/prlib/render.cpp.o }
+      - { path: asm/data/prlib/renderee.bss.s.o }
+      - { path: src/prlib/transition.cpp.o }
+      - { path: asm/data/prlib/microprogram.bss.s.o }
+      - { path: asm/data/prlib/spram.bss.s.o }
+      - { path: src/prlib/mfifo.cpp.o }
+      - { path: asm/data/prlib/spadata.bss.s.o }
+      - { path: src/prlib/scene.cpp.o }
+      - { path: src/prlib/cluster.cpp.o }
+      - { path: src/prlib/shape.cpp.o }
+      - { path: asm/data/prlib/billboard.bss.s.o }
+      - { path: asm/data/prlib/depthfield.bss.s.o }
+      - { path: src/prlib/vram.cpp.o }
+      - { path: src/prlib/random.cpp.o }
+      - { path: src/prlib/menderer.cpp.o }
+      - { path: asm/data/prlib/menderercreate.bss.s.o }
+      - { path: asm/data/prlib/mendererawful.bss.s.o }
+      - { path: asm/data/prlib/mendereralpha.bss.s.o }
+      - { path: asm/data/prlib/mendererdata.bss.s.o }
+      - { path: asm/data/prlib/wave.bss.s.o }
+      - { path: src/prlib/dmaqueue.cpp.o }
+      - { path: src/prlib/utility.cpp.o }
+      - { path: src/prlib/tim2.cpp.o }
+      - { path: src/prlib/animation.cpp.o }
+      - { path: asm/data/prlib/camera.bss.s.o }
+      - { path: src/prlib/contour.cpp.o }
+      - { path: src/prlib/dma.cpp.o }
+
+      - { path: src/nalib/navector.cpp.o }
+
+      - { path: asm/sdk/graphdev.s.o }
+      - { path: asm/sdk/libdma.s.o }
+      - { path: asm/sdk/devvu0.s.o }
+      - { path: asm/sdk/devvif0.s.o }
+      - { path: asm/sdk/libgifpk.s.o }
+      - { path: asm/sdk/libpad.s.o }
+      - { path: asm/sdk/klib.s.o }
+      - { path: asm/sdk/glue.s.o }
+      - { path: asm/sdk/cache.s.o }
+      - { path: asm/sdk/intr.s.o }
+      - { path: asm/sdk/tty.s.o }
+      - { path: asm/sdk/kprintf.s.o }
+      - { path: asm/sdk/sifcmd.s.o }
+      - { path: asm/sdk/sifrpc.s.o }
+      - { path: asm/sdk/filestub.s.o }
+      - { path: asm/sdk/eeloadfile.s.o }
+      - { path: asm/sdk/iopreset.s.o }
+      - { path: asm/sdk/diei.s.o }
+      - { path: asm/sdk/initsys.s.o }
+      - { path: asm/sdk/thread.s.o }
+      - { path: asm/sdk/deci2.s.o }
+      - { path: asm/sdk/libvu0.s.o }
+      - { path: asm/sdk/eecdvd.s.o }
+      - { path: asm/sdk/libmc.s.o }
+
+      - { path: asm/data/sdk/scelib.bss.s.o }
+      - { path: asm/data/sdk/newlib.bss.s.o }
+  
+  - name: mfifo
+    alloc_sections: [.mfifo]
+    subalign: 0x10000
+    segment_end_align: 0x10000
+    files:
+      - { path: asm/data/prlib/mfifo.mfifo.s.o }
+
+asserts:
+  - check: mfifo_VRAM <= 0x01ca0000
+    error_message: .mfifo section overflowed into overlay area.
+
+  # .text 0x00100000: {
+  #     crt0.o(.text)
+  #     *(.text)
+  #     QUAD(0)
+  # }
+  # .reginfo                    :     { KEEP(*(.reginfo)) }
+  # .data             ALIGN(128):     { *(.data) }
+  # .rodata           ALIGN(128):     { *(.rodata) }
+  # .gcc_except_table ALIGN(128):     { *(.gcc_except_table) }
+  # _gp = ALIGN(128) + 0x7ff0;
+  # .lit8             ALIGN(128):     { *(.lit8) }
+  # .lit4             ALIGN(128):     { *(.lit4) }
+  # .sdata            ALIGN(128):     { *(.sdata) }
+  # .sbss             ALIGN(128):     { _fbss = .; *(.sbss) *(.scommon) }
+  # .bss              ALIGN(128):     { *(.bss) }
+  # .mfifo            ALIGN(0x10000): { *(.mfifo) }

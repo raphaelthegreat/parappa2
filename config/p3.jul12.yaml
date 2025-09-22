@@ -1,5 +1,6 @@
 name: PaRappa the Rapper 2 (NTSC-J) (July 12th prototype)
-sha1: e693c3968afc22dfcb4cc4529aceb7c4f4921a94
+#sha1: e693c3968afc22dfcb4cc4529aceb7c4f4921a94
+sha1: 6883b00102f831881b6dcdea38b30ee1e91ee0a3
 options:
     # paths
     basename: SCPS_150.17
@@ -9,6 +10,8 @@ options:
     asm_path: asm
     src_path: src
     build_path: build
+
+    ld_script_path: SCPS_150.17.splat.ld
 
     extensions_path: tools/splat_ext
     symbol_addrs_path: config/p3.jul12.symbol_addrs.txt
@@ -31,8 +34,12 @@ options:
     subalign: null
 
     find_file_boundaries: False
-    section_order: [".text", ".data", ".rodata", ".lit8", ".lit4", ".sdata", ".sbss", ".bss"]
+    section_order: [".text", ".reginfo", ".data", ".rodata", ".lit8", ".lit4", ".sdata", ".sbss", ".bss"]
     auto_link_sections: [".data", ".rodata", ".lit8", ".lit4", ".sdata", ".sbss", ".bss"]
+
+    # Linker script needs to be manually fixed.
+    # ld_sections_allowlist:
+    #   - .reginfo
 
     gp_value: 0x3a0ef0
     ld_gp_expression: main_LIT8_START + 0x7ff0
@@ -175,6 +182,7 @@ segments:
 
         # .vutext
         - [0x78040,  databin, vutext]
+        #- [0x7A890,  databin, pad]
 
         # .data
         - [0x7A900,  data]
@@ -464,13 +472,28 @@ segments:
         - { type: bss,   vram: 0x01c88500, name: sdk/scelib           }
         - { type: bss,   vram: 0x01c8df00, name: sdk/newlib           }
 
-    - [0x299A00, databin] # pad
-
     - name: mfifo
       type: code
-      start: 0x29A000
+      start: 0x299A00
       vram: 0x01C90000
+      #ld_align_segment_start: 0x10000
+      subalign: 0x10000
+      #align: 0x10000
+      follows_vram: main
       subsegments:
-        - [0x29A000, databin, prlib/mfifo]
+        - [0x299A00, mfifo, prlib/mfifo]
+        
 
-    - [0x2AA000]
+    #- [0x299A00, databin] # pad
+    #- name: mfifo
+    #  type: code
+    #  start: 0x29A000 # 0x299A00
+    #  vram: 0x01C90000
+    #  #ld_align_segment_start: 0x10000
+    #  #subalign: 0x10000
+    #  #align: 0x10000
+    #  #follows_vram: main
+    #  subsegments:
+    #    - [0x29A000, data, prlib/mfifo] # 0x299A00
+
+    - [0x2A9A00] # 0x2A9A00
