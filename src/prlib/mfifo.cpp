@@ -12,9 +12,7 @@ extern char mfifoBase[PR_MFIFOSIZE] __attribute__((section(".mfifo")));
 static PrSPRAM_DATA* prSpramData = (PrSPRAM_DATA*)0x70000000;
 static bool mfifoProcessing = false;
 
-static inline u_int PrMfifoGetUnsentDataSize(u_int arg0, u_int arg1) {
-    return (arg1 - arg0) & 0xfff0;
-}
+#define PR_ALIGNSPR(addr) ((u_int)addr&0xfff0)
 
 void PrInitializeMfifo() {
     *D_RBOR = (u_int)mfifoBase;
@@ -31,21 +29,39 @@ void PrStartMfifo() {
         PrWaitDmaFinish(SCE_DMA_fromSPR);
         PrWaitDmaFinish(SCE_DMA_GIF);
 
+        /*
+         * Enable MFIFO and set the GIF
+         * as the drain channel.
+         */
         ((tD_CTRL*)D_CTRL)->MFD = 3;
         ((tD_CTRL*)D_CTRL)->RELE = 0;
         ((tD_CTRL*)D_CTRL)->RCYC = 0;
         
+        /*
+         * Initialize the SPRfrom and GIF
+         * addresses to the ring buffer.
+         *
+         * Setting them to the same value
+         * will also stall the transfer
+         * (D2_TADR==D8_MADR).
+         */
         *D8_MADR = (u_int)mfifoBase;
         *D2_TADR = (u_int)mfifoBase;
 
-        /* MOD=1, TTE=1 */
+        /*
+         * Start GIF transfer.
+         *
+         * MOD=Chain
+         * ASP,TTE,TIE=0
+         * STR=1
+         */
         *(int*)D2_CHCR = 0x104;
     }
 }
 
 void PrStopMfifo() {
     if (mfifoProcessing) {
-        PrSendMfifo(&prSpramData->unk2A0);
+        PrSendMfifo(&prSpramData->mEndDmaTag);
         PrWaitDmaFinish(SCE_DMA_GIF);
 
         /*
@@ -60,35 +76,35 @@ void PrStopMfifo() {
 
 void PrWaitMfifo() {
     if (mfifoProcessing) {
-        while (*D8_CHCR & (1<<8));
-        while (*D2_TADR != *D8_MADR);
+        while (*D8_CHCR & (1<<8)); /*STR*/
+        while (*D2_TADR != *D8_MADR); /* Wait until the GIF is done */
     }
 }
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("asm/nonmatchings/prlib/mfifo", PrSendMfifo__FPC10_sceDmaTag);
-#else
 void PrSendMfifo(const sceDmaTag* tag) {
     u_int qwc = tag->qwc + 1;
     u_int size = qwc * 16;
 
-    while ( *D8_CHCR & 0x100 );
+    while (*D8_CHCR & (1<<8)); /*STR*/
 
-    *D8_SADR = (u_int)tag & 0xfff0;
+    *D8_SADR = PR_ALIGNSPR(tag);
     *D8_QWC = qwc;
 
     while (1) {
-        u_int v1 = *D2_TADR;
-        u_int v0 = *D8_MADR;
-        if (v1 == v0 || size < PrMfifoGetUnsentDataSize(v0, v1)) {
+        u_int gif_tadr = *D2_TADR;
+        u_int spr_madr = *D8_MADR;
+        if (gif_tadr == spr_madr /* MFIFO is empty */ ||
+            /* Ring buffer has enough size */
+            size < PR_ALIGNSPR(gif_tadr - spr_madr)) {
             break;
         }
     }
 
-    *D8_CHCR |= (1<<8);
+    *(int*)D8_CHCR |= (1<<8); /* STR=1 */
 }
-#endif
 
 u_int PrMfifoUnsentDataSize() {
-    return PrMfifoGetUnsentDataSize(*D2_TADR, *D8_MADR);
+    u_int gif_tadr = *D2_TADR;
+    u_int spr_madr = *D8_MADR;
+    return PR_ALIGNSPR(spr_madr - gif_tadr);
 }

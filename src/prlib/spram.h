@@ -11,7 +11,7 @@ struct PrSPRAM_DATA {
     PR_PADDING(unk0, 0xe0);
     NaMATRIX<float, 4, 4> unkE0;
     PR_PADDING(unk120, 0x180);
-    sceDmaTag unk2A0;
+    sceDmaTag mEndDmaTag;
 };
 
 #endif /* PRLIB_SPRAM_H */
