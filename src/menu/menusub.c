@@ -1,6 +1,5 @@
 #include "menu/menusub.h"
 
-#include "common.h"
 #include "main/cdctrl.h"
 #include "main/etc.h"
 
@@ -26,7 +25,7 @@
 // /* data 18b630 */ static short RShopRute1[0];
 // /* data 18b638 */ static short RShopRute2[0];
 // /* data 18b648 */ static short *RecordShopRute[10];
-// /* data 18b670 */ static MNMAPPOS mnmapCityHall[0];
+/* data 18b670 */ extern MNMAPPOS mnmapCityHall[]; /* static */
 // /* data 18b730 */ short AnmCHallPara_OptRet[0];
 // /* data 18b738 */ short AnmCHallPara_Opt[0];
 // /* data 18b740 */ short AnmCHallPara_RepRet[0];
@@ -123,8 +122,8 @@
 /* sdata 3997c8 */ extern int PopMenu_Sw; /* static */
 /* sdata 3997cc */ extern int SaveMenu_Sw; /* static */
 /* sdata 3997d0 */ extern int JukeMenu_Sw; /* static */
-// /* data 18ca60 */ static USERLISTTYPE_TABLE ULTypeT_CITY_STGCLR;
-// /* data 18ca70 */ static USERLISTTYPE_TABLE ULTypeT_CITY_REPLAY;
+/* data 18ca60 */ extern USERLISTTYPE_TABLE ULTypeT_CITY_STGCLR; /* static */
+/* data 18ca70 */ extern USERLISTTYPE_TABLE ULTypeT_CITY_REPLAY; /* static */
 // /* data 18ca80 */ static USERLISTTYPE_TABLE ULTypeT_SAVE_LOG;
 // /* data 18ca90 */ static USERLISTTYPE_TABLE ULTypeT_SAVE_REPLAY;
 // /* data 18caa0 */ static int POPBtn2Sel[0];
@@ -165,7 +164,7 @@
 /* bss 1c7f6e0 */ extern TsUSERPKT MnLPkt; /* static */
 /* bss 1c7f780 */ extern sceGifPacket FPacket; /* static */
 /* sdata 399828 */ extern MAP_TIME MapTime;
-// /* sbss 399b44 */ static int UCheckLoadError;
+/* sbss 399b44 */ extern int UCheckLoadError; /* static */
 // /* sbss 399b48 */ static int UCheckSaveError;
 /* sbss 399b4c */ extern int subStatus; /* static */
 /* sbss 399b50 */ extern int ret; /* static */
@@ -227,7 +226,7 @@ static int   TsMap_Flow(int flg, u_int tpad, u_int tpad2);
 /* static */ void  TsMakeUserWork(int mode);
 /* static */ void  TsSaveSuccessProc(void);
 /* static */ int   MpSave_Flow(int flg, u_int tpad, u_int tpad2);
-/* static */ int   MpCityHall_Flow(int flg, u_int tpad, u_int tpad2);
+static int   MpCityHall_Flow(int flg, u_int tpad, u_int tpad2);
 /* static */ void  MpCityHallParaStart(int pos);
 static void  MpCityHallFPHSSoundMask(int flg);
 /* static */ int   MpCityHallFPHSMove(int pos, int fpos);
@@ -1322,7 +1321,7 @@ static int TsMap_Flow(int flg, u_int tpad, u_int tpad2) {
             TsBGMChangePos(MapCity_tmp_254.curPos + 1);
             break;
         case 3:
-            TSSNDPLAY(9);
+            TSSNDPLAY(VSND_CANCEL);
             break;
         case 2:
             break;
@@ -1343,17 +1342,17 @@ static int TsMap_Flow(int flg, u_int tpad, u_int tpad2) {
     case 0x1100:
         if (MapCity_tmp_254.curPos == 0) {
             MNScene_StartAnime(&MNS_StageMap, -1, &StageMapAnimePA[3]);
-            TSSNDPLAY(7);
+            TSSNDPLAY(VSND_SELMODE);
             state_tmp_253 = 0x6000;
             break;
         } else if (MapCity_tmp_254.curPos == 9) {
             MNScene_StartAnime(&MNS_StageMap, -1, &StageMapAnimePA[3]);
-            TSSNDPLAY(7);
+            TSSNDPLAY(VSND_SELMODE);
             state_tmp_253 = 0x5000;
             break;
         }
 
-        TSSNDPLAY(7);
+        TSSNDPLAY(VSND_SELMODE);
         pP3GameState->nStage = MapCity_tmp_254.curPos;
         state_tmp_253 = 0x3000;
         break;
@@ -1366,7 +1365,7 @@ static int TsMap_Flow(int flg, u_int tpad, u_int tpad2) {
         /* fallthrough */
     case 0x1210:
         if (--_MNwaitTime <= 0) {
-            return 4;
+            return P3MRET_TOTITLE;
         }
         break;
     case 0x2000:
@@ -1451,7 +1450,7 @@ static int TsMap_Flow(int flg, u_int tpad, u_int tpad2) {
         /* fallthrough */
     case 0x4010:
         if (--_MNwaitTime <= 0) {
-            return 2;
+            return P3MRET_PLAYGAME;
         }
         break;
     case 0x5000:
@@ -1465,7 +1464,7 @@ static int TsMap_Flow(int flg, u_int tpad, u_int tpad2) {
         /* fallthrough */
     case 0x5018:
         if (--_MNwaitTime <= 0) {
-            TSSNDPLAY(7);
+            TSSNDPLAY(VSND_SELMODE);
             state_tmp_253 = 0x5100;
         }
         break;
@@ -1516,7 +1515,6 @@ static int TsMap_Flow(int flg, u_int tpad, u_int tpad2) {
             break;
         } else if (ret == 2) {
             state_tmp_253 = 0xff00;
-            break;
         } else if (ret == 3) {
             state_tmp_253 = 0x7020;
         } else {
@@ -1541,7 +1539,7 @@ static int TsMap_Flow(int flg, u_int tpad, u_int tpad2) {
         TsSCFADE_Set(1, 0xf, 0);
         break;
     case 0xff00:
-        return 3;
+        return P3MRET_REPLAY;
     }
 
     return 0;
@@ -1553,7 +1551,537 @@ INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsSaveSuccessProc);
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", MpSave_Flow);
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", MpCityHall_Flow);
+static int MpCityHall_Flow(int flg, u_int tpad, u_int tpad2) {
+    /* TODO: Fix names once made static. */
+    /* sbss 399ae0 */ extern int state_tmp_270;
+    /* sbss 399ae4 */ extern int waitTime_tmp_271;
+    /* bss 1c77a88 */ extern MAPPOS MapCHall_tmp_272;
+    /* sbss 399ae8 */ extern int scstate_tmp_273;
+    /* sbss 399aec */ extern int scstPos_tmp_274;
+    /* sbss 399af0 */ extern int curTag_tmp_275;
+    /* sbss 399af4 */ extern int fphs_pos_tmp_276;
+    /* sbss 399af8 */ extern u_int AnmBit_tmp_277;
+    int chkType, chkMode;
+    int bBroken;
+    int ret;
+    int anmno;
+    int cmpmesNo;
+    int isError;
+    int ntag;
+
+    if (flg == 1) {
+        switch (tpad) {
+        case 0:
+            MNScene_DispSw(&MNS_StageMap, 0);
+            MNScene_DispSw(&MNS_CityHall, 1);
+            AnmBit_tmp_277 = MNScene_StartAnime(&MNS_CityHall, -1, CityHallAnime);
+            TsCMPMes_SetMes(-1);
+            MapCHall_tmp_272.pscene = &MNS_CityHall;
+            MapCHall_tmp_272.panime = CityHallAnime;
+            MapCHall_tmp_272.mnmap = mnmapCityHall;
+            MpMapMenu_Flow(1, &MapCHall_tmp_272, 0);
+            MapCHall_tmp_272.curPos = 0;
+            waitTime_tmp_271 = 0;
+            state_tmp_270 = 0;
+            scstate_tmp_273 = 0;
+            scstPos_tmp_274 = 0;
+            MpCityHallCharPosSet(0);
+            fphs_pos_tmp_276 = 0;
+            MpCityHallFPHSSoundMask(0);
+            TSSNDPLAY(0x8001);
+            return 0;
+        case 1:
+            MNScene_DispSw(&MNS_StageMap, 0);
+            MNScene_DispSw(&MNS_CityHall, 1);
+            MapCHall_tmp_272.pscene = &MNS_CityHall;
+            MapCHall_tmp_272.panime = CityHallAnime;
+            MapCHall_tmp_272.mnmap = mnmapCityHall;
+            MpMapMenu_Flow(1, &MapCHall_tmp_272, 0);
+            MpMapMenu_Flow(3, &MapCHall_tmp_272, 2);
+            TsCMPMes_SetMes(-1);
+            scstate_tmp_273 = 0;
+            state_tmp_270 = 0x100;
+            scstPos_tmp_274 = 0;
+            MpCityHallCharPosSet(2);
+            fphs_pos_tmp_276 = 2;
+            return 0;
+        }
+    }
+
+    switch (scstate_tmp_273) {
+    case 0:
+        if (scstPos_tmp_274 != 0) {
+            scstate_tmp_273 = 0x2100;
+        }
+        break;
+    case 0x100:
+        if (TsSCFADE_Set(2, 0xa, 1)) {
+            break;
+        }
+        TsUserList_Flow(2, 0, 0);
+        UserList_Sw = 0;
+        MNScene_DispSw(&MNS_OptCounter, 0);
+        OptionList_Sw = 0;
+        scstate_tmp_273 = 0x110;
+        /* fallthrough */
+    case 0x110:
+        MNScene_DispSw(&MNS_CityHall, 1);
+        MpMapMenu_Flow(3, &MapCHall_tmp_272, MapCHall_tmp_272.curPos);
+        MpCityHallCharPosSet(MapCHall_tmp_272.curPos);
+        fphs_pos_tmp_276 = MapCHall_tmp_272.curPos;
+        MpCityHallFPHSSoundMask(0);
+        scstate_tmp_273 = 0x120;
+        /* fallthrough */
+    case 0x120:
+        if (!TsSCFADE_Set(1, 0x14, 1)) {
+            scstate_tmp_273 = 0;
+        }
+        break;
+    case 0x2000:
+        if (scstPos_tmp_274 == 0) {
+            scstate_tmp_273 = 0x100;
+        }
+        break;
+    case 0x2100:
+        anmno = -1;
+        cmpmesNo = -1;
+
+        switch (MapCHall_tmp_272.curPos) {
+        case 0:
+            anmno = 3;
+            cmpmesNo = MENU_LOGLOAD_CAM;
+            MpCityHallFPHOK(0);
+            break;
+        case 2:
+            anmno = 9;
+            cmpmesNo = MENU_REPLOAD_CAM;
+            MpCityHallFPHOK(1);
+            break;
+        case 1:
+            anmno = 6;
+            cmpmesNo = MENU_OPT_CAM;
+            MpCityHallFPHOK(2);
+            break;
+        }
+
+        AnmBit_tmp_277 = 0x80000000;
+        if (anmno >= 0) {
+            AnmBit_tmp_277 |= MNScene_StartAnime(&MNS_CityHall, -1, &CityHallAnime[anmno]);
+        }
+
+        MpCityHallFPHSSoundMask(1);
+        TsCMPMes_SetMes(cmpmesNo);
+        scstate_tmp_273 = 0x2200;
+        /* fallthrough */
+    case 0x2200:
+        if (scstPos_tmp_274 == 0) {
+            scstate_tmp_273 = 0x100;
+        }
+        if (!TsAnimeWait_withKeySkip(tpad, &MNS_CityHall, 0xa, AnmBit_tmp_277)) {
+            scstate_tmp_273 = 0x2000;
+        }
+        break;
+    }
+
+    
+    fphs_pos_tmp_276 = MpCityHallFPHSMove(MapCHall_tmp_272.curPos, fphs_pos_tmp_276);
+
+    switch (state_tmp_270) {
+    case 0:
+        if (++waitTime_tmp_271 == 70) {
+            TsCMPMes_SetMes(MENU_HALL_INSIDE);
+            TSSNDPLAY(VSND_MENU1);
+        }
+        if (TsAnimeWait_withKeySkip(tpad, &MNS_CityHall, 0, -1)) {
+            return 0;
+        }
+        TSSND_SKIPPLAY(VSND_MENU1);
+        TsCMPMes_SetMes(MENU_HALL_INSIDE);
+        MpMapMenu_Flow(3, &MapCHall_tmp_272, 0);
+        state_tmp_270 = 0x100;
+        /* fallthrough */
+    case 0x100:
+        ret = MpMapMenu_Flow(0, &MapCHall_tmp_272, tpad);
+        if (MapCHall_tmp_272.anmStop != 0) {
+            TSSND_SKIPSTOP(2);
+        }
+        if (MapCHall_tmp_272.anmtrg != 0) {
+            MpCityHallParaStart(MapCHall_tmp_272.anmtrg);
+        }
+    
+        switch (MapCHall_tmp_272.sndtrg) {
+        case 1:
+            TSSNDPLAY(VSND_MVCUS_LR);
+            break;
+        case 2:
+            TSSNDPLAY(VSND_SELPOPUP);
+            break;
+        case 3:
+            TSSNDPLAY(VSND_CANCEL);
+            break;
+        }
+    
+        if (ret != 0) {
+            if (ret == 1) {
+                switch (MapCHall_tmp_272.curPos) {
+                case 0:
+                    TSSNDSTOP(3);
+                    TSSNDPLAY(VSND_MENU2);
+                    break;
+                case 2:
+                    TSSNDSTOP(3);
+                    TSSNDPLAY(VSND_MENU3);
+                    break;
+                case 1:
+                    TSSNDSTOP(3);
+                    TSSNDPLAY(VSND_MENU4);
+                    break;
+                }
+
+                state_tmp_270 = 0x1000;
+            }
+
+            if (ret == -1) {
+                state_tmp_270 = 0xf000;
+            }
+
+            return 0;
+        }
+
+        break;
+    case 0x1000:
+        if (MapCHall_tmp_272.curPos == 1) {
+            state_tmp_270 = 0x1500;
+            break;
+        }
+        McInitFlow();
+        state_tmp_270 = 0x1010;
+        /* fallthrough */
+    case 0x1010:
+        if (MapCHall_tmp_272.curPos == 0) {
+            curTag_tmp_275 = 0;
+            chkMode = 1;
+            chkType = 3;
+        } else {
+            curTag_tmp_275 = 0;
+            chkType = 1;
+            chkMode = 2;
+        }
+
+        ret = McUserCheckFlow(chkType, chkMode, 0);
+        if (ret == -2) {
+            break;
+        }
+        if (ret > 0 && ret < 3) {
+            state_tmp_270 = 0x5000;
+            break;
+        }
+        state_tmp_270 = 0x1500;
+        /* fallthrough */
+    case 0x1500:
+        scstPos_tmp_274 = 1;
+    
+        switch (MapCHall_tmp_272.curPos) {
+        case 0:
+        case 2:
+            state_tmp_270 = 0x2000;
+            break;
+        case 1:
+            state_tmp_270 = 0x3000;
+            break;
+        }
+    
+        break;
+    case 0x2000:
+        if (MapCHall_tmp_272.curPos == 0) {
+            chkMode = 1;
+            chkType = 3;
+        } else {
+            chkMode = 2;
+            chkType = 1;
+        }
+
+        isError = 0;
+        ret = McUserCheckFlow(chkType, chkMode, &isError);
+        if (ret < 0) {
+            if (isError == 1) {
+                scstPos_tmp_274 = 0;
+            }
+            if (isError == 2) {
+                scstPos_tmp_274 = 1;
+                break;
+            }
+            return 0;
+        }
+        if (ret > 0 && ret < 3) {
+            state_tmp_270 = 0x5000;
+            break;
+        }
+        TsMCAMes_SetMes(-1);
+        state_tmp_270 = 0x2020;
+        break;
+    case 0x2020:
+        if (scstate_tmp_273 & 0xfff) {
+            return 0;
+        }
+        state_tmp_270 = 0x2021;
+        /* fallthrough */
+    case 0x2021:
+        if (UserList_Sw) {
+            if (TsSCFADE_Set(2, 0x14, 0)) {
+                return 0;
+            }
+        }
+        TsMakeUserWork(1);
+        state_tmp_270 = 0x2022;
+        /* fallthrough */
+    case 0x2022:
+        if (MapCHall_tmp_272.curPos == 0) {
+            if (UCheckLoadError) {
+                ntag = 1;
+                curTag_tmp_275 = 1;
+            } else {
+                ntag = curTag_tmp_275;
+            }
+            TsUserList_SetType(&ULTypeT_CITY_STGCLR, pP3GameState->nMode, ntag);
+        } else {
+            TsUserList_SetType(&ULTypeT_CITY_REPLAY, pP3GameState->nMode, 0);
+        }
+
+        MNScene_End(&MNS_StageMap2);
+        MNScene_Init(&MNS_StageMap2, &Scene_CityHall, 0);
+        MNScene_CopyState(&MNS_StageMap2, &MNS_CityHall);
+        MNScene_DispSw(&MNS_CityHall, 0);
+        MNScene_DispSw(&MNS_StageMap2, 2);
+        state_tmp_270 = 0x2024;
+        /* fallthrough */
+    case 0x2024:
+        if (!UserList_Sw) {
+            chkType = 5;
+            TsSCFADE_Set(chkType, 0x14, 2);
+        } else {
+            chkType = 1;
+            TsSCFADE_Set(chkType, 0x14, 0);
+        }
+        UserList_Sw = 1;
+        state_tmp_270 = 0x2026;
+        /* fallthrough */
+    case 0x2026:
+        if (TsSCFADE_Set(0, 0, 0) >= 9) {
+            break;
+        }
+        MNScene_DispSw(&MNS_CityHall, 0);
+        MNScene_DispSw(&MNS_StageMap2, 0);
+        MNScene_End(&MNS_StageMap2);
+        state_tmp_270 = 0x2028;
+        /* fallthrough */
+    case 0x2028:
+        ret = TsUserList_Flow(0, tpad, tpad2);
+
+        if (ret != 0) {
+            switch (ret) {
+            case -1:
+                state_tmp_270 = 0x5000;
+                break;
+            case 1:
+                if (TsUserList_IsGetFileSave()) {
+                    state_tmp_270 = 0x2830;
+                } else {
+                    state_tmp_270 = 0x2030;
+                }
+                break;
+            case -3:
+                if (TsUserList_IsGetFileSave()) {
+                    curTag_tmp_275 = 1;
+                } else {
+                    curTag_tmp_275 = 0;
+                }
+
+                McInitFlow();
+                state_tmp_270 = 0x2000;
+                break;
+            }
+
+            McInitFlow();
+            return 0;
+        }
+
+        break;
+    case 0x2030:
+        if (MapCHall_tmp_272.curPos == 0) {
+            chkMode = 1;
+        } else {
+            chkMode = 2;
+        }
+
+        ret = McUserLoadFlow(TsUserList_GetCurFileNo(&bBroken), chkMode, bBroken);
+        if (ret < 0) {
+            return 0;
+        }
+
+        waitTime_tmp_271 = 0;
+        if (ret != 0) {
+            if (ret == 1) {
+                state_tmp_270 = 0x2028;
+            }
+            if (ret == 2) {
+                state_tmp_270 = 0x2050;
+            }
+            if (ret != 4) {
+                return 0;
+            }
+            McInitFlow();
+            state_tmp_270 = 0x2000;
+            break;
+        }
+
+        TsCMPMes_SetMes(-1);
+        state_tmp_270 = 0x2040;
+        /* fallthrough */
+    case 0x2040:
+        if (++waitTime_tmp_271 >= 35) {
+            waitTime_tmp_271 = 0;
+            TsSet_ParappaCapColor();
+            if (MapCHall_tmp_272.curPos == 2) {
+                state_tmp_270 = 0xf010;
+            } else {
+                state_tmp_270 = 0xef00;
+            }
+        }
+        break;
+    case 0x2830:
+        UserWork->fileNo = TsUserList_GetCurFileNo(NULL);
+        state_tmp_270 = 0x2840;
+        /* fallthrough */
+    case 0x2840:
+        ret = McUserSaveFlow(UserWork);
+        if (ret < 0) {
+            TsUserList_SetCurDispUserData(UserWork);
+            return 0;
+        }
+        if (ret != 0) {
+            if (ret == 1) {
+                state_tmp_270 = 0x2020;
+            }
+            if (ret == 2) {
+                state_tmp_270 = 0x2900;
+            }
+            if (ret == 4) {
+                McInitFlow();
+                state_tmp_270 = 0x2000;
+                break;
+            }
+            return 0;
+        }
+        /* fallthrough */
+    case 0x2850:
+        TsSaveSuccessProc();
+        waitTime_tmp_271 = 0;
+        state_tmp_270 = 0x2860;
+        /* fallthrough */
+    case 0x2860:
+        TsCMPMes_SetMes(-1);
+        if (++waitTime_tmp_271 >= 35) {
+            waitTime_tmp_271 = 0;
+            state_tmp_270 = 0x2900;
+        } else {
+            break;
+        }
+        /* fallthrough */
+    case 0x2050:
+    case 0x2900:
+        state_tmp_270 = 0x5000;
+        break;
+    case 0x3000:
+        if (scstate_tmp_273 & 0xfff) {
+            return 0;
+        }
+        OptionList_Sw = 1;
+        TsOption_Flow(1, tpad);
+        MNScene_End(&MNS_StageMap2);
+        MNScene_Init(&MNS_StageMap2, &Scene_CityHall, 0);
+        MNScene_CopyState(&MNS_StageMap2, &MNS_CityHall);
+        MNScene_DispSw(&MNS_CityHall, 0);
+        MNScene_DispSw(&MNS_StageMap2, 2);
+        MNScene_DispSw(&MNS_OptCounter, 1);
+        state_tmp_270 = 0x3005;
+        /* fallthrough */
+    case 0x3005:
+        if (TsSCFADE_Set(5, 0x14, 2)) {
+            return 0;
+        }
+        MNScene_DispSw(&MNS_CityHall, 0);
+        MNScene_DispSw(&MNS_StageMap2, 0);
+        MNScene_End(&MNS_StageMap2);
+        state_tmp_270 = 0x3010;
+        /* fallthrough */
+    case 0x3010:
+        ret = TsOption_Flow(0, tpad);
+        if (ret != 0) {
+            if (ret == -1) {
+                state_tmp_270 = 0x3f00;
+            }
+            if (ret == 1) {
+                state_tmp_270 = 0x3f00;
+            }
+            return 0;
+        }
+        break;
+    case 0x3f00:
+        state_tmp_270 = 0x5000;
+        /* fallthrough */
+    case 0x5000:
+        scstPos_tmp_274 = 0;
+        state_tmp_270 = 0x5008;
+        break;
+    case 0x5008:
+        if (scstate_tmp_273 & 0xfff) {
+            return 0;
+        }
+        state_tmp_270 = 0x100;
+        break;
+    case 0xef00:
+        TSSNDSTOP(3);
+        MenuVoiceBankSet(0);
+        state_tmp_270 = 0xef10;
+        /* fallthrough */
+    case 0xef10:
+        if (TsSCFADE_Set(2, 0x14, 1)) {
+            return 0;
+        }
+        TsUserList_Flow(2, 0, 0);
+        UserList_Sw = 0;
+        MNScene_DispSw(&MNS_OptCounter, 0);
+        OptionList_Sw = 0;
+        TSSNDSTOP(3);
+        return 3;
+    case 0xf000:
+        TSSNDSTOP(3);
+        return 1;
+    case 0xf010:
+        TSSNDSTOP(3);
+        scstPos_tmp_274 = 0;
+        state_tmp_270 = 0xf014;
+        break;
+    case 0xf014:
+        TsCMPMes_SetMes(-1);
+        if (scstate_tmp_273 & 0xfff) {
+            return 0;
+        }
+        TsBGMStop(12);
+        _MNwaitTime = 10;
+        state_tmp_270 = 0xf018;
+        /* fallthrough */
+    case 0xf018:
+        if (--_MNwaitTime <= 0) {
+            TSSNDSTOP(3);
+            return 2;
+        }
+        break;
+    }
+
+    return 0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", MpCityHallParaStart);
 

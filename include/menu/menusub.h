@@ -74,6 +74,66 @@ typedef struct { // 0x8
     /* 0x6 */ u_short offtim;
 } TSVOICE_TBL;
 
+enum {
+    VSND_MVCUS_L = 0,
+    VSND_MVCUS_R = 1,
+    VSND_MVCUS_LR = 2,
+    VSND_MVCUS_U = 3,
+    VSND_MVCUS_D = 4,
+    VSND_MVCUS_UD = 5,
+    VSND_SELPOPUP = 6,
+    VSND_SELMODE = 7,
+    VSND_GO_GAME = 8,
+    VSND_CANCEL = 9,
+    VSND_CHALL_MOVE = 10,
+    VSND_CHALL_PHFSMOVE = 11,
+    VSND_PARAMOVE = 12,
+    VSND_MC_FORMAT1 = 13,
+    VSND_MC_FORMAT2 = 14,
+    VSND_MC_FORMAT3 = 15,
+    VSND_MC_SAVE1 = 16,
+    VSND_MC_SAVE2 = 17,
+    VSND_MC_SAVE3 = 18,
+    VSND_MC_SAVE4 = 19,
+    VSND_MC_ALERT1 = 20,
+    VSND_MC_ALERT2 = 21,
+    VSND_MC_CHECK1 = 22,
+    VSND_MC_CHECK2 = 23,
+    VSND_BGM_MOVEEND = 24,
+    VSND_BGM_MOVE = 25,
+    VSND_BGM_CHALL = 26,
+    VSND_BGM_ST1 = 27,
+    VSND_BGM_ST2 = 28,
+    VSND_BGM_ST3 = 29,
+    VSND_BGM_ST4 = 30,
+    VSND_BGM_ST5 = 31,
+    VSND_BGM_ST6 = 32,
+    VSND_BGM_ST7 = 33,
+    VSND_BGM_ST8 = 34,
+    VSND_MC_LOAD1 = 35,
+    VSND_MC_LOAD2 = 36,
+    VSND_MC_LOAD3A = 37,
+    VSND_MC_LOAD3B = 38,
+    VSND_MC_LOAD4 = 39,
+    VSND_MC_LOAD5 = 40,
+    VSND_MC_LOAD6 = 41,
+    VSND_MENU1 = 42,
+    VSND_MENU2 = 43,
+    VSND_MENU3 = 44,
+    VSND_MENU4 = 45,
+    VSND_MENU5 = 46,
+    VSND_MENU6 = 47,
+    VSND_OPTION1 = 48,
+    VSND_OPTION2 = 49,
+    VSND_OPTION3 = 50,
+    VSND_OPTION4 = 51,
+    VSND_WAIT1 = 52,
+    VSND_WAIT2 = 53,
+    VSND_MC_LOAD7 = 54,
+    VSND_MC_CHECK2_B = 55,
+    VSND_MAXNUM = 56
+};
+
 typedef struct { // 0x14
     /* 0x00 */ TSVOICE_TBL *pTap;
     /* 0x04 */ u_short isOn;
@@ -340,6 +400,13 @@ typedef struct { // 0x8
     /* 0x0 */ int chanNo;
     /* 0x4 */ u_short *pSeqTop;
 } TSVSNDSEQ;
+
+enum {
+    VSNDSEQNO_LOAD3 = 0,
+    VSNDSEQNO_WAIT0 = 1,
+    VSNDSEQNO_WAIT1 = 2,
+    VSNDSEQNO_MAX = 3
+};
 
 void TsBGMChangePos(int no);
 

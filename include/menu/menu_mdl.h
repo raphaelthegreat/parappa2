@@ -117,7 +117,7 @@ int MNScene_ModelDispSw(MN_SCENE *pshdl, int nmdl, int bsw);
 // /* data 18a548 */ MN_MDLTBL Mdl_CityHall[0];
 // /* data 18a678 */ int Cam_CityHall[0];
 /* sdata 399718 */ extern MN_SCENETBL Scene_CityHall;
-// /* data 18a690 */ MNANM_TBL CityHallAnime[0];
+/* data 18a690 */ extern MNANM_TBL CityHallAnime[];
 // /* data 18aa30 */ int Cam_Notdef[0];
 // /* data 18aa38 */ MN_MDLTBL Mdl_OptCounter[0];
 /* sdata 399720 */ extern MN_SCENETBL Scene_OptCounter;
