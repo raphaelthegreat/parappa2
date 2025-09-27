@@ -14,8 +14,8 @@ float FLT_00398F3C; /* UG_NoodlesDisp -> 0.12822828 */
 extern sceGsStoreImage gs_simage_EFFECTTMP;
 extern sceGsLoadImage gs_loadimg;
 
-#define WV_SCREEN_W 640
-#define WV_SCREEN_H 224
+#define WV_SCREEN_W (640)
+#define WV_SCREEN_H (224)
 
 void CG_WaveInit(WAVE_STR *wstr) {
     wstr->currentAng = 0.0f;

@@ -1458,6 +1458,7 @@ TsHosiPut                           = 0x00137df0; // type:func
 mnmapMap1                           = 0x0018b0e0; // size:0x80
 mnmapMap                            = 0x0018b160; // size:0x240
 mnmapMap2                           = 0x0018b3a0; // size:0x280
+mnmapCityHall                       = 0x0018b670; // size:0xc0
 MapBgmTbl                           = 0x0018b880; // size:0x84
 TsVoiceTbl                          = 0x0018b908; // size:0x1c0
 VSNDSEQ_Tbl                         = 0x0018baf8; // size:0x18
@@ -1491,6 +1492,13 @@ MapTime                             = 0x00399828; // size:0x8
 state                               = 0x00399ac8;
 mesNo                               = 0x00399acc;
 state_tmp_253                       = 0x00399ad0;
+state_tmp_270                       = 0x00399ae0;
+waitTime_tmp_271                    = 0x00399ae4;
+scstate_tmp_273                     = 0x00399ae8;
+scstPos_tmp_274                     = 0x00399aec;
+curTag_tmp_275                      = 0x00399af0;
+fphs_pos_tmp_276                    = 0x00399af4;
+AnmBit_tmp_277                      = 0x00399af8;
 _bMapCaptureReq                     = 0x00399b1c;
 pP3GameState                        = 0x00399b18;
 _MNwaitTime                         = 0x00399b20;
@@ -1500,12 +1508,17 @@ UserWork                            = 0x00399b34;
 pCStageRank                         = 0x00399b38;
 UserLst                             = 0x00399b3c;
 UserDispWork                        = 0x00399b40;
+UCheckLoadError                     = 0x00399b44;
 subStatus                           = 0x00399b4c;
 ret                                 = 0x00399b50;
 errorNo                             = 0x00399b54;
 waitTime                            = 0x00399b58;
 
+ULTypeT_CITY_STGCLR                 = 0x0018ca60; // size:0xc
+ULTypeT_CITY_REPLAY                 = 0x0018ca70; // size:0xc
+
 MapCity_tmp_254                     = 0x01c77a50; // size:0x34
+MapCHall_tmp_272                    = 0x01c77a88; // size:0x34
 menuPadState                        = 0x01c77ac0; // size:0x20
 TsSndChan                           = 0x01c77ae0; // size:0x12c
 TsBGMState                          = 0x01c77c10; // size:0xa0
@@ -2138,6 +2151,9 @@ CG_WaveDisp__FP8WAVE_STRP10sceGsFrame                                           
 WaveCtrlInit__FP8WAVE_STRss10WMODE_ENUM                                             = 0x001522f8; // type:func
 WaveCtrlDisp__FP8WAVE_STRP10sceGsFrame                                              = 0x001523b0; // type:func
 WaveCtrlUpdate__FP8WAVE_STRf                                                        = 0x001523b8; // type:func
+
+WV_SCREEN_W                                                                         = 0x00399bc8;
+WV_SCREEN_H                                                                         = 0x00399bcc;
 
 // prlib/dmaqueue.cpp
 __10PrDmaQueueUi                                                                    = 0x001523f0; // type:func
