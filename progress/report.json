@@ -9003,21 +9003,27 @@
           "name": "Append__27PrDmaStripForSetGifRegisterUiRCUl",
           "size": "60",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrDmaStripForSetGifRegister::Append(unsigned int, unsigned long const &)"
+          },
           "address": "0"
         },
         {
           "name": "Freeze__27PrDmaStripForSetGifRegisterUcPCv",
           "size": "276",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrDmaStripForSetGifRegister::Freeze(unsigned char, void const *)"
+          },
           "address": "64"
         },
         {
           "name": "PrInitializeDmaStripGifRegister__FG9sceGsZbuf",
           "size": "1304",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrInitializeDmaStripGifRegister(sceGsZbuf)"
+          },
           "address": "344"
         },
         {
@@ -9033,21 +9039,27 @@
           "name": "_GLOBAL_$D$Append__27PrDmaStripForSetGifRegisterUiRCUl",
           "size": "88",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "global destructors keyed to PrDmaStripForSetGifRegister::Append(unsigned int, unsigned long const &)"
+          },
           "address": "1672"
         },
         {
           "name": "_GLOBAL_$I$Append__27PrDmaStripForSetGifRegisterUiRCUl",
           "size": "52",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "global constructors keyed to PrDmaStripForSetGifRegister::Append(unsigned int, unsigned long const &)"
+          },
           "address": "1760"
         },
         {
           "name": "_$_27PrDmaStripForSetGifRegister",
           "size": "28",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrDmaStripForSetGifRegister::~PrDmaStripForSetGifRegister(void)"
+          },
           "address": "1816"
         }
       ],
@@ -9107,13 +9119,17 @@
         {
           "name": "__13PrModelObjectP13SpmFileHeader",
           "size": "216",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrModelObject::PrModelObject(SpmFileHeader *)"
+          },
           "address": "120"
         },
         {
           "name": "_$_13PrModelObject",
           "size": "264",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrModelObject::~PrModelObject(void)"
+          },
           "address": "336"
         },
         {
@@ -9127,7 +9143,9 @@
         {
           "name": "LinkAnimation__13PrModelObjectP13SpaFileHeader",
           "size": "24",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrModelObject::LinkAnimation(SpaFileHeader *)"
+          },
           "address": "936"
         },
         {
@@ -9141,7 +9159,9 @@
         {
           "name": "LinkPositionAnimation__13PrModelObjectP13SpaFileHeader",
           "size": "24",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrModelObject::LinkPositionAnimation(SpaFileHeader *)"
+          },
           "address": "968"
         },
         {
@@ -9156,19 +9176,25 @@
           "name": "UnionBoundaryBox__13PrModelObjectPt8NaVECTOR2Zfi4T1",
           "size": "100",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrModelObject::UnionBoundaryBox(NaVECTOR<float, 4> *, NaVECTOR<float, 4> *)"
+          },
           "address": "1000"
         },
         {
           "name": "GetPrimitivePosition__13PrModelObjectPt8NaVECTOR2Zfi4",
           "size": "260",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrModelObject::GetPrimitivePosition(NaVECTOR<float, 4> *)"
+          },
           "address": "1104"
         },
         {
           "name": "GetScreenPosition__13PrModelObjectPt8NaVECTOR2Zfi4",
           "size": "116",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrModelObject::GetScreenPosition(NaVECTOR<float, 4> *)"
+          },
           "address": "1368"
         },
         {
@@ -9220,13 +9246,17 @@
         {
           "name": "__16PrObjectDatabase",
           "size": "52",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrObjectDatabase::PrObjectDatabase(void)"
+          },
           "address": "0"
         },
         {
           "name": "_$_16PrObjectDatabase",
           "size": "108",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrObjectDatabase::~PrObjectDatabase(void)"
+          },
           "address": "56"
         },
         {
@@ -9249,43 +9279,57 @@
         {
           "name": "CreateScene__16PrObjectDatabaseP13sceGsDrawEnv1PCcUi",
           "size": "152",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrObjectDatabase::CreateScene(sceGsDrawEnv1 *, char const *, unsigned int)"
+          },
           "address": "208"
         },
         {
           "name": "DeleteScene__16PrObjectDatabaseP13PrSceneObject",
           "size": "144",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrObjectDatabase::DeleteScene(PrSceneObject *)"
+          },
           "address": "360"
         },
         {
           "name": "_GLOBAL_$D$prObjectDatabase",
           "size": "16",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "global destructors keyed to prObjectDatabase"
+          },
           "address": "504"
         },
         {
           "name": "_GLOBAL_$I$prObjectDatabase",
           "size": "12",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "global constructors keyed to prObjectDatabase"
+          },
           "address": "520"
         },
         {
           "name": "_$_t11PrObjectSet1Z13SpcFileHeader",
           "size": "28",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrObjectSet<SpcFileHeader>::~PrObjectSet(void)"
+          },
           "address": "536"
         },
         {
           "name": "_$_t11PrObjectSet1Z13SpaFileHeader",
           "size": "28",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrObjectSet<SpaFileHeader>::~PrObjectSet(void)"
+          },
           "address": "568"
         },
         {
           "name": "_$_t11PrObjectSet1Z13PrSceneObject",
           "size": "28",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrObjectSet<PrSceneObject>::~PrObjectSet(void)"
+          },
           "address": "600"
         }
       ],
@@ -9332,21 +9376,27 @@
           "name": "__13PrRenderStuff",
           "size": "72",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrRenderStuff::PrRenderStuff(void)"
+          },
           "address": "0"
         },
         {
           "name": "_$_13PrRenderStuff",
           "size": "88",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrRenderStuff::~PrRenderStuff(void)"
+          },
           "address": "72"
         },
         {
           "name": "Initialize__13PrRenderStuffG9sceGsZbuf",
           "size": "104",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrRenderStuff::Initialize(sceGsZbuf)"
+          },
           "address": "160"
         },
         {
@@ -9362,7 +9412,9 @@
           "name": "GetZbufBits__C13PrRenderStuff",
           "size": "88",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrRenderStuff::GetZbufBits(void) const"
+          },
           "address": "328"
         },
         {
@@ -9378,7 +9430,9 @@
           "name": "StartRender__13PrRenderStuffP13PrSceneObject",
           "size": "52",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrRenderStuff::StartRender(PrSceneObject *)"
+          },
           "address": "480"
         },
         {
@@ -9394,21 +9448,27 @@
           "name": "AllocateTransmitDmaArray__13PrRenderStuffUi",
           "size": "124",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrRenderStuff::AllocateTransmitDmaArray(unsigned int)"
+          },
           "address": "736"
         },
         {
           "name": "AppendTransmitDmaTag__13PrRenderStuffPC10_sceDmaTagUif",
           "size": "124",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrRenderStuff::AppendTransmitDmaTag(_sceDmaTag const *, unsigned int, float)"
+          },
           "address": "864"
         },
         {
           "name": "CompareFunction__13PrRenderStuffPCvT1",
           "size": "88",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrRenderStuff::CompareFunction(void const *, void const *)"
+          },
           "address": "992"
         },
         {
@@ -9432,20 +9492,26 @@
         {
           "name": "_GLOBAL_$D$prRenderStuff",
           "size": "16",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "global destructors keyed to prRenderStuff"
+          },
           "address": "1368"
         },
         {
           "name": "_GLOBAL_$I$prRenderStuff",
           "size": "12",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "global constructors keyed to prRenderStuff"
+          },
           "address": "1384"
         },
         {
           "name": "AppendDmaTag__13PrRenderStuffPC10_sceDmaTag",
           "size": "8",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrRenderStuff::AppendDmaTag(_sceDmaTag const *)"
+          },
           "address": "1400"
         }
       ],
@@ -10063,7 +10129,9 @@
           "name": "ChangePointer__7SpmNodeP13SpmFileHeaderP7SpmNode",
           "size": "416",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpmNode::ChangePointer(SpmFileHeader *, SpmNode *)"
+          },
           "address": "176"
         },
         {
@@ -10077,7 +10145,9 @@
         {
           "name": "ChangePointer__16SpaNodeAnimationP13SpaFileHeader",
           "size": "688",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpaNodeAnimation::ChangePointer(SpaFileHeader *)"
+          },
           "address": "776"
         },
         {
@@ -10158,25 +10228,33 @@
         {
           "name": "CalculateCurrentMatrix__13SpmFileHeaderP13PrModelObjectRCt8NaMATRIX3Zfi4i4",
           "size": "128",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpmFileHeader::CalculateCurrentMatrix(PrModelObject *, NaMATRIX<float, 4, 4> const &)"
+          },
           "address": "1840"
         },
         {
           "name": "CalculateCurrentMatrixAnimation__13SpmFileHeaderP13PrModelObjectRCt8NaMATRIX3Zfi4i4",
           "size": "3916",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpmFileHeader::CalculateCurrentMatrixAnimation(PrModelObject *, NaMATRIX<float, 4, 4> const &)"
+          },
           "address": "1968"
         },
         {
           "name": "CalculateClusterMatrix__13SpmFileHeaderP13PrModelObjectRCt8NaMATRIX3Zfi4i4",
           "size": "752",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpmFileHeader::CalculateClusterMatrix(PrModelObject *, NaMATRIX<float, 4, 4> const &)"
+          },
           "address": "5888"
         },
         {
           "name": "CalculateClusterMatrixAnimation__13SpmFileHeaderP13PrModelObjectRCt8NaMATRIX3Zfi4i4",
           "size": "4496",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpmFileHeader::CalculateClusterMatrixAnimation(PrModelObject *, NaMATRIX<float, 4, 4> const &)"
+          },
           "address": "6640"
         },
         {
@@ -10190,19 +10268,25 @@
         {
           "name": "RenderContext1Model__13SpmFileHeaderP13PrModelObject",
           "size": "120",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpmFileHeader::RenderContext1Model(PrModelObject *)"
+          },
           "address": "11192"
         },
         {
           "name": "ModifySimpleDmaPacket__7SpmNodeP23PrVuNodeHeaderDmaPacket",
           "size": "232",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpmNode::ModifySimpleDmaPacket(PrVuNodeHeaderDmaPacket *)"
+          },
           "address": "11312"
         },
         {
           "name": "RenderContext1Node__7SpmNodeP13PrModelObject",
           "size": "372",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpmNode::RenderContext1Node(PrModelObject *)"
+          },
           "address": "11544"
         },
         {
@@ -10264,13 +10348,17 @@
         {
           "name": "RenderContext2Model__13SpmFileHeaderP13PrModelObject",
           "size": "120",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpmFileHeader::RenderContext2Model(PrModelObject *)"
+          },
           "address": "12872"
         },
         {
           "name": "RenderContext2Node__7SpmNodeP13PrModelObject",
           "size": "716",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpmNode::RenderContext2Node(PrModelObject *)"
+          },
           "address": "12992"
         },
         {
@@ -10282,7 +10370,9 @@
         {
           "name": "ComposeGlobalMatrix__7SpmNodeP13PrModelObjectRCt8NaMATRIX3Zfi4i4",
           "size": "116",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpmNode::ComposeGlobalMatrix(PrModelObject *, NaMATRIX<float, 4, 4> const &)"
+          },
           "address": "13752"
         },
         {
@@ -10294,7 +10384,9 @@
         {
           "name": "ComposeGlobalMatrixWithoutVisibility__7SpmNodeP13PrModelObjectRCt8NaMATRIX3Zfi4i4",
           "size": "888",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpmNode::ComposeGlobalMatrixWithoutVisibility(PrModelObject *, NaMATRIX<float, 4, 4> const &)"
+          },
           "address": "13880"
         }
       ],
@@ -10340,7 +10432,9 @@
         {
           "name": "InitializeEECore__13PrRenderStuffP13PrSceneObject",
           "size": "136",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrRenderStuff::InitializeEECore(PrSceneObject *)"
+          },
           "address": "0"
         },
         {
@@ -10380,13 +10474,17 @@
         {
           "name": "RenderNodeEECore__13PrRenderStuffP23PrVuNodeHeaderDmaPacket",
           "size": "812",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrRenderStuff::RenderNodeEECore(PrVuNodeHeaderDmaPacket *)"
+          },
           "address": "504"
         },
         {
           "name": "RenderChunkEECore__13PrRenderStuffP25PrVuDataChunkPacketHeaderf",
           "size": "780",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrRenderStuff::RenderChunkEECore(PrVuDataChunkPacketHeader *, float)"
+          },
           "address": "1320"
         },
         {
@@ -10448,13 +10546,17 @@
         {
           "name": "BlendTransitionMatrix__7SpmNodeP13PrModelObjectRt8NaMATRIX3Zfi4i4",
           "size": "748",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpmNode::BlendTransitionMatrix(PrModelObject *, NaMATRIX<float, 4, 4> &)"
+          },
           "address": "96"
         },
         {
           "name": "BlendTransactionWeight__12SpmShapeNodeP13PrModelObjectfUi",
           "size": "104",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpmShapeNode::BlendTransactionWeight(PrModelObject *, float, unsigned int)"
+          },
           "address": "848"
         }
       ],
@@ -10615,13 +10717,17 @@
         {
           "name": "Initialize__12PrSPRAM_DATAP13PrSceneObject",
           "size": "2932",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrSPRAM_DATA::Initialize(PrSceneObject *)"
+          },
           "address": "0"
         },
         {
           "name": "InitializeModel__12PrSPRAM_DATAP13PrModelObject",
           "size": "84",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrSPRAM_DATA::InitializeModel(PrModelObject *)"
+          },
           "address": "2936"
         },
         {
@@ -10647,7 +10753,9 @@
         {
           "name": "_GLOBAL_$I$Initialize__12PrSPRAM_DATAP13PrSceneObject",
           "size": "76",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "global constructors keyed to PrSPRAM_DATA::Initialize(PrSceneObject *)"
+          },
           "address": "3752"
         },
         {
@@ -10832,40 +10940,52 @@
           "name": "SearchSegment__C12SpaTrackBasef",
           "size": "320",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpaTrackBase::SearchSegment(float) const"
+          },
           "address": "0"
         },
         {
           "name": "GetValue__Ct8SpaTrack1Zif",
           "size": "164",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpaTrack<int>::GetValue(float) const"
+          },
           "address": "320"
         },
         {
           "name": "GetMatrix__C12SpaTransformf",
           "size": "632",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpaTransform::GetMatrix(float) const"
+          },
           "address": "488"
         },
         {
           "name": "GetMatrix__C16SpaNodeAnimationf",
           "size": "304",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpaNodeAnimation::GetMatrix(float) const"
+          },
           "address": "1120"
         },
         {
           "name": "IsVisible__C16SpaNodeAnimationf",
           "size": "48",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpaNodeAnimation::IsVisible(float) const"
+          },
           "address": "1424"
         },
         {
           "name": "IsNodeVisible__C13SpaFileHeaderP7SpmNodef",
           "size": "196",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpaFileHeader::IsNodeVisible(SpmNode *, float) const"
+          },
           "address": "1472"
         },
         {
@@ -10889,14 +11009,18 @@
         {
           "name": "GetLinearValue__Ct8SpaTrack1Zt8NaVECTOR2Zfi4Uif",
           "size": "232",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpaTrack<NaVECTOR<float, 4> >::GetLinearValue(unsigned int, float) const"
+          },
           "address": "2496"
         },
         {
           "name": "GetValue__Ct8SpaTrack1Zt8NaVECTOR2Zfi4f",
           "size": "300",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpaTrack<NaVECTOR<float, 4> >::GetValue(float) const"
+          },
           "address": "2728"
         },
         {
@@ -10920,37 +11044,49 @@
         {
           "name": "GetSprineValue__Ct8SpaTrack1ZfUif",
           "size": "204",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpaTrack<float>::GetSprineValue(unsigned int, float) const"
+          },
           "address": "3976"
         },
         {
           "name": "GetLinearValue__Ct8SpaTrack1ZfUif",
           "size": "96",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpaTrack<float>::GetLinearValue(unsigned int, float) const"
+          },
           "address": "4184"
         },
         {
           "name": "GetValue__Ct8SpaTrack1Zff",
           "size": "304",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpaTrack<float>::GetValue(float) const"
+          },
           "address": "4280"
         },
         {
           "name": "GetSprineValue__Ct8SpaTrack1Zt8NaMATRIX3Zfi4i4Uif",
           "size": "3824",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpaTrack<NaMATRIX<float, 4, 4> >::GetSprineValue(unsigned int, float) const"
+          },
           "address": "4584"
         },
         {
           "name": "GetLinearValue__Ct8SpaTrack1Zt8NaMATRIX3Zfi4i4Uif",
           "size": "1092",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpaTrack<NaMATRIX<float, 4, 4> >::GetLinearValue(unsigned int, float) const"
+          },
           "address": "8408"
         },
         {
           "name": "GetValue__Ct8SpaTrack1Zt8NaMATRIX3Zfi4i4f",
           "size": "304",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpaTrack<NaMATRIX<float, 4, 4> >::GetValue(float) const"
+          },
           "address": "9504"
         },
         {
@@ -10975,7 +11111,9 @@
           "name": "GetSprineValue__Ct8SpaTrack1Zt8NaVECTOR2Zfi4Uif",
           "size": "212",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpaTrack<NaVECTOR<float, 4> >::GetSprineValue(unsigned int, float) const"
+          },
           "address": "11040"
         }
       ],
@@ -11021,20 +11159,26 @@
         {
           "name": "__13PrSceneObjectP13sceGsDrawEnv1PCcUi",
           "size": "392",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrSceneObject::PrSceneObject(sceGsDrawEnv1 *, char const *, unsigned int)"
+          },
           "address": "0"
         },
         {
           "name": "_$_13PrSceneObject",
           "size": "84",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrSceneObject::~PrSceneObject(void)"
+          },
           "address": "392"
         },
         {
           "name": "SelectCamera__13PrSceneObjectP13SpcFileHeader",
           "size": "12",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrSceneObject::SelectCamera(SpcFileHeader *)"
+          },
           "address": "480"
         },
         {
@@ -11058,21 +11202,27 @@
           "name": "GetFocalLength__C13PrSceneObject",
           "size": "104",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrSceneObject::GetFocalLength(void) const"
+          },
           "address": "1384"
         },
         {
           "name": "GetDefocusLength__C13PrSceneObject",
           "size": "72",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrSceneObject::GetDefocusLength(void) const"
+          },
           "address": "1488"
         },
         {
           "name": "GetDepthLevel__C13PrSceneObject",
           "size": "44",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrSceneObject::GetDepthLevel(void) const"
+          },
           "address": "1560"
         },
         {
@@ -11099,7 +11249,9 @@
         {
           "name": "_$_t11PrObjectSet1Z13PrModelObject",
           "size": "28",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrObjectSet<PrModelObject>::~PrObjectSet(void)"
+          },
           "address": "2128"
         }
       ],
@@ -11139,7 +11291,9 @@
         {
           "name": "RenderClusterNode__22SpmClusterGeometryNodeP13PrModelObject",
           "size": "800",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpmClusterGeometryNode::RenderClusterNode(PrModelObject *)"
+          },
           "address": "0"
         }
       ],
@@ -11179,13 +11333,17 @@
         {
           "name": "AddShapePosition__12SpmShapeNodeUif",
           "size": "168",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpmShapeNode::AddShapePosition(unsigned int, float)"
+          },
           "address": "0"
         },
         {
           "name": "RenderShapeNode__12SpmShapeNodeP13PrModelObject",
           "size": "1084",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpmShapeNode::RenderShapeNode(PrModelObject *)"
+          },
           "address": "168"
         }
       ],
@@ -11225,7 +11383,9 @@
         {
           "name": "CreateBillboardMatrix__FRCt8NaMATRIX3Zfi4i4",
           "size": "440",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "CreateBillboardMatrix(NaMATRIX<float, 4, 4> const &)"
+          },
           "address": "0"
         },
         {
@@ -11405,13 +11565,17 @@
         {
           "name": "PrAddSpriteDefinition__FP11NaGifPacketRC11PrVRAM_RECTT1b",
           "size": "436",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrAddSpriteDefinition(NaGifPacket *, PrVRAM_RECT const &, PrVRAM_RECT const &, bool)"
+          },
           "address": "688"
         },
         {
           "name": "PrAddSpriteDefinitionSuperSampled__FP11NaGifPacketRC11PrVRAM_RECTT1",
           "size": "1068",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrAddSpriteDefinitionSuperSampled(NaGifPacket *, PrVRAM_RECT const &, PrVRAM_RECT const &)"
+          },
           "address": "1128"
         },
         {
@@ -11637,13 +11801,17 @@
         {
           "name": "DrawNoodleStripChunk__FRCt8NaMATRIX3Zfi4i4",
           "size": "1468",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "DrawNoodleStripChunk(NaMATRIX<float, 4, 4> const &)"
+          },
           "address": "1184"
         },
         {
           "name": "SetNoodleRotationMatrix__FRt8NaMATRIX3Zfi4i4f",
           "size": "1072",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SetNoodleRotationMatrix(NaMATRIX<float, 4, 4> &, float)"
+          },
           "address": "2656"
         },
         {
@@ -11771,7 +11939,9 @@
           "name": "_GLOBAL_$I$prMendererRatio",
           "size": "8",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "global constructors keyed to prMendererRatio"
+          },
           "address": "6784"
         },
         {
@@ -11953,7 +12123,9 @@
         {
           "name": "PrDrawAwfulBackground__FG10sceGsFrame",
           "size": "1084",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrDrawAwfulBackground(sceGsFrame)"
+          },
           "address": "888"
         },
         {
@@ -12115,7 +12287,9 @@
         {
           "name": "PrGetNoodlePolygonPosition__FPt8NaVECTOR2Zfi4Ui",
           "size": "1420",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrGetNoodlePolygonPosition(NaVECTOR<float, 4> *, unsigned int)"
+          },
           "address": "1400"
         },
         {
@@ -12290,14 +12464,18 @@
           "name": "__10PrDmaQueueUi",
           "size": "100",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrDmaQueue::PrDmaQueue(unsigned int)"
+          },
           "address": "0"
         },
         {
           "name": "_$_10PrDmaQueue",
           "size": "96",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrDmaQueue::~PrDmaQueue(void)"
+          },
           "address": "104"
         },
         {
@@ -12322,7 +12500,9 @@
           "name": "Append__10PrDmaQueuePv",
           "size": "160",
           "fuzzy_match_percent": 100.0,
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "PrDmaQueue::Append(void *)"
+          },
           "address": "512"
         },
         {
@@ -12627,7 +12807,9 @@
         {
           "name": "GetCamera__C13SpcFileHeaderf",
           "size": "576",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpcFileHeader::GetCamera(float) const"
+          },
           "address": "8"
         },
         {
@@ -12700,7 +12882,9 @@
         {
           "name": "SaveContour__14SpmComplexNodeP13PrModelObject",
           "size": "364",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpmComplexNode::SaveContour(PrModelObject *)"
+          },
           "address": "168"
         },
         {
@@ -12715,7 +12899,9 @@
         {
           "name": "RenderContour__14SpmComplexNodeP13PrModelObject",
           "size": "820",
-          "metadata": {},
+          "metadata": {
+            "demangled_name": "SpmComplexNode::RenderContour(PrModelObject *)"
+          },
           "address": "560"
         }
       ],

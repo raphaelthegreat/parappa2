@@ -2310,7 +2310,11 @@ INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsMCAMes_Flow);
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsMCAMes_Draw);
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCMPMes_SetPos);
+void TsCMPMes_SetPos(int x, int y) {
+    CMPMES_WORK *pmesw = &CmpMesWork;
+    pmesw->px = x;
+    pmesw->py = y;
+}
 
 void TsCMPMes_SetMes(int no) {
     CMPMES_WORK *pmesw = &CmpMesWork;
@@ -2466,15 +2470,34 @@ INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsJukeMenu_Flow);
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsJukeMenu_Draw);
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCmnCell_CusorSET);
+static void TsCmnCell_CusorSET(CELLOBJ *obj) {
+    obj->state = 0;
+    obj->flg = 1;
+    obj->ton = 0x80;
+}
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCmnCell_CusorON);
+static void TsCmnCell_CusorON(CELLOBJ *obj) {
+    obj->state = 1;
+    obj->flg = 0;
+    obj->tim = 0x10;
+}
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCmnCell_CusorOFF);
+static void TsCmnCell_CusorOFF(CELLOBJ *obj) {
+    obj->state = 2;
+    obj->flg = 1;
+    obj->tim = 0x10;
+}
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCmnCell_CusorSEL);
+static void TsCmnCell_CusorSEL(CELLOBJ *obj) {
+    obj->state = 3;
+    obj->flg = 1;
+    obj->tim = 0x18;
+}
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCmnCell_CusorMASK);
+static void TsCmnCell_CusorMASK(CELLOBJ *obj) {
+    obj->state = 0;
+    obj->flg = 0xffff;
+}
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCmnCell_CusorDraw);
 
