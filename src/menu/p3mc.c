@@ -293,54 +293,75 @@ void P3MC_DeleteDataWork(MCRWDATA_HDL *phdl) {
     free(phdl);
 }
 
-#define USER_HDR(x) ((USER_HEADER*)x)
+MCRWDATA_HDL* P3MC_MakeDataWork(int dsize, USER_DATA *puser) {
+    MCRWDATA_HDL *phdl;
+    u_char       *pdata;
+    int           asize, dsize0;
+    u_char       *data;
 
-#if 1
-INCLUDE_ASM("asm/nonmatchings/menu/p3mc", P3MC_MakeDataWork);
-#else
-MCRWDATA_HDL* P3MC_MakeDataWork(/* s4 20 */ int dsize, /* s5 21 */ USER_DATA *puser)
-{
-    /* s3 19 */ MCRWDATA_HDL *phdl;
-    /* s2 18 */ u_char *pdata;
-    /* s1 17 */ int asize;
-    /* s0 16 */ int dsize0;
+    phdl = (MCRWDATA_HDL*)malloc(sizeof(MCRWDATA_HDL));
+    memset(phdl, 0, sizeof(MCRWDATA_HDL));
 
-    phdl = malloc(sizeof(MCRWDATA_HDL));
+    if (phdl != NULL) {
+        dsize0 = ((dsize + 15) >> 4) << 4;
+        asize = sizeof(USER_HEADER) + dsize0 + sizeof(USER_FOOTER);
 
-    if (phdl != NULL)
-    {
-        dsize0 = ((dsize + 15) >> 4) * 16;
+        pdata = memalign(16, asize);
+        memset(pdata, 0, asize);
 
-        pdata = memalign(16, dsize0 + 0x2694);
-        memset(pdata, 0, dsize0 + 0x2694);
+        phdl->pMemTop = pdata;
+        phdl->rwsize = asize;
+        phdl->datasize = asize;
+        phdl->srcsize = dsize;
 
-        phdl->pMemTop  = pdata; // 1045
-        phdl->rwsize   = dsize0 + sizeof(USER_HEADER); // 1046
-        phdl->datasize = dsize0 + sizeof(USER_HEADER); // 1047
-        phdl->srcsize  = dsize; // 1048
+        phdl->pHead = pdata;
 
-        phdl->pHead = (USER_HEADER*)pdata; // 1050
-        phdl->pData = pdata + sizeof(USER_HEADER); // 1051
-        phdl->pFoot = USER_HDR(pdata + sizeof(USER_HEADER))->footer[dsize0]; // 1052
+        data = ((USER_HEADER*)pdata) + 1;
+        phdl->pData = data;
+        phdl->pFoot = data + dsize0;
 
-        if (puser != NULL)
-        {
-            USER_HDR(pdata)->user = *puser;
+        if (puser != NULL) {
+            ((USER_HEADER*)pdata)->user = *puser;
         }
 
         return phdl;
     }
-    else
-    {
-        P3MC_DeleteDataWork(NULL);
-        return NULL;
-    }
+
+    P3MC_DeleteDataWork(NULL);
+    return NULL;
 }
-#endif
 
-INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MCStrCmpLen);
+static int _P3MCStrCmpLen(char *str, char *id, int len) {
+    int i;
 
-INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MCStrNum);
+    for (i = 0; i < len; i++) {
+        if (*str != *id) {
+            return 1;
+        }
+        id++, str++;
+    }
+
+    return 0;
+}
+
+static int _P3MCStrNum(char *nstr, int len) {
+    int    i;
+    int    n;
+    u_char c;
+
+    n = 0;
+
+    for (i = 0; i < len; i++, nstr++) {
+        c = *nstr;
+        if (c >= '0' && c <= '9') {
+            n = (n * 10) + (c - '0');
+        } else {
+            printf("Error=%c\n", c);
+        }
+    }
+
+    return n;
+}
 
 INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MC_MemcCheck);
 
@@ -387,15 +408,74 @@ void P3MC_GetUserEnd(void) {
 
 INCLUDE_ASM("asm/nonmatchings/menu/p3mc", P3MC_GetUserCheck);
 
-INCLUDE_ASM("asm/nonmatchings/menu/p3mc", P3MC_AddUser);
+void P3MC_AddUser(P3MC_USRLST *pUser, int mode, USER_DATA *puser) {
+    USER_DATA *newUser = &pUser->getUser[pUser->nGetUser];
+    *newUser = *puser;
 
-INCLUDE_RODATA("asm/nonmatchings/menu/p3mc", D_00396420);
+    pUser->nGetUser++;
+    if (pUser->nGetUser > 0x4f) {
+        printf(" AddUserWork Over All File Count...\n");
+        pUser->nGetUser = 0x4f;
+    }
 
-INCLUDE_RODATA("asm/nonmatchings/menu/p3mc", D_00396448);
+    switch (mode) {
+    case 1:
+        pUser->plog_user[pUser->nLogGet] = newUser;
+        pUser->nLogGet++;
+        if (pUser->nLogGet > 0x4f) {
+            printf(" AddUserWork Over Log File Count...\n");
+            pUser->nLogGet = 0x4f;
+        }
+        break;
+    case 2:
+        pUser->prep_user[pUser->nRepGet] = newUser;
+        pUser->nRepGet++;
+        if (pUser->nRepGet > 0x4f) {
+            printf(" AddUserWork Over Replay File Count...\n");
+            pUser->nRepGet = 0x4f;
+        }
+        break;
+    }
+}
 
-INCLUDE_RODATA("asm/nonmatchings/menu/p3mc", D_00396470);
+static void _P3MC_AddUserBroken(P3MC_USRLST *pUser, int mode, int fno) {
+    USER_DATA *newUser = &pUser->getUser[pUser->nGetUser];
 
-INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MC_AddUserBroken);
+    memset(newUser, 0, sizeof(USER_DATA));
+    strcpy(newUser->name, "(BROKEN)");
+    strcpy(newUser->name1, "(BROKEN)");
+    newUser->stageNo = 0;
+    newUser->fileNo = fno;
+    newUser->mode = mode;
+    newUser->flg = 2;
+
+    newUser->date_year = -0xfb0 - fno;
+
+    pUser->nGetUser++;
+    if (pUser->nGetUser > 0x4f) {
+        printf(" AddUserWork Over All File Count...\n");
+        pUser->nGetUser = 0x4f;
+    }
+
+    switch (mode) {
+    case 1:
+        pUser->plog_user[pUser->nLogGet] = newUser;
+        pUser->nLogGet++;
+        if (pUser->nLogGet > 0x4f) {
+            printf(" AddUserWork Over Log File Count...\n");
+            pUser->nLogGet = 0x4f;
+        }
+        break;
+    case 2:
+        pUser->prep_user[pUser->nRepGet] = newUser;
+        pUser->nRepGet++;
+        if (pUser->nRepGet > 0x4f) {
+            printf(" AddUserWork Over Replay File Count...\n");
+            pUser->nRepGet = 0x4f;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/menu/p3mc", P3MC_SortUser);
 

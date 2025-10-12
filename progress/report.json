@@ -1,15 +1,15 @@
 {
   "measures": {
-    "fuzzy_match_percent": 41.107967,
+    "fuzzy_match_percent": 41.696953,
     "total_code": "342284",
-    "matched_code": "138616",
-    "matched_code_percent": 40.497364,
+    "matched_code": "140632",
+    "matched_code_percent": 41.08635,
     "total_data": "227448",
     "matched_data": "183464",
     "matched_data_percent": 80.66195,
     "total_functions": 1429,
-    "matched_functions": 885,
-    "matched_functions_percent": 61.93142,
+    "matched_functions": 895,
+    "matched_functions_percent": 62.631207,
     "total_units": 70
   },
   "units": [
@@ -7653,14 +7653,14 @@
     {
       "name": "menu/p3mc",
       "measures": {
-        "fuzzy_match_percent": 12.837146,
+        "fuzzy_match_percent": 30.044384,
         "total_code": "11716",
-        "matched_code": "1504",
-        "matched_code_percent": 12.837146,
+        "matched_code": "3520",
+        "matched_code_percent": 30.044382,
         "total_data": "1232",
         "total_functions": 45,
-        "matched_functions": 17,
-        "matched_functions_percent": 37.77778,
+        "matched_functions": 27,
+        "matched_functions_percent": 60.000004,
         "total_units": 1
       },
       "sections": [
@@ -7682,7 +7682,7 @@
         {
           "name": ".text",
           "size": "11792",
-          "fuzzy_match_percent": 12.837146,
+          "fuzzy_match_percent": 30.044384,
           "metadata": {}
         }
       ],
@@ -7697,6 +7697,7 @@
         {
           "name": "P3MC_GetIconPtr",
           "size": "212",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "40"
         },
@@ -7716,6 +7717,7 @@
         {
           "name": "_P3MC_EUC2SJIS",
           "size": "136",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "632"
         },
@@ -7728,6 +7730,7 @@
         {
           "name": "_P3MC_UserName_ASC2SJIS",
           "size": "44",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "1016"
         },
@@ -7818,18 +7821,21 @@
         {
           "name": "P3MC_MakeDataWork",
           "size": "392",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "3352"
         },
         {
           "name": "_P3MCStrCmpLen",
           "size": "56",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "3744"
         },
         {
           "name": "_P3MCStrNum",
           "size": "144",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "3800"
         },
@@ -7862,12 +7868,14 @@
         {
           "name": "P3MC_AddUser",
           "size": "440",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "5936"
         },
         {
           "name": "_P3MC_AddUserBroken",
           "size": "384",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "6376"
         },
@@ -7913,6 +7921,7 @@
         {
           "name": "P3MC_LoadCheck",
           "size": "124",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "8552"
         },
@@ -7938,6 +7947,7 @@
         {
           "name": "P3MC_SaveCheck",
           "size": "84",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "9952"
         },
@@ -13028,16 +13038,16 @@
     {
       "id": "menu",
       "measures": {
-        "fuzzy_match_percent": 31.988123,
+        "fuzzy_match_percent": 33.743427,
         "total_code": "114852",
-        "matched_code": "35492",
-        "matched_code_percent": 30.90238,
+        "matched_code": "37508",
+        "matched_code_percent": 32.65768,
         "total_data": "11048",
         "matched_data": "12",
         "matched_data_percent": 0.10861694,
         "total_functions": 374,
-        "matched_functions": 216,
-        "matched_functions_percent": 57.75401,
+        "matched_functions": 226,
+        "matched_functions_percent": 60.42781,
         "total_units": 9
       }
     },

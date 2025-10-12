@@ -31,9 +31,6 @@ static int cdSampleTmp;
 /* bss - static */
 extern unsigned char RBuff[N + F - 1]; /* Ring buffer for INT decompression */
 
-#define lzss_read()   *(fp_r)++;
-#define lzss_write(x) *(fp_w)++ = (x);
-
 #define PACK(x) ((PACKINT_FILE_STR*)x)
 
 static int cdctrlReadSub(FILE_STR *fstr_pp, int ofs, int size, int buf);
@@ -67,26 +64,26 @@ int PackIntDecode(u_char *fp_r, u_char *fp_w) {
 
     while (fp_w != fp_w_end) {
         if (((flags >>= 1) & 256) == 0) {
-            c = lzss_read();
+            c = *fp_r++;
             flags = c | 0xff00;
         }
 
         if (flags & 1) {
-            c = lzss_read();
-            lzss_write(c);
+            c = *fp_r++;
+            *fp_w++ = c;
 
             RBuff[rp++] = c;
             rp &= (N - 1);
         } else {
-            c1 = lzss_read();
-            c2 = lzss_read();
+            c1 = *fp_r++;
+            c2 = *fp_r++;
 
             c1 |= ((c2 & 0xf0) << 4);
             c2 = (c2 & 0x0f) + THRESHOLD;
 
             for (i = 0; i <= c2; i++) {
                 c = RBuff[(c1 + i) & (N - 1)];
-                lzss_write(c);
+                *fp_w++ = c;
                 
                 RBuff[rp++] = c;
                 rp &= (N - 1);
@@ -134,26 +131,26 @@ int PackIntDecodeWait(u_char *fp_r, u_char *fp_w, int wait_hline) {
         }
 
         if (((flags >>= 1) & 256) == 0) {
-            c = lzss_read();
+            c = *fp_r++;
             flags = c | 0xff00;
         }
 
         if (flags & 1) {
-            c = lzss_read();
-            lzss_write(c);
+            c = *fp_r++;
+            *fp_w++ = c;
 
             RBuff[rp++] = c;
             rp &= (N - 1);
         } else {
-            c1 = lzss_read();
-            c2 = lzss_read();
+            c1 = *fp_r++;
+            c2 = *fp_r++;
 
             c1 |= ((c2 & 0xf0) << 4);
             c2 = (c2 & 0x0f) + THRESHOLD;
 
             for (i = 0; i <= c2; i++) {
                 c = RBuff[(c1 + i) & (N - 1)];
-                lzss_write(c);
+                *fp_w++ = c;
                 
                 RBuff[rp++] = c;
                 rp &= (N - 1);
