@@ -886,6 +886,8 @@ PackDecode                          = 0x0011bcd0; // type:func
 PackGetAdrs                         = 0x0011be08; // type:func
 PackDbgList                         = 0x0011be38; // type:func
 
+RBuff_tmp_pack                      = 0x01c72000; // type:u8 size:0x1011
+
 // main/etc.c
 GlobalInit                          = 0x0011bec0; // type:func
 clearStageCheck                     = 0x0011bf38; // type:func

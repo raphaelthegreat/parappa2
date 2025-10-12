@@ -5,8 +5,6 @@
 
 #include <eetypes.h>
 
-#define PACK(x) ((PACK_STR*)x)
-
 typedef struct { // 0x10
     /* 0x0 */ u_int id;
     /* 0x4 */ char version[8];

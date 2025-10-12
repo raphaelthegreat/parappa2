@@ -437,7 +437,7 @@ segments:
         - { type: bss,   vram: 0x01c6e030, name: main/drawctrl        }
         - { type: bss,   vram: 0x01c6fef0, name: main/effect          }
         - { type: bss,   vram: 0x01c6ffc0, name: main/mbar            }
-        - { type: bss,   vram: 0x01c72000, name: main/pack            }
+        - { type: .bss,  vram: 0x01c72000, name: main/pack            }
         - { type: bss,   vram: 0x01c73018, name: main/etc             }
         - { type: bss,   vram: 0x01c730e8, name: main/mcctrl          }
         - { type: bss,   vram: 0x01c77630, name: main/main            }

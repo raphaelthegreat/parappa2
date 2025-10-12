@@ -976,7 +976,7 @@ segments:
       - { path: asm/data/main/drawctrl.bss.s.o }
       - { path: asm/data/main/effect.bss.s.o }
       - { path: asm/data/main/mbar.bss.s.o }
-      - { path: asm/data/main/pack.bss.s.o }
+      - { path: src/main/pack.c.o }
       - { path: asm/data/main/etc.bss.s.o }
       - { path: src/main/wipe.c.o }
       - { path: asm/data/main/mcctrl.bss.s.o }
