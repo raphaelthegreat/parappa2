@@ -12,31 +12,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* .sdata */
-extern char *HedderID;
-extern char *FooterID;
-extern GETUSER_WORK *pUChkWork;
-
-/* .bss */
-extern P3MC_WORK P3MC_Work;
-
-/* .sbss */
-extern int FreeSizeFlg;
-extern int portCheckFlg;
-extern int NeedSize[2];
-extern int UChkSize[2];
-
-/* .bss */
-extern char filePath[64];
-extern MEMC_INFO mcmenu_info;
-extern sceMcTblGetDir p3mcTblGetDir[8];
-
-/* .sbss */
-extern int isFileFlgCash;
-
-/* .bss */
-extern u_char McLogFileFlg[80];
-extern u_char McReplayFileFlg[80];
+/* sdata 399830 */ extern char *HedderID; /* static */
+/* sdata 399834 */ extern char *FooterID; /* static */
+/* sdata 399838 */ extern GETUSER_WORK *pUChkWork; /* static */
+/* bss 1c81100 */ extern P3MC_WORK P3MC_Work; /* static */
+/* sbss 399b60 */ extern int FreeSizeFlg; /* static */
+/* sbss 399b64 */ extern int portCheckFlg; /* static */
+/* sbss 399b68 */ extern int NeedSize[2]; /* static */
+/* sbss 399b70 */ extern int UChkSize[2]; /* static */
+/* bss 1c81120 */ extern char filePath[64]; /* static */
+/* bss 1c81160 */ extern MEMC_INFO mcmenu_info; /* static */
+/* bss 1c81180 */ extern sceMcTblGetDir p3mcTblGetDir[8]; /* static */
+/* sbss 399b78 */ extern int isFileFlgCash; /* static */
+/* bss 1c81380 */ extern u_char McLogFileFlg[80]; /* static */
+/* bss 1c813d0 */ extern u_char McReplayFileFlg[80]; /* static */
 
 static int      P3MC_GetIconSize(int mode);
 static void*    P3MC_GetIconPtr(int mode, int stageNo);
@@ -144,26 +133,26 @@ extern char D_00399860[]; /* "??????"  */
 #ifndef NON_MATCHING /* Requires sdata split to match */
 INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MC_GetFilePath);
 #else
-static char* _P3MC_GetFilePath(int mode, int fileNo)
-{
+static char* _P3MC_GetFilePath(int mode, int fileNo) {
     char *addName;
 
     strcpy(filePath, "BISCPS-15017"); /* D_003961C0 */
     addName = &filePath[12];
 
-    switch (mode)
-    {
+    switch (mode) {
     case 1:
-        if (fileNo < 0)
+        if (fileNo < 0) {
             strcpy(addName, "REP???");
-        else
+        } else {
             sprintf(addName, "REP%03d", fileNo);
+        }
         break;
     case 2:
-        if (fileNo < 0)
+        if (fileNo < 0) {
             strcpy(addName, "LOG???");
-        else
+        } else {
             sprintf(addName, "LOG%03d", fileNo);
+        }
         break;
     case 3:
     default:
@@ -279,7 +268,10 @@ int P3MC_CheckIsNewSave(int mode) {
     return FreeSizeFlg & mode;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MC_GetSaveDataSize);
+static int _P3MC_GetSaveDataSize(int dsize) {
+    u_int dsize0 = (dsize + 0xf) >> 0x4 << 0x4;
+    return sizeof(USER_HEADER) + dsize0 + sizeof(USER_FOOTER);
+}
 
 void P3MC_DeleteDataWork(MCRWDATA_HDL *phdl) {
     if (phdl == NULL) {
@@ -314,11 +306,11 @@ MCRWDATA_HDL* P3MC_MakeDataWork(int dsize, USER_DATA *puser) {
         phdl->datasize = asize;
         phdl->srcsize = dsize;
 
-        phdl->pHead = pdata;
+        phdl->pHead = (USER_HEADER*)pdata;
 
-        data = ((USER_HEADER*)pdata) + 1;
+        data = (u_char*)(((USER_HEADER*)pdata) + 1);
         phdl->pData = data;
-        phdl->pFoot = data + dsize0;
+        phdl->pFoot = (USER_FOOTER*)(data + dsize0);
 
         if (puser != NULL) {
             ((USER_HEADER*)pdata)->user = *puser;
@@ -639,7 +631,202 @@ int P3MC_SaveCheck(void) {
 
 INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MC_SaveCheck);
 
-INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MC_proc);
+static u_short _P3MC_proc(u_short prg) {
+    u_short    re;
+    P3MC_WORK *pw = &P3MC_Work;
+    int        need;
+
+    re = memc_manager(1);
+
+    switch (re) {
+    case 6:
+    case 48:
+        switch (prg & 0xff00) {
+        case 0x200:
+        case 0x1200:
+            if (pw->prgflag & 0x8) {
+                memc_port_info(0, &mcmenu_info);
+                re = prg;
+                break;
+            }
+            /* fallthrough */
+        default:
+            if (prg & 0xf000) {
+                re = 0x1210;
+            } else {
+                re = 0x210;
+            }
+            break;
+        }
+        break;
+    case 0:
+        switch (prg & 0xff00) {
+        case 0x200:
+            if (mcmenu_info.flag & 0x200) {
+                if (!_P3MC_mainfile_chk(-1, pw->dhdl->datasize, pw->data_mode, &need)) {
+                    re = 0x410;
+                    break;
+                }
+                if (mcmenu_info.free < need) {
+                    re = 0x206;
+                } else {
+                    re = 0x400;
+                }
+                break;
+            }
+            re = 0x201;
+            break;
+        case 0x400:
+            if (prg == 0x411) {
+                re = 0x400;
+            } else {
+                re = 0x401;
+            }
+            break;
+        case 0x500:
+            memc_port_info(0, &mcmenu_info);
+            re = 0x200;
+            break;
+        case 0x1200:
+            if (mcmenu_info.flag & 0x200) {
+                /* note: variable not in STABS info. */
+                int chk = _P3MC_mainfile_chk(-1, pw->dhdl->datasize, pw->data_mode, NULL);
+                if (chk >= -1 && chk <= 0) {
+                    re = 0x1400;
+                } else {
+                    re = 0x1231;
+                }
+                break;
+            }
+            re = 0x1201;
+            break;
+        case 0x1204:
+            re = 0x1100;
+            break;
+        case 0x1400:
+            re = 0x1401;
+            break;
+        default:
+            re = prg & 0xf000;
+            break;
+        }
+        break;
+    case 16:
+        re = prg;
+        break;
+    case 18:
+        re = 0x400;
+        memc_save_overwrite();
+        break;
+    case 2:
+        switch (prg & 0xf000) {
+        case 0:
+            if (prg == 0x400) {
+                re = 0x211;
+            } else {
+                re = 0x201;
+            }
+            break;
+        case 0x1000:
+            if ((prg & 0xff00) == 0x1400) {
+                re = 0x1211;
+            } else {
+                re = 0x1201;
+            }
+            break;
+        }
+        break;
+    case 5:
+    case 17:
+        switch (prg & 0xf000) {
+        case 0:
+            if (_P3MC_freesize_chk() & pw->data_mode) {
+                re = 0x400;
+            } else {
+                re = 0x206;
+            }
+            break;
+        case 0x1000:
+            re = 0x1209;
+            break;
+        }
+        break;
+    case 4:
+        if ((prg & 0xf000) == 0) {
+            re = 0x206;
+        } else {
+            re = 0x1231;
+        }
+        break;
+    case 3:
+        switch (prg & 0xf000) {
+        case 0:
+            if ((prg & 0xff00) == 0x200) {
+                re = 0x510;
+            } else if (prg == 0x511) {
+                re = 0x520;
+                memc_format(0);
+            } else {
+                re = 0x210;
+            }
+            break;
+        case 0x1000:
+            re = 0x1203;
+            break;
+        }
+        break;
+    case 1:
+    case 7:
+    case 8:
+    case 9:
+    case 10:
+    case 11:
+    case 12:
+    case 13:
+    case 14:
+    case 15:
+    case 19:
+    case 20:
+    case 21:
+    case 22:
+    case 23:
+    case 24:
+    case 25:
+    case 26:
+    case 27:
+    case 28:
+    case 29:
+    case 30:
+    case 31:
+    case 32:
+    case 33:
+    case 34:
+    case 35:
+    case 36:
+    case 37:
+    case 38:
+    case 39:
+    case 40:
+    case 41:
+    case 42:
+    case 43:
+    case 44:
+    case 45:
+    case 46:
+    case 47:
+    default:
+        if ((prg & 0xff00) == 0x500) {
+            re = 0x530;
+        } else if (prg & 0x1000) {
+            re = 0x1207;
+        } else {
+            re = 0x207;
+        }
+        break;
+    }
+
+    return re;
+}
 
 void _P3MC_dataCheckFunc(P3MC_WORK *pw, P3MCDataCheckFunc funcp) {
     pw->data_cfunc = funcp;
