@@ -8,6 +8,7 @@
 
 /* Memory card function types */
 #define MEMC_FUNC_GETINFO (11)
+#define MEMC_FUNC_DELFILE (12)
 
 typedef struct { // 0x340
     /* 0x000 */ u_int flag;

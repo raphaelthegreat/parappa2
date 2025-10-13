@@ -10,7 +10,17 @@ extern u_int _memc_type[];
 /* .bss */
 extern MEMC_STAT memc_stat;
 
+static int memc_SaveFileClust(void);
+static void memc_clearMEMCINFO(MEMC_INFO *info);
+static int memc_mansub_ErrChk(int result);
 static int memc_mansub_Open(char *name, u_int type);
+static int memc_mansub_Close(void);
+static int memcsub_fileChk(sceMcTblGetDir *dir, unsigned char *name, int max);
+static int memc_mansub_GetInfo(int result);
+static int memc_mansub_load(int result);
+static int memc_manager_save(int result);
+static int memc_manager_overwrite(int result);
+static int memc_manager_chk(int mode);
 
 void memc_init(void) {
     sceMcInit();
@@ -188,7 +198,47 @@ static void memc_clearMEMCINFO(MEMC_INFO *info) {
     info->savefile = 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu/memc", memc_searchDirTbl);
+sceMcTblGetDir* memc_searchDirTbl(char *name, sceMcTblGetDir *dirTbl, int num, int isClose, int cmpSize, int *status) {
+    int i, j;
+    int flg;
+
+    if (name == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < num && (flg = FALSE, dirTbl[i].EntryName[0] != '\0'); i++) {
+        for (j = 0; /*None*/; j++) {
+            if (name[j] == '\0') {
+                flg = TRUE;
+                break;
+            }
+            if (name[j] != '?' && name[j] != dirTbl[i].EntryName[j]) {
+                break;
+            }
+        }
+
+        if (flg) {
+            if (cmpSize != 0 && dirTbl[i].FileSizeByte != cmpSize) {
+                if (status != NULL) {
+                    *status = 2;
+                }
+                return NULL;
+            }
+
+            if (status != NULL) {
+                *status = 0;
+            }
+
+            return &dirTbl[i];
+        }
+    }
+
+    if (status != NULL) {
+        *status = 1;
+    }
+
+    return NULL;
+}
 
 extern char D_00399880[]; // sdata - "/*"
 
@@ -238,7 +288,7 @@ int memc_del_file(int port, int no) {
 
     re = sceMcDelete(pmw->port, pmw->slot, pmw->filename);
     if (re == sceMcResSucceed) {
-        pmw->func = 12;
+        pmw->func = MEMC_FUNC_DELFILE;
     }
 
     return re;
@@ -481,8 +531,50 @@ int memc_get_dir_continue(sceMcTblGetDir *dir, int max) {
     return re;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu/memc", memc_mansub_ErrChk);
-int memc_mansub_ErrChk(/* a0 4 */ int result);
+static int memc_mansub_ErrChk(int result) {
+    MEMC_STAT *pmw = &memc_stat;
+
+    if (pmw->func == 9 && result >= pmw->size) {
+        return 0x13;
+    }
+
+    if (result >= 0) {
+        pmw->func = 0;
+        return 0;
+    }
+
+    switch (result) {
+    case -1:
+        pmw->func = 0;
+        pmw->isChange = 1;
+        return 6;
+    case -2:
+        pmw->func = 0;
+        return 3;
+    case -0x7d0:
+        pmw->func = 0;
+        pmw->isChange = 1;
+        return 0x30;
+    case -3:
+        pmw->func = 0;
+        return 4;
+    case -4:
+        pmw->func = 0;
+        switch (pmw->cmd) {
+        case 0xb:
+            return 0;
+        case 0xd:
+            return 0x11;
+        case 2:
+        case 0xf:
+            return 5;
+        }
+        return 1;
+    default:
+        pmw->func = 0;
+        return 2;
+    }
+}
 
 static int memc_mansub_Open(char *name, u_int type) {
     int        re;
@@ -508,8 +600,29 @@ static int memc_mansub_Close(void) {
     return re;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu/memc", memcsub_fileChk);
-/* static */ int memcsub_fileChk(/* a0 4 */ sceMcTblGetDir *dir, /* a1 5 */ unsigned char *name, /* a2 6 */ int max);
+static int memcsub_fileChk(sceMcTblGetDir *dir, unsigned char *name, int max) {
+    int i, j, s;
+
+    if (name == NULL) {
+        return -1;
+    }
+
+    s = 0;
+
+    for (i = 0; i < max; i++) {
+        for (j = 0; j < 64; j++) {
+            if (name[j] == '\0') {
+                s++;
+                break;
+            }
+            if (dir[i].EntryName[j] != name[j]) {
+                break;
+            }
+        }
+    }
+
+    return s;
+}
 
 extern char D_00399888[]; /* sdata - "SAVE" */
 
@@ -665,16 +778,13 @@ static int memc_manager_chk(int mode) {
         switch (pmw->func) {
         case 3:
             return memc_mansub_load(result);
-
         case 4:
             return memc_manager_save(result);
-
         case 1:
             if (result == -2) {
                 result = -2000;
             }
             return memc_mansub_ErrChk(result);
-
         case 7:
             switch (pmw->cmd) {
             case 0xe:
@@ -696,7 +806,6 @@ static int memc_manager_chk(int mode) {
                 }
 
                 return memc_mansub_ErrChk(result);
-
             case 0x10:
                 if (result >= 0) {
                     pmw->func = 0;
@@ -712,29 +821,23 @@ static int memc_manager_chk(int mode) {
                 sceMcFormat(pmw->port, pmw->slot);
                 break;
             }
-
             break;
-
         case 2:
         case 6:
         case 8:
         case 9:
         case 10:
-        case 12:
+        case MEMC_FUNC_DELFILE:
             return memc_mansub_ErrChk(result);
-
         case MEMC_FUNC_GETINFO:
             return memc_mansub_GetInfo(result);
-
         case 14:
             return memc_manager_overwrite(result);
-
         case 0:
         case 5:
         default:
             pmw->func = 0;
             break;
-
         case 13:
             return 0x10;
         }
