@@ -333,10 +333,9 @@ void PkTEX0_SetAdd(SPR_PKT pkt, int vram, int w, int h, int isLinear) {
 }
 
 u_int GetDToneColor(u_int sbgr, u_int dbgr, int ton) {
-    u_char *pd, *ps;
+    u_char *pd, *ps; /* note: 'ps' is not in STABS. */
     int     sc, dc;
     int     r, g, b, a;
-    u_int   col;
 
     ps = (u_char*)&sbgr;
     pd = (u_char*)&dbgr;
@@ -353,71 +352,146 @@ u_int GetDToneColor(u_int sbgr, u_int dbgr, int ton) {
     dc = pd[3]; sc = ps[3];
     a = sc + (((dc - sc) * ton) >> 8);
 
+    #if 0
+    r = min(max(r, 0), 255);
+    g = min(max(g, 0), 255);
+    b = min(max(b, 0), 255);
+    a = min(max(a, 0), 255);
+    a = SCE_GS_SET_RGBAQ(r, g, b, a, 0x0 /* 0.0f */);
+    #else
     asm volatile(
-        "pcpyld  $2, %4, %3 \n\t"
-        "pcpyld  $4, %2, %1 \n\t"
-        "ppacw   $2, $2, $4 \n\t"
-        "li      $8, 0xff   \n\t"
-        "dsll32  $8, 0      \n\t"
-        "ori     $8, 0xff   \n\t"
-        "pcpyld  $8, $8, $8 \n\t"
-        "pmaxw   $2, $2, $0 \n\t"
-        "pminw   $2, $2, $8 \n\t"
-        "ppach   $2, $0, $2 \n\t"
-        "ppacb   %0, $0, $2 \n\t"
-    : "=r"(col) : "r"(r), "r"(g), "r"(b), "r"(a)
+        "pcpyld  $2, %3, %2       \n\t" /* $2 = ((((u64)a)<<64)|(u64)(b)) */
+        "pcpyld  $4, %1, %0       \n\t" /* $4 = ((((u64)g)<<64)|(u64)(r)) */
+        "ppacw   $2, $2, $4       \n\t" /* $2 = (((u32)($2>>64)<<96) | ((u32)($2)<<64) |
+                                                 ((u32)($4>>64)<<32) | ((u32)($4)<<0 )) */
+        "li      $8, 0xff000000ff \n\t" /* $8 = 0xff000000ff */
+        "pcpyld  $8, $8, $8       \n\t" /* $8 = ((((u64)$8)<<64)|(u64)($8)) */
+        "pmaxw   $2, $2, $0       \n\t" /* $2 = (((u128)((u32)max((u32)($2>>96), 0))<<96) |
+                                                 ((u128)((u32)max((u32)($2>>64), 0))<<64) |
+                                                 ((u128)((u32)max((u32)($2>>32), 0))<<32) |
+                                                 ((u128)((u32)max((u32)($2>>0 ), 0))<<0 )) */
+        "pminw   $2, $2, $8       \n\t" /* $2 = (((u128)((u32)min((u32)($2>>96), (u32)($8>>96)))<<96) |
+                                                 ((u128)((u32)min((u32)($2>>64), (u32)($8>>64)))<<64) |
+                                                 ((u128)((u32)min((u32)($2>>32), (u32)($8>>32)))<<32) |
+                                                 ((u128)((u32)min((u32)($2>>0 ), (u32)($8>>0 )))<<0 )) */
+        "ppach   $2, $0, $2       \n\t" /* $2 = (((u64)(0)<<64)      | ((u16)($2>>96)<<48) |
+                                                 ((u16)($2>>64)<<32) | ((u16)($2>>32)<<16) |
+                                                 ((u16)($2>>0 )<<0 )) */
+        "ppacb   %3, $0, $2       \n\t" /* a = (((u64)(0)<<64)     | ((u8)($2>>112)<<56) |
+                                                ((u8)($2>>96)<<48) | ((u8)($2>>80)<<40 ) |
+                                                ((u8)($2>>64)<<32) | ((u8)($2>>48)<<24 ) |
+                                                ((u8)($2>>32)<<16) | ((u8)($2>>16)<<8  ) |
+                                                ((u8)($2>>0 )<<0 )) */
+    : : "r"(r), "r"(g), "r"(b), "r"(a)
     );
+    #endif
 
-    return col;
+    return a;
 }
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("asm/nonmatchings/menu/pksprite", GetToneColorA);
-#else
-u_int GetToneColorA(/* 0x0(sp) */ u_int abgr, /* a1 5 */ int tona, /* a2 6 */ int tonb, /* a3 7 */ int tong, /* t0 8 */ int tonr) {
-    u_char *pa;
-    /* a0 4 */ u_int r;
-    /* t1 9 */ u_int g;
-    /* v1 3 */ u_int b;
-    /* v0 2 */ u_int a;
-    u_int col;
+u_int GetToneColorA(u_int abgr, int tona, int tonb, int tong, int tonr) {
+    u_int r, g, b, a;
 
-    pa = (u_char*)&abgr;
+    r = abgr_get_r(abgr);
+    g = abgr_get_g(abgr);
+    b = abgr_get_b(abgr);
+    a = abgr_get_a(abgr);
 
-    r = pa[0] * tonr;
-    g = pa[1] * tong;
-    b = pa[2] * tonb;
-    a = pa[3] * tona;
+    r = (r * tonr) >> 0x4;
+    g = (g * tong) >> 0x4;
+    b = (b * tonb) >> 0x4;
+    a = (a * tona) >> 0x4;
 
-    r >>= 4;
-    g >>= 4;
-    b >>= 4;
-    a >>= 4;
-
+    #if 0
+    r = min(max(r, 0), 255);
+    g = min(max(g, 0), 255);
+    b = min(max(b, 0), 255);
+    a = min(max(a, 0), 255);
+    a = SCE_GS_SET_RGBAQ(r, g, b, a, 0x0 /* 0.0f */);
+    #else
     asm volatile(
-        "pcpyld  $2, %4, %3 \n\t"
-        "pcpyld  $4, %2, %1 \n\t"
-        "ppacw   $2, $2, $4 \n\t"
-        "li      $8, 0xff   \n\t"
-        "dsll32  $8, 0      \n\t"
-        "ori     $8, 0xff   \n\t"
-        "pcpyld  $8, $8, $8 \n\t"
-        "pmaxw   $2, $2, $0 \n\t"
-        "pminw   $2, $2, $8 \n\t"
-        "ppach   $2, $0, $2 \n\t"
-        "ppacb   %0, $0, $2 \n\t"
-    : "=r"(col) : "r"(r), "r"(g), "r"(b), "r"(a)
+        "pcpyld  $2, %3, %2       \n\t" /* $2 = ((((u64)a)<<64)|(u64)(b)) */
+        "pcpyld  $9, %1, %0       \n\t" /* $9 = ((((u64)g)<<64)|(u64)(r)) */
+        "ppacw   $2, $2, $9       \n\t" /* $2 = (((u32)($2>>64)<<96) | ((u32)($2)<<64) |
+                                                 ((u32)($9>>64)<<32) | ((u32)($9)<<0 )) */
+        "li      $8, 0xff000000ff \n\t" /* $8 = 0xff000000ff */
+        "pcpyld  $8, $8, $8       \n\t" /* $8 = ((((u64)$8)<<64)|(u64)($8)) */
+        "pmaxw   $2, $2, $0       \n\t" /* $2 = (((u128)((u32)max((u32)($2>>96), 0))<<96) |
+                                                 ((u128)((u32)max((u32)($2>>64), 0))<<64) |
+                                                 ((u128)((u32)max((u32)($2>>32), 0))<<32) |
+                                                 ((u128)((u32)max((u32)($2>>0 ), 0))<<0 )) */
+        "pminw   $2, $2, $8       \n\t" /* $2 = (((u128)((u32)min((u32)($2>>96), (u32)($8>>96)))<<96) |
+                                                 ((u128)((u32)min((u32)($2>>64), (u32)($8>>64)))<<64) |
+                                                 ((u128)((u32)min((u32)($2>>32), (u32)($8>>32)))<<32) |
+                                                 ((u128)((u32)min((u32)($2>>0 ), (u32)($8>>0 )))<<0 )) */
+        "ppach   $2, $0, $2       \n\t" /* $2 = (((u64)(0)<<64)      | ((u16)($2>>96)<<48) |
+                                                 ((u16)($2>>64)<<32) | ((u16)($2>>32)<<16) |
+                                                 ((u16)($2>>0 )<<0 )) */
+        "ppacb   %3, $0, $2       \n\t" /* a = (((u64)(0)<<64)     | ((u8)($2>>112)<<56) |
+                                                ((u8)($2>>96)<<48) | ((u8)($2>>80)<<40 ) |
+                                                ((u8)($2>>64)<<32) | ((u8)($2>>48)<<24 ) |
+                                                ((u8)($2>>32)<<16) | ((u8)($2>>16)<<8  ) |
+                                                ((u8)($2>>0 )<<0 )) */
+    : : "r"(r), "r"(g), "r"(b), "r"(a)
     );
+    #endif
 
-    return col;
+    return a;
 }
-#endif
 
-INCLUDE_ASM("asm/nonmatchings/menu/pksprite", GetToneColorH);
+u_int GetToneColorH(u_int abgr, int tona, int tonb, int tong, int tonr) {
+    u_int r, g, b, a;
+    
+    r = abgr_get_r(abgr);
+    g = abgr_get_g(abgr);
+    b = abgr_get_b(abgr);
+    a = abgr_get_a(abgr);
+
+    r = (r * tonr) >> 0x8;
+    g = (g * tong) >> 0x8;
+    b = (b * tonb) >> 0x8;
+    a = (a * tona) >> 0x8;
+
+    #if 0
+    r = min(max(r, 0), 255);
+    g = min(max(g, 0), 255);
+    b = min(max(b, 0), 255);
+    a = min(max(a, 0), 255);
+    a = SCE_GS_SET_RGBAQ(r, g, b, a, 0x0 /* 0.0f */);
+    #else
+    asm volatile(
+        "pcpyld  $2, %3, %2       \n\t" /* $2 = ((((u64)a)<<64)|(u64)(b)) */
+        "pcpyld  $9, %1, %0       \n\t" /* $9 = ((((u64)g)<<64)|(u64)(r)) */
+        "ppacw   $2, $2, $9       \n\t" /* $2 = (((u32)($2>>64)<<96) | ((u32)($2)<<64) |
+                                                 ((u32)($9>>64)<<32) | ((u32)($9)<<0 )) */
+        "li      $8, 0xff000000ff \n\t" /* $8 = 0xff000000ff */
+        "pcpyld  $8, $8, $8       \n\t" /* $8 = ((((u64)$8)<<64)|(u64)($8)) */
+        "pmaxw   $2, $2, $0       \n\t" /* $2 = (((u128)((u32)max((u32)($2>>96), 0))<<96) |
+                                                 ((u128)((u32)max((u32)($2>>64), 0))<<64) |
+                                                 ((u128)((u32)max((u32)($2>>32), 0))<<32) |
+                                                 ((u128)((u32)max((u32)($2>>0 ), 0))<<0 )) */
+        "pminw   $2, $2, $8       \n\t" /* $2 = (((u128)((u32)min((u32)($2>>96), (u32)($8>>96)))<<96) |
+                                                 ((u128)((u32)min((u32)($2>>64), (u32)($8>>64)))<<64) |
+                                                 ((u128)((u32)min((u32)($2>>32), (u32)($8>>32)))<<32) |
+                                                 ((u128)((u32)min((u32)($2>>0 ), (u32)($8>>0 )))<<0 )) */
+        "ppach   $2, $0, $2       \n\t" /* $2 = (((u64)(0)<<64)      | ((u16)($2>>96)<<48) |
+                                                 ((u16)($2>>64)<<32) | ((u16)($2>>32)<<16) |
+                                                 ((u16)($2>>0 )<<0 )) */
+        "ppacb   %3, $0, $2       \n\t" /* a = (((u64)(0)<<64)     | ((u8)($2>>112)<<56) |
+                                                ((u8)($2>>96)<<48) | ((u8)($2>>80)<<40 ) |
+                                                ((u8)($2>>64)<<32) | ((u8)($2>>48)<<24 ) |
+                                                ((u8)($2>>32)<<16) | ((u8)($2>>16)<<8  ) |
+                                                ((u8)($2>>0 )<<0 )) */
+    : : "r"(r), "r"(g), "r"(b), "r"(a)
+    );
+    #endif
+
+    return a;
+}
 
 void SetSprDefOfsXY(SPR_PRM *spr) {
-    spr->ofsx = 2048.0f - _PkScrW * 0.5f;
-    spr->ofsy = 2048.0f - _PkScrH * 0.5f;
+    spr->ofsx = 2048.0f - (_PkScrW * 0.5f);
+    spr->ofsy = 2048.0f - (_PkScrH * 0.5f);
 }
 
 void SetSprScreenXYWH(SPR_PRM *spr) {
@@ -482,7 +556,32 @@ void PkZBUFMask_Add(SPR_PKT pkt, int bMsk) {
 
 INCLUDE_ASM("asm/nonmatchings/menu/pksprite", PkSprPkt_SetTexVram);
 
-INCLUDE_ASM("asm/nonmatchings/menu/pksprite", PkSprPkt_SetDefault);
+void PkSprPkt_SetDefault(SPR_PKT pk, SPR_PRM *spr, sceGsDrawEnv1 *pdenv) {
+    if (pdenv != NULL) {
+        _PkDefSCISSOR = pdenv->scissor1;
+        _PkDefZBUFFER = pdenv->zbuf1;
+    }
+
+    _PkScrW = _PkDefSCISSOR.SCAX1 - _PkDefSCISSOR.SCAX0 + 1;
+    _PkScrH = _PkDefSCISSOR.SCAY1 - _PkDefSCISSOR.SCAY0 + 1;
+
+    SetSprDefOfsXY(spr);
+
+    spr->zoom.isOn = 0;
+    spr->rgba0 = (u_int)SCE_GS_SET_RGBAQ(128, 128, 128, 128, 0x0 /* 0.0f */);
+    spr->zdepth = 0;
+    spr->zx = spr->zy = 1.0f;
+
+    PkDefReg_Add(pk);
+    PkPABE_Add(pk, 0);
+    PkFBA_Add(pk, 0);
+    PkALPHA_Add(pk, 0x44);
+    PkTEST_Add(pk, 0x30000);
+    PkCLAMP_Add(pk, 0);
+    PkCCLAMP_Add(pk, 1);
+    PkDefSCISSOR_Add(pk);
+    PkTEX1_Add(pk, 0x2020);
+}
 
 INCLUDE_ASM("asm/nonmatchings/menu/pksprite", PkNSprite_Add);
 
@@ -831,19 +930,19 @@ void PkPolyFT4_Add(SPR_PKT pk, SPR_PRM *ppspr, int flg) {
     :: "r"(ppspr) : "$9");
 
     #if 0
-        sp->uv0 = SCE_GS_SET_UV((ppspr->ux << 4) + 0x8, (ppspr->uy << 4) + 0x8);
-        sp->uv1 = SCE_GS_SET_UV((ppspr->ux << 4) - 0x8, (ppspr->uy << 4) + 0x8);
-        sp->uv2 = SCE_GS_SET_UV((ppspr->ux << 4) + 0x8, (ppspr->uy << 4) - 0x8);
-        sp->uv3 = SCE_GS_SET_UV((ppspr->ux << 4) - 0x8, (ppspr->uy << 4) - 0x8);
+    sp->uv0 = SCE_GS_SET_UV((ppspr->ux << 4) + 8, (ppspr->uy << 4) + 8);
+    sp->uv1 = SCE_GS_SET_UV((ppspr->ux << 4) - 8, (ppspr->uy << 4) + 8);
+    sp->uv2 = SCE_GS_SET_UV((ppspr->ux << 4) + 8, (ppspr->uy << 4) - 8);
+    sp->uv3 = SCE_GS_SET_UV((ppspr->ux << 4) - 8, (ppspr->uy << 4) - 8);
     #else
     asm volatile(
         "lq     $8,  0x20(%0) \n\t" /* $8 = ppspr->ux/uy/uw/uh (128bit load) */
-        "li     $10, -8       \n\t" /* $10 = 0xfffffffffffffff8 */
+        "li     $10, -8       \n\t" /* $10 = -8 */
         "daddu  $9,  $0,  $8  \n\t" /* $9 = (u64)$8 */
         "pcpyld $8,  $8,  $0  \n\t" /* $8 = ((((u64)$8)<<64)|(u64)(0)) */
         "paddw  $9,  $8,  $9  \n\t" /* $9[0...3] += $8[0...3] */
         "psllw  $9,  $9,  0x4 \n\t" /* $9[0...3] =  $9[0...3] << 4 */
-        "li     $8,  0x8      \n\t" /* $8 = 0x8 */
+        "li     $8,  0x8      \n\t" /* $8 = 8 */
         "pextlw $8,  $10, $8  \n\t" /* $8[0] = $8[0], $8[1] = $10[0],
                                        $8[2] = $8[1], $8[3] = $10[1] */
         "pextlw $8,  $8,  $8  \n\t" /* $8[0] = $8[0], $8[1] = $8[0],

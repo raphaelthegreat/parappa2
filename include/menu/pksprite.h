@@ -9,6 +9,11 @@
 #include <libgraph.h>
 #include <libvu0.h>
 
+#define abgr_get_r(abgr) (((u_char*)&abgr)[0])
+#define abgr_get_g(abgr) (((u_char*)&abgr)[1])
+#define abgr_get_b(abgr) (((u_char*)&abgr)[2])
+#define abgr_get_a(abgr) (((u_char*)&abgr)[3])
+
 typedef struct { // 0x40
     /* 0x00 */ sceDmaTag tag[3];
     /* 0x30 */ u_int PaketTop;
