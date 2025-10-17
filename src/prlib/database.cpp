@@ -1,14 +1,14 @@
 #include "database.h"
 
 /* .sdata */
-extern int databaseInitialized;
+extern bool databaseInitialized;
 
 INCLUDE_ASM("asm/nonmatchings/prlib/database", __16PrObjectDatabase);
 
 INCLUDE_ASM("asm/nonmatchings/prlib/database", _$_16PrObjectDatabase);
 
 void PrObjectDatabase::Initialize() {
-    databaseInitialized = 1;
+    databaseInitialized = true;
 }
 
 INCLUDE_ASM("asm/nonmatchings/prlib/database", Cleanup__16PrObjectDatabase);

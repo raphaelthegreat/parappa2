@@ -236,7 +236,13 @@ int P3MC_InitReady(void) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu/p3mc", P3MC_GetSaveSize);
+int P3MC_GetSaveSize(int size, int mode) {
+    int dataAsize = _P3MC_GetSaveDataSize(size);
+    int icsize = P3MC_GetIconSize(mode);
+
+    size = ((icsize + 1023) / 1024) + ((dataAsize + 1023) / 1024);
+    return size + 5;
+}
 
 void P3MC_SetCheckSaveSize(int mode, int fsize, int csize) {
     int asize = _P3MC_GetSaveDataSize(csize);
@@ -249,12 +255,85 @@ void P3MC_SetCheckSaveSize(int mode, int fsize, int csize) {
     case 2:
         NeedSize[1] = fsize;
         UChkSize[1] = asize;
+        break;
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu/p3mc", _P3MC_freesize_chk);
+static int _P3MC_freesize_chk(void) {
+    int free;
+    int flg;
 
-INCLUDE_ASM("asm/nonmatchings/menu/p3mc", P3MC_CheckChange);
+    free = mcmenu_info.free;
+
+    if (!memc_checkFormat()) {
+        flg = -1;
+    } else {
+        flg = (free >= NeedSize[0]);
+        if (free >= NeedSize[1]) {
+            flg |= 2;
+        }
+    }
+
+    return flg;
+}
+
+int P3MC_CheckChange(void) {
+    int re, err;
+
+    err = 0;
+    re = memc_manager(1);
+    if (re == 0x10) {
+        return -1;
+    }
+
+    switch (re) {
+    case 1:
+        portCheckFlg = 0;
+        return -1;
+    case 2:
+        err = 3;
+        P3MC_CheckChangeClear();
+        break;
+    case 6:
+    case 48:
+        err = 5;
+        break;
+    case 0:
+    default:
+        FreeSizeFlg = _P3MC_freesize_chk();
+        break;
+    }
+
+    if (err != 0) {
+        FreeSizeFlg = 0;
+        portCheckFlg = 0;
+        if (mcmenu_info.flag == 2) {
+            return err;
+        } else {
+            return 3;
+        }
+    }
+
+    if (portCheckFlg == 0) {
+        portCheckFlg = 1;
+        memc_port_check(0, &mcmenu_info.flag, &mcmenu_info.free);
+        return -1;
+    }
+
+    portCheckFlg = 0;
+    if (mcmenu_info.flag != 2) {
+        FreeSizeFlg = 0;
+        err = 3;
+    } else {
+        if (memc_getChangeState()) {
+            err = 5;
+        } else {
+            err = 0;
+        }
+    }
+ 
+    return err;
+}
 
 void P3MC_CheckChangeClear(void) {
     memc_setChangeState(0);
@@ -531,11 +610,7 @@ void P3MC_OpeningCheckEnd(void) {
 
 INCLUDE_ASM("asm/nonmatchings/menu/p3mc", P3MC_OpeningCheck);
 
-#if 1
-INCLUDE_ASM("asm/nonmatchings/menu/p3mc", P3MC_LoadUser);
-#else
-int P3MC_LoadUser(/* s5 21 */ int mode, /* s3 19 */ int fileNo, /* s1 17 */ MCRWDATA_HDL *pdhdl, /* s4 20 */ int flg)
-{
+int P3MC_LoadUser(int mode, int fileNo, MCRWDATA_HDL *pdhdl, int flg) {
     P3MC_WORK *pw = &P3MC_Work;
 
     memset(pdhdl->pMemTop, 0, pdhdl->rwsize);
@@ -543,19 +618,17 @@ int P3MC_LoadUser(/* s5 21 */ int mode, /* s3 19 */ int fileNo, /* s1 17 */ MCRW
     _P3MC_SetUserDirName(mode, fileNo);
     _P3MC_dataCheckFunc(pw, _P3MC_CheckUserData);
 
-    pw->prgflag    = flg; // 2114
+    pw->prg = 0x1000;
+    pw->dstat = 0;
 
-    pw->dstat      = 0; // 2115
-    pw->dhdl       = pdhdl; // 2121
-    
-    pw->data_mode  = mode; // 2117
-    pw->data_no    = fileNo; // 2118
-    pw->data_stage = 0; // 2119
+    pw->data_mode = mode;
+    pw->data_no = fileNo;
+    pw->data_stage = 0;
 
-    pw->prg = 0x1000; // 2122
+    pw->dhdl = pdhdl;
+    pw->prgflag = flg;
     return 0;
 }
-#endif
 
 int P3MC_LoadCheck(void) {
     int        re;

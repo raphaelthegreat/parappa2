@@ -89,7 +89,7 @@ typedef struct { // 0x20
     /* 0x1c */ void *data_cfunc;
 } P3MC_WORK;
 
-typedef int (*P3MCDataCheckFunc)();
+typedef int (*P3MCDataCheckFunc)(P3MC_WORK *pw);
 
 typedef struct { // 0x3b00
     /* 0x0000 */ int curState;

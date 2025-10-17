@@ -2306,7 +2306,103 @@ void TsMCAMes_SetMes(int no) {
     pmesw->line = _PkMCMsgGetLine(pmesw->mesflg & 0xffff);
 }
 
+#ifndef NON_MATCHING
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsMCAMes_Flow);
+#else /* Needs .sdata match */
+static void TsMCAMes_Flow(u_int tpad) {
+    MCMES_WORK *pmesw;
+    int         cLine;
+    float       fRate;
+    int         isOK, isCAN;
+
+    pmesw = &MCMesWork;
+    if (pmesw->backSw && pmesw->mesflg >= 0) {
+        cLine = pmesw->line;
+        if (cLine == 1) {
+            cLine = 2;
+        }
+
+        cLine *= 4096;
+        if (pmesw->D0line == 0) {
+            pmesw->Dline = pmesw->D0line = cLine;
+        } else {
+            pmesw->Dline = pmesw->D0line = TSNumMov(pmesw->D0line, cLine, 4);
+        }
+
+        fRate = (MNSceneGetMusicFitTimer() % 72) / 72.0f;
+        fRate *= 6.2831855f;
+        fRate = cosf(fRate);
+        fRate = ((fRate * fRate) * 1228.8f);
+        pmesw->Dline += (int)fRate;
+    } else {
+        pmesw->D0line = 0;
+        pmesw->Dline = 0;
+    }
+
+    if (pmesw->btflg != 0) {
+        if (pmesw->btton < 0x40) {
+            pmesw->btton += 7;
+            if (pmesw->btton > 0x40) {
+                pmesw->btton = 0x40;
+            }
+        }
+    } else {
+        if (pmesw->btton > 0) {
+            pmesw->btton -= 7;
+            if (pmesw->btton < 0) {
+                pmesw->btton = 0;
+            }
+        }
+    }
+
+    if (pmesw->mesflg >= 0 && (pmesw->mesflg & 0xff000000)) {
+        if (pmesw->mesflg & 0xc000000) {
+            if (!TSSND_CHANISSTOP(1)) {
+                pmesw->seltim++;
+                return;
+            }
+        }
+
+        if (pmesw->mesflg & 0x2000000) {
+            isCAN = TRUE;
+        } else {
+            isCAN = FALSE;
+        }
+    
+        if (pmesw->mesflg & 0x1000000) {
+            isOK = TRUE;
+        } else {
+            isOK = FALSE;
+        }
+        
+        if (pmesw->mesflg & 0x14000000) {
+            isOK = TRUE;
+            isCAN = TRUE;
+        }
+    
+        if (isOK && (tpad & 0x20)) {
+            pmesw->selflg = 1;
+            TSSNDPLAY(6);
+        }
+    
+        if (isCAN && (tpad & 0x40)) {
+            pmesw->selflg = 2;
+            if (pmesw->mesflg & 0x4000000) {
+                TSSNDPLAY(6);
+            } else {
+                TSSNDPLAY(9);
+            }
+        }
+    
+        if (pmesw->mesflg & 0xc000000) {
+            pmesw->seltim++;
+            if (pmesw->seltim >= 0x79) {
+                pmesw->selflg = 1;
+            }
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsMCAMes_Draw);
 
