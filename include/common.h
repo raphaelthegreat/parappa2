@@ -56,4 +56,6 @@ typedef float f32;
 
 #define PR_PADDING(name, x) char unk##name[x]
 
+#define PR_BREAK() asm("break")
+
 #endif /* COMMON_H */

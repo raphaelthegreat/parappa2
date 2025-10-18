@@ -19,35 +19,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-extern int _end_addr;
-extern int _stack_size_addr;
-extern int oddeven_idx;
+/* linker: _end & _stack_size */
+extern void *_end;
+extern void *_stack_size;
 
-/* .bss */
-extern u_long128 GifPkCommon[8192];
-
-void (*OsFuncAddr)();
-
-/* .bss */
-extern sceGsDrawEnv1 drawEnvSp;
-extern sceGsDrawEnv1 drawEnvZbuff;
-extern sceGsDrawEnv1 drawEnvEnd;
-
-int main(void) {
-    mallocInit();
-
-    while (1) {
-        MtcInit();
-        initSystem();
-
-        MtcStart(systemCtrlMain);
-
-        MtcQuit();
-        exitSystem();
-    }
-}
-
-static u_char *iop_module[11] = {
+static u_char *iop_module[] = {
     "cdrom0:\\IRX\\SIO2MAN.IRX;1",
     "cdrom0:\\IRX\\PADMAN.IRX;1",
     "cdrom0:\\IRX\\LIBSD.IRX;1",
@@ -60,6 +36,51 @@ static u_char *iop_module[11] = {
     "cdrom0:\\IRX\\WAVE2PS2.IRX;1",
     "cdrom0:\\IRX\\TAPCTRL.IRX;1",
 };
+
+int double_tmp_on_off = 0;
+
+static int _end_addr = (int)&_end;
+static int _stack_size_addr = (int)&_stack_size;
+
+sceGsDBuffDc DBufDc = {};
+int outbuf_idx = 0;
+int oddeven_idx = 0;
+
+sceGsDrawEnv1 *drawEnvP[5] = {};
+
+PADD pad[2] = {};
+
+static u_long128 GifPkCommon[8192];
+
+void (*OsFuncAddr)() = NULL;
+
+GLOBAL_DATA       global_data       = {};
+GAME_STATUS       game_status       = {};
+MC_REP_STR        mc_rep_str        = {};
+HAT_CHANGE_ENUM   hat_change_enum   = HCNG_R1;
+INGAME_COMMON_STR ingame_common_str = {};
+
+static sceGsDrawEnv1 drawEnvSp;
+static sceGsDrawEnv1 drawEnvZbuff;
+static sceGsDrawEnv1 drawEnvEnd;
+
+int main(void) {
+    mallocInit();
+
+#if defined(PRD_SHIFTABLE)
+    scePrintf("P3 shifted ELF - https://github.com/parappadev/parappa2\n");
+#endif
+
+    while (1) {
+        MtcInit();
+        initSystem();
+
+        MtcStart(systemCtrlMain);
+
+        MtcQuit();
+        exitSystem();
+    }
+}
 
 int SetIopModule(void) {
     u_int i;
@@ -87,8 +108,6 @@ int SetIopModule(void) {
     return 0;
 }
 
-sceGsDBuffDc   DBufDc      = {};
-sceGsDrawEnv1 *drawEnvP[5] = {};
 
 static void firstClrFrameBuffer(void) {
     CLEAR_VRAM_DMA vclr_dma;
@@ -135,12 +154,29 @@ void initSystem(void) {
     sceGsSetDefDBuffDc(&DBufDc, SCE_GS_PSMCT32, SCREEN_WIDTH, SCREEN_HEIGHT / 2, SCE_GS_ZGEQUAL, SCE_GS_PSMZ32, SCE_GS_CLEAR);
     SetBackColor(0, 0, 0);
 
-    /*
-     * Initialize TIMER0 to use the
-     * external clock (H-BLNK) and start
-     * the timer.
-     */
+    /* Start TIMER0 on H-BLANK mode. */
     *T0_MODE = T_MODE_CLKS_M | T_MODE_CUE_M;
+#if defined(PRD_SYORI)
+    /*
+     * TIMER2 and TIMER3 are reserved by the
+     * EE kernel, so modifying them will cause
+     * a TLB modification exception in HW.
+     *
+     * prlib's rendering statictics use TIMER3
+     * regardless.
+     *
+     * Testing confirms it's already set at
+     * the mode we want, so we can still use them.
+     */
+     if ((*T3_MODE & (T_MODE_CLKS_M|T_MODE_CUE_M)) !=
+         (T_MODE_CLKS_M|T_MODE_CUE_M)) {
+        printf("Unexpected TIMER3 mode\n");
+        PR_BREAK();
+     }
+#if 0
+    *T3_MODE = T_MODE_CLKS_M | T_MODE_CUE_M;
+#endif
+#endif
 
     outbuf_idx = 0;
 
@@ -181,8 +217,6 @@ void exitSystem(void) {
     sceCdInit(SCECdEXIT);
     sceSifExitCmd();
 }
-
-PADD pad[2] = {};
 
 void SetOsFuncAddr(void* func_pp) {
     OsFuncAddr = func_pp;
@@ -269,8 +303,3 @@ void mallocInit(void) {
     int size = FullAllocAndFree();
     scePrintf("HEAP SIZE[%08x]\n", size);
 }
-
-GLOBAL_DATA       global_data       = {};
-GAME_STATUS       game_status       = {};
-MC_REP_STR        mc_rep_str        = {};
-INGAME_COMMON_STR ingame_common_str = {};

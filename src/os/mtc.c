@@ -5,21 +5,21 @@
 #include <stdio.h>
 
 static char mtcStack_CTRL[MTC_TASK_SIZE_CTRL] PR_ALIGNED(16);
-static char mtcStack_MAIN[MTC_TASK_SIZE_MAIN];
-static char mtcStack_02[MTC_TASK_SIZE_02];
-static char mtcStack_03[MTC_TASK_SIZE_03];
-static char mtcStack_04[MTC_TASK_SIZE_04];
-static char mtcStack_05[MTC_TASK_SIZE_05];
-static char mtcStack_06[MTC_TASK_SIZE_06];
-static char mtcStack_07[MTC_TASK_SIZE_07];
-static char mtcStack_08[MTC_TASK_SIZE_08];
-static char mtcStack_09[MTC_TASK_SIZE_09];
-static char mtcStack_0A[MTC_TASK_SIZE_0A];
-static char mtcStack_0B[MTC_TASK_SIZE_0B];
-static char mtcStack_0C[MTC_TASK_SIZE_0C];
-static char mtcStack_0D[MTC_TASK_SIZE_0D];
-static char mtcStack_0E[MTC_TASK_SIZE_0E];
-static char mtcStack_0F[MTC_TASK_SIZE_0F];
+static char mtcStack_MAIN[MTC_TASK_SIZE_MAIN] PR_ALIGNED(16);
+static char mtcStack_02[MTC_TASK_SIZE_02] PR_ALIGNED(16);
+static char mtcStack_03[MTC_TASK_SIZE_03] PR_ALIGNED(16);
+static char mtcStack_04[MTC_TASK_SIZE_04] PR_ALIGNED(16);
+static char mtcStack_05[MTC_TASK_SIZE_05] PR_ALIGNED(16);
+static char mtcStack_06[MTC_TASK_SIZE_06] PR_ALIGNED(16);
+static char mtcStack_07[MTC_TASK_SIZE_07] PR_ALIGNED(16);
+static char mtcStack_08[MTC_TASK_SIZE_08] PR_ALIGNED(16);
+static char mtcStack_09[MTC_TASK_SIZE_09] PR_ALIGNED(16);
+static char mtcStack_0A[MTC_TASK_SIZE_0A] PR_ALIGNED(16);
+static char mtcStack_0B[MTC_TASK_SIZE_0B] PR_ALIGNED(16);
+static char mtcStack_0C[MTC_TASK_SIZE_0C] PR_ALIGNED(16);
+static char mtcStack_0D[MTC_TASK_SIZE_0D] PR_ALIGNED(16);
+static char mtcStack_0E[MTC_TASK_SIZE_0E] PR_ALIGNED(16);
+static char mtcStack_0F[MTC_TASK_SIZE_0F] PR_ALIGNED(16);
 
 static MTC_TASK_CONB mtcTaskConB[16];
 static char mtcStack_Ctrl[MTC_TASK_SIZE_CTRL];
@@ -27,10 +27,14 @@ static struct ThreadParam th_para_Ctrl;
 
 /* Size for each stack */
 int mtcStackSizeTbl[] = {
-    0x1000, 0x1000, 0x100,  0x800,
-    0x1000, 0x4000, 0x100,  0x4000,
-    0x100,  0x100,  0x1000, 0x100,
-    0x100,  0x1000, 0x100,  0x1000
+    MTC_TASK_SIZE_CTRL, MTC_TASK_SIZE_MAIN,
+    MTC_TASK_SIZE_02,   MTC_TASK_SIZE_03,
+    MTC_TASK_SIZE_04,   MTC_TASK_SIZE_05,
+    MTC_TASK_SIZE_06,   MTC_TASK_SIZE_07,
+    MTC_TASK_SIZE_08,   MTC_TASK_SIZE_09,
+    MTC_TASK_SIZE_0A,   MTC_TASK_SIZE_0B,
+    MTC_TASK_SIZE_0C,   MTC_TASK_SIZE_0D,
+    MTC_TASK_SIZE_0E,   MTC_TASK_SIZE_0F
 };
 
 char* mtcStack[16] = {
@@ -40,13 +44,11 @@ char* mtcStack[16] = {
     mtcStack_0C,   mtcStack_0D,   mtcStack_0E, mtcStack_0F
 };
 
-struct SemaParam mtcSemaPara = { 0, 0, 0, 0, 0, 0 }; 
+struct SemaParam mtcSemaPara = {}; 
 
-/* .sdata */
 int mtcCurrentTask = 0;
 int mtcSemaEnd = 0;
 
-/* ,sbss */
 static short th_id_Ctrl;
 
 static void mtcStackErrorCheck(int level) {
