@@ -13,15 +13,13 @@ char msg8x8data[] = {
 static u_long128 dbgPacket[4096];
 static sceGifPacket gifPacket;
 
-/* .sbss */
-extern sceDmaChan *dbgDmaC;
+static sceDmaChan *dbgDmaC;
 
 static TIM2INFO tinfo;
 
-/* .sbss */
-extern u_char MSGCOL[3];
-extern u_short MSGSIZE[2];
-extern u_int MSGZPOP;
+static u_char MSGCOL[3];
+static u_short MSGSIZE[2];
+static u_int MSGZPOP;
 
 static void msgOutYY(u_char msg, u_short *uv_pp);
 

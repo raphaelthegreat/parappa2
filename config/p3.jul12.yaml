@@ -384,7 +384,7 @@ segments:
         - [0x2999D0, sdata, nalib/navector]
 
         # .sbss
-        - { type: sbss,  vram: 0x00399a00, name: dbug/dbgmsg          }
+        - { type: .sbss, vram: 0x00399a00, name: dbug/dbgmsg          }
 
         - { type: .sbss, vram: 0x00399a18, name: os/mtc               }
         - { type: .sbss, vram: 0x00399a1c, name: os/cmngifpk          }

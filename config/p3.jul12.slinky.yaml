@@ -844,7 +844,7 @@ segments:
       - { path: asm/sdk/crt0.s.o }
       - { path: asm/sdk/tmp.s.o }
 
-      - { path: asm/data/dbug/dbgmsg.sbss.s.o }
+      - { path: src/dbug/dbgmsg.c.o }
       - { path: src/dbug/syori.c.o }
       - { path: src/dbug/vramsave.c.o }
 
