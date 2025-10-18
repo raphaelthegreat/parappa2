@@ -425,7 +425,7 @@ segments:
         - { type: .bss,  vram: 0x003a9d90, name: os/mtc               }
         - { type: .bss,  vram: 0x003ba0c0, name: os/syssub            }
         - { type: .bss,  vram: 0x003babd0, name: os/system            }
-        - { type: bss,   vram: 0x003dad50, name: os/cmngifpk          }
+        - { type: .bss,  vram: 0x003dad50, name: os/cmngifpk          }
         - { type: .bss,  vram: 0x003db380, name: os/usrmem            }
         - { type: .bss,  vram: 0x01c5d380, name: os/tim2              }
 

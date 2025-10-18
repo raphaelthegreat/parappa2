@@ -2,7 +2,9 @@
 
 #include <stdio.h>
 
-static char usrMemoryData[0x1880000]; /* ~25 MB */
+/* I'm not sure if it actually was 128bit aligned (minimum is 32bit),
+ * but 128bit makes more sense in this case. */
+static char usrMemoryData[0x1880000] PR_ALIGNED(128); /* ~25 MB */
 static u_int usrMemPos[2048];
 
 static int usrMemPosCnt;

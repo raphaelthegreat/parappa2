@@ -5,14 +5,13 @@
 
 #include <stdio.h>
 
-/* static--move to bss! */
-extern CMNGIF_PRI cmngif_pri[64];
+static CMNGIF_PRI cmngif_pri[64];
 static int cmngif_pri_cnt;
 
 static u_long128 *cmnGifPkBase, *cmnGifPkCurrent, *cmnGifPkEnd;
 
-extern u_long128 cmnGifTr[65];
-extern sceGifPacket cmnGifPacket;
+static u_long128 cmnGifTr[65];
+static sceGifPacket cmnGifPacket;
 
 void CmnGifInit(void *buf_adr, int size) {
     cmnGifPkEnd     = (buf_adr + size * 16);
