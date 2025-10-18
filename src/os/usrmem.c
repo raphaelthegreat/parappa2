@@ -2,11 +2,9 @@
 
 #include <stdio.h>
 
-/* .bss */
-extern char usrMemoryData[0x1880000]; /* ~25 MB */
-extern u_int usrMemPos[2048];
+static char usrMemoryData[0x1880000]; /* ~25 MB */
+static u_int usrMemPos[2048];
 
-/* .sbss */
 static int usrMemPosCnt;
 static int usrMemPosEndCnt;
 
@@ -101,13 +99,13 @@ u_int UsrMemEndAlloc(int size) {
 }
 
 void UsrMemFree(void) {
-    if (usrMemPosCnt) {
+    if (usrMemPosCnt != 0) {
         usrMemPosCnt--;
     }
 }
 
 void UsrMemEndFree(void) {
-    if (usrMemPosEndCnt) {
+    if (usrMemPosEndCnt != 0) {
         usrMemPosEndCnt--;
     }
 }

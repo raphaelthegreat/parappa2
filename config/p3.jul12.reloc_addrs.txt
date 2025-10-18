@@ -165,6 +165,34 @@ rom:0x28C7C4 symbol:none reloc:MIPS_NONE
 rom:0x28CD00 symbol:none reloc:MIPS_NONE
 rom:0x28CD50 symbol:none reloc:MIPS_NONE
 
+//
+// sdk
+//
+
+// sdk/libdma.c: sceDmaSend
+rom:0x56E8C symbol:none reloc:MIPS_NONE
+rom:0x56EAC symbol:none reloc:MIPS_NONE
+
+// sdk/libdma.c: sceDmaSendN
+rom:0x56F6C symbol:none reloc:MIPS_NONE
+rom:0x56F8C symbol:none reloc:MIPS_NONE
+
+// sdk/libdma.c: sceDmaSendI
+rom:0x57054 symbol:none reloc:MIPS_NONE
+rom:0x57074 symbol:none reloc:MIPS_NONE
+
+// sdk/libdma.c: sceDmaRecv
+rom:0x5712C symbol:none reloc:MIPS_NONE
+rom:0x5714C symbol:none reloc:MIPS_NONE
+
+// sdk/libdma.c: sceDmaRecvN
+rom:0x57204 symbol:none reloc:MIPS_NONE
+rom:0x57224 symbol:none reloc:MIPS_NONE
+
+// sdk/libdma.c: sceDmaRecvI
+rom:0x572F4 symbol:none reloc:MIPS_NONE
+rom:0x57314 symbol:none reloc:MIPS_NONE
+
 // sdk/thread.c: InitThread
 rom:0x6125C symbol:_gp reloc:MIPS_HI16
 rom:0x61268 symbol:_gp reloc:MIPS_LO16

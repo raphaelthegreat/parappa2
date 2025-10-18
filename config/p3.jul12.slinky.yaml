@@ -964,7 +964,7 @@ segments:
       - { path: src/os/syssub.c.o }
       - { path: src/os/system.c.o }
       - { path: asm/data/os/cmngifpk.bss.s.o }
-      - { path: asm/data/os/usrmem.bss.s.o }
+      - { path: src/os/usrmem.c.o }
       - { path: src/os/tim2.c.o }
 
       - { path: asm/data/main/cdctrl.bss.s.o }
