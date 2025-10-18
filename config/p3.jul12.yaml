@@ -353,7 +353,7 @@ segments:
         - [0x299830, sdata, menu/p3mc]
         - [0x299878, sdata, menu/memc]
         - [0x299890, sdata, menu/menufont]
-        - [0x2998A0, sdata, menu/pksprite]
+        - [0x2998A0, .sdata, menu/pksprite]
 
         - [0x2998B8, .sdata, prlib/gifreg]
         - [0x2998BC, sdata, prlib/model]
@@ -405,6 +405,7 @@ segments:
         - { type: sbss,  vram: 0x00399ac8, name: menu/menusub         }
         - { type: sbss,  vram: 0x00399b60, name: menu/p3mc            }
         - { type: sbss,  vram: 0x00399b7c, name: menu/menufont        }
+        - { type: .sbss, vram: 0x00399b84, name: menu/pksprite        }
 
         - { type: sbss,  vram: 0x00399b8c, name: prlib/model          }
         - { type: sbss,  vram: 0x00399b90, name: prlib/prlib          }

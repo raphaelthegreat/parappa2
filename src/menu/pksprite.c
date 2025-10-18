@@ -5,13 +5,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* .sbss */
-extern sceGsScissor _PkDefSCISSOR;
-extern sceGsZbuf _PkDefZBUFFER;
+static sceGsScissor _PkDefSCISSOR PR_ALIGNED(16) = {
+    .SCAX0 = 0, .SCAX1 = 639,
+    .SCAY0 = 0, .SCAY1 = 223,
+};
+static sceGsZbuf _PkDefZBUFFER PR_ALIGNED(16) = {
+    .ZBP = 0, .PSM = 0, .ZMSK = 0,
+};
 
-/* .sbss */
-extern int _PkScrW;
-extern int _PkScrH;
+static int _PkScrW;
+static int _PkScrH;
 
 /* .lit4 */
 float FLT_003990DC; /* cannot be defined as extern, needed for `rotcossin` */

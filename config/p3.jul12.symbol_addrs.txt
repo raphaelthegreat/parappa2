@@ -4,7 +4,8 @@ _start                              = 0x00100008; // type:func
 _exit                               = 0x001000b8; // type:func
 _root                               = 0x001000c0; // type:func
 
-_args                               = 0x00399c00; // size:0x144
+_args                               = 0x00399c00; // size:0x144 align:0x40
+ob                                  = 0x00399d48; // size:0x18
 
 // tmp/cc76DAYa.c
 reg_frame                           = 0x001000c8; // type:func

@@ -769,7 +769,7 @@ segments:
       - { path: asm/data/menu/memc.sdata.s.o }
       - { path: src/menu/mntm2hed.c.o }
       - { path: asm/data/menu/menufont.sdata.s.o }
-      - { path: asm/data/menu/pksprite.sdata.s.o }
+      - { path: src/menu/pksprite.c.o }
 
       - { path: src/iop_mdl/wp2cd_rpc.c.o }
       - { path: src/iop_mdl/tapctrl_rpc.c.o }

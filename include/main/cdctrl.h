@@ -7,6 +7,7 @@
 #include <libcdvd.h>
 
 #define PACKINT_MAGIC (0x44332211)
+#define PACK(x) ((PACKINT_FILE_STR*)x)
 
 typedef enum {
     FRMODE_PC = 0,

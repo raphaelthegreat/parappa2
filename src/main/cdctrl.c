@@ -15,14 +15,7 @@
 #include <sifdev.h>
 #include <stdio.h>
 
-/* sdata */
 void *current_intg_adrs = NULL;
-
-/* bss - static */
-extern CDCTRL_STR cdctrl_str;
-
-/* sbss - static */
-static int cdSampleTmp;
 
 #define N        4096 /* Size of ring buffer */
 #define F          18 /* Upper limit */
@@ -30,8 +23,6 @@ static int cdSampleTmp;
 
 /* bss - static */
 extern unsigned char RBuff[N + F - 1]; /* Ring buffer for INT decompression */
-
-#define PACK(x) ((PACKINT_FILE_STR*)x)
 
 static int cdctrlReadSub(FILE_STR *fstr_pp, int ofs, int size, int buf);
 static void cdctrlReadDataOne(void *x);
@@ -161,6 +152,9 @@ int PackIntDecodeWait(u_char *fp_r, u_char *fp_w, int wait_hline) {
     asm("sync.l");
     return 0;
 }
+
+static int cdSampleTmp;
+extern CDCTRL_STR cdctrl_str; /* bss - static */
 
 void CdctrlInit(void) {
     WorkClear(&cdctrl_str, sizeof(cdctrl_str));
