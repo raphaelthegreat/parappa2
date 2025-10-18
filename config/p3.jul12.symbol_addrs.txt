@@ -214,7 +214,8 @@ UsrMemEndAlloc                      = 0x00104258; // type:func
 UsrMemFree                          = 0x00104300; // type:func
 UsrMemEndFree                       = 0x00104318; // type:func
 
-usrMemoryData                       = 0x003db380; // size:0x1880000 align:0x80
+// The `usrMemoryData` symbol can be safely ignored now that it has been migrated.
+usrMemoryData                       = 0x003db380; // size:0x1880000 align:0x80 ignore:true
 usrMemPos                           = 0x01c5b380; // size:0x2000
 usrMemPosCnt                        = 0x00399a2c; // size:0x4
 usrMemPosEndCnt                     = 0x00399a30; // size:0x4
