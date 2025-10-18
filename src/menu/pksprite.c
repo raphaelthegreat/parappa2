@@ -16,6 +16,10 @@ extern int _PkScrH;
 /* .lit4 */
 float FLT_003990DC; /* cannot be defined as extern, needed for `rotcossin` */
 
+static void _tsWorkEnd(TS_WORKMEM *emem);
+static u_int* _tsWorkInit(TS_WORKMEM *emem, u_int *buf, u_int size);
+static void PkDefReg_Add(SPR_PKT pkt);
+
 static void _tsWorkEnd(TS_WORKMEM *emem) {
     if (emem->isAlloc && emem->top != NULL) {
         free(emem->top);
@@ -282,7 +286,7 @@ void PkTEX0_SetAdd(SPR_PKT pkt, int vram, int w, int h, int isLinear) {
     pk = (qword*)*pkt;
 
     ((u_long*)*pk)[0] = SCE_GIF_SET_TAG(1, 1, 0, 0, SCE_GIF_PACKED, 3);
-    ((u_long*)*pk)[1] = 0 |
+    ((u_long*)*pk)[1] =
         SCE_GIF_PACKED_AD << (0 * 4) |
         SCE_GIF_PACKED_AD << (1 * 4) |
         SCE_GIF_PACKED_AD << (2 * 4);
@@ -357,14 +361,14 @@ u_int GetDToneColor(u_int sbgr, u_int dbgr, int ton) {
     g = min(max(g, 0), 255);
     b = min(max(b, 0), 255);
     a = min(max(a, 0), 255);
-    a = SCE_GS_SET_RGBAQ(r, g, b, a, 0x0 /* 0.0f */);
+    a = (u_int)SCE_GS_SET_RGBAQ(r, g, b, a, 0x0 /* 0.0f */);
     #else
     asm volatile(
         "pcpyld  $2, %3, %2       \n\t" /* $2 = ((((u64)a)<<64)|(u64)(b)) */
         "pcpyld  $4, %1, %0       \n\t" /* $4 = ((((u64)g)<<64)|(u64)(r)) */
         "ppacw   $2, $2, $4       \n\t" /* $2 = (((u32)($2>>64)<<96) | ((u32)($2)<<64) |
                                                  ((u32)($4>>64)<<32) | ((u32)($4)<<0 )) */
-        "li      $8, 0xff000000ff \n\t" /* $8 = 0xff000000ff */
+        "li      $8, 0xff000000ff \n\t" /* $8 = 0x000000ff000000ff */
         "pcpyld  $8, $8, $8       \n\t" /* $8 = ((((u64)$8)<<64)|(u64)($8)) */
         "pmaxw   $2, $2, $0       \n\t" /* $2 = (((u128)((u32)max((u32)($2>>96), 0))<<96) |
                                                  ((u128)((u32)max((u32)($2>>64), 0))<<64) |
@@ -382,7 +386,7 @@ u_int GetDToneColor(u_int sbgr, u_int dbgr, int ton) {
                                                 ((u8)($2>>64)<<32) | ((u8)($2>>48)<<24 ) |
                                                 ((u8)($2>>32)<<16) | ((u8)($2>>16)<<8  ) |
                                                 ((u8)($2>>0 )<<0 )) */
-    : : "r"(r), "r"(g), "r"(b), "r"(a)
+    :: "r"(r), "r"(g), "r"(b), "r"(a)
     );
     #endif
 
@@ -407,7 +411,7 @@ u_int GetToneColorA(u_int abgr, int tona, int tonb, int tong, int tonr) {
     g = min(max(g, 0), 255);
     b = min(max(b, 0), 255);
     a = min(max(a, 0), 255);
-    a = SCE_GS_SET_RGBAQ(r, g, b, a, 0x0 /* 0.0f */);
+    a = (u_int)SCE_GS_SET_RGBAQ(r, g, b, a, 0x0 /* 0.0f */);
     #else
     asm volatile(
         "pcpyld  $2, %3, %2       \n\t" /* $2 = ((((u64)a)<<64)|(u64)(b)) */
@@ -432,7 +436,7 @@ u_int GetToneColorA(u_int abgr, int tona, int tonb, int tong, int tonr) {
                                                 ((u8)($2>>64)<<32) | ((u8)($2>>48)<<24 ) |
                                                 ((u8)($2>>32)<<16) | ((u8)($2>>16)<<8  ) |
                                                 ((u8)($2>>0 )<<0 )) */
-    : : "r"(r), "r"(g), "r"(b), "r"(a)
+    :: "r"(r), "r"(g), "r"(b), "r"(a)
     );
     #endif
 
@@ -457,7 +461,7 @@ u_int GetToneColorH(u_int abgr, int tona, int tonb, int tong, int tonr) {
     g = min(max(g, 0), 255);
     b = min(max(b, 0), 255);
     a = min(max(a, 0), 255);
-    a = SCE_GS_SET_RGBAQ(r, g, b, a, 0x0 /* 0.0f */);
+    a = (u_int)SCE_GS_SET_RGBAQ(r, g, b, a, 0x0 /* 0.0f */);
     #else
     asm volatile(
         "pcpyld  $2, %3, %2       \n\t" /* $2 = ((((u64)a)<<64)|(u64)(b)) */
@@ -482,7 +486,7 @@ u_int GetToneColorH(u_int abgr, int tona, int tonb, int tong, int tonr) {
                                                 ((u8)($2>>64)<<32) | ((u8)($2>>48)<<24 ) |
                                                 ((u8)($2>>32)<<16) | ((u8)($2>>16)<<8  ) |
                                                 ((u8)($2>>0 )<<0 )) */
-    : : "r"(r), "r"(g), "r"(b), "r"(a)
+    :: "r"(r), "r"(g), "r"(b), "r"(a)
     );
     #endif
 
@@ -510,7 +514,7 @@ void PkSprPkt_SetDrawEnv(SPR_PKT pkt, SPR_PRM *spr, sceGsDrawEnv1 *pdenv) {
     pk = (qword*)*pkt;
 
     ((u_long*)*pk)[0] = SCE_GIF_SET_TAG(1, 1, 0, 0, SCE_GIF_PACKED, 3);
-    ((u_long*)*pk)[1] = 0 |
+    ((u_long*)*pk)[1] =
         SCE_GIF_PACKED_AD << (0 * 4) |
         SCE_GIF_PACKED_AD << (1 * 4) |
         SCE_GIF_PACKED_AD << (2 * 4);
@@ -554,7 +558,44 @@ void PkZBUFMask_Add(SPR_PKT pkt, int bMsk) {
     ((sceGsZbuf*)*pk)[2].ZMSK = (bMsk != 0);
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu/pksprite", PkSprPkt_SetTexVram);
+void PkSprPkt_SetTexVram(SPR_PKT pkt, SPR_PRM *spr, sceGsDrawEnv1 *pdenv) {
+    qword *pk;
+    int    x, y, w, h;
+    int    fbp, psm, fbw; /* note: variables not in STABS. */
+
+    if (pdenv == NULL) {
+        return;
+    }
+
+    fbp = pdenv->frame1.FBP;
+    fbw = pdenv->frame1.FBW;
+    psm = pdenv->frame1.PSM;
+
+    x = pdenv->scissor1.SCAX0;
+    y = pdenv->scissor1.SCAY0;
+    w = (pdenv->scissor1.SCAX1 - x) + 1;
+    h = (pdenv->scissor1.SCAY1 - y) + 1;
+
+    spr->ux = x;
+    spr->uy = y;
+    spr->uw = w;
+    spr->uh = h;
+
+    pk = (qword*)*pkt;
+
+    ((u_long*)*pk)[0] = SCE_GIF_SET_TAG(1, 1, 0, 0, SCE_GIF_PACKED, 2);
+    ((u_long*)*pk)[1] =
+        SCE_GIF_PACKED_AD << (0 * 4) |
+        SCE_GIF_PACKED_AD << (1 * 4);
+
+    /* texflush doesn't use the data. */
+    ((u_long*)*pk)[3] = SCE_GS_TEXFLUSH;
+
+    ((u_long*)*pk)[4] = SCE_GS_SET_TEX0(fbp << 5, fbw, psm, 10/*1024*/, 10/*1024*/, 1, 0, 0, 0, 0, 0, 0);
+    ((u_long*)*pk)[5] = SCE_GS_TEX0_1;
+
+    *pkt = (u_long128*)pk + 3;
+}
 
 void PkSprPkt_SetDefault(SPR_PKT pk, SPR_PRM *spr, sceGsDrawEnv1 *pdenv) {
     if (pdenv != NULL) {
@@ -575,12 +616,13 @@ void PkSprPkt_SetDefault(SPR_PKT pk, SPR_PRM *spr, sceGsDrawEnv1 *pdenv) {
     PkDefReg_Add(pk);
     PkPABE_Add(pk, 0);
     PkFBA_Add(pk, 0);
-    PkALPHA_Add(pk, 0x44);
-    PkTEST_Add(pk, 0x30000);
-    PkCLAMP_Add(pk, 0);
-    PkCCLAMP_Add(pk, 1);
+    PkALPHA_Add(pk, SCE_GS_SET_ALPHA(0, 1, 0, 1, 0));
+    PkTEST_Add(pk, SCE_GS_SET_TEST(0, 0, 0, 0, 0, 0, 1, 1));
+    PkCLAMP_Add(pk, SCE_GS_SET_CLAMP(0, 0, 0, 0, 0, 0));
+    PkCCLAMP_Add(pk, SCE_GS_SET_COLCLAMP(1));
     PkDefSCISSOR_Add(pk);
-    PkTEX1_Add(pk, 0x2020);
+    /* note: undocumented bit on TEX1. useless? */
+    PkTEX1_Add(pk, SCE_GS_SET_TEX1(0, 0, 1, 0, 0, 0, 0) | (1<<13));
 }
 
 INCLUDE_ASM("asm/nonmatchings/menu/pksprite", PkNSprite_Add);
@@ -714,7 +756,7 @@ static void rotcossin(float rot) {
 "_rcossin_01:                            \n\t"
         "vsubx.x     vf04, vf19, vf05    \n\t" /* VF04.x = s */
 "_rcossin_02:                            \n\t"
-    : : "f"(rot));
+    :: "f"(rot));
 }
 
 void _pkVU0RotMatrixZ(float rz) {

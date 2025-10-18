@@ -17,8 +17,7 @@ typedef enum {
     STW_MAX = 8
 } SNDTAP_WIPE_ENUM;
 
-typedef enum
-{
+typedef enum {
     WIPE_TYPE_LOADING = 0,
     WIPE_TYPE_SAME = 1,
     WIPE_TYPE_YES_NO = 2,
