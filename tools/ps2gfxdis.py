@@ -188,13 +188,13 @@ def disassemble_alpha(data, name):
 
 def disassemble_test(data, name):
     ATE   = (data >> 0 ) & 0x1
-    ATST  = (data >> 1 ) & 0x111
+    ATST  = (data >> 1 ) & 0x7
     AREF  = (data >> 4 ) & 0xff
-    AFAIL = (data >> 12) & 0x11
+    AFAIL = (data >> 12) & 0x3
     DATE  = (data >> 14) & 0x1
     DATM  = (data >> 15) & 0x1
     ZTE   = (data >> 16) & 0x1
-    ZTST  = (data >> 17) & 0x11
+    ZTST  = (data >> 17) & 0x3
 
     return format_macro(name, ATE, ATST, AREF, AFAIL, DATE, DATM, ZTE, ZTST)
 
