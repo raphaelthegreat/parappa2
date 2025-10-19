@@ -13,21 +13,67 @@
 
 #include <libpad.h>
 
-/* data */
-/* static */ extern SNDTAP         sndtap_menu[];
-/* static */ extern VOICE_TBL      VoiceSet[];
-/* static */ extern int           *ocl1_rndTbl[];
-/* static */ extern MN_CRWCL1_TBL *ocl1_stageTbl[];
-/* static */ extern RT2TRANS_STR   rt2trans_str[];
+/* sdata 3996f0 */ extern int _BankChan1Req; /* static */
+/* sdata 3996f4 */ extern int _BankChan1Stat; /* static */
+/* data 187558 */ MenuMcIcon menumciconL[0];
+/* data 187868 */ MenuMcIcon menumciconR[0];
+/* data 187e88 */ extern SNDTAP sndtap_menu[0]; /* static */
+/* data 187f48 */ extern SNDTAP sndtap_map[0]; /* static */
+/* data 187f60 */ extern SNDTAP sndtap_chall[0]; /* static */
+/* data 187fd8 */ extern VOICE_TBL VoiceSet[0]; /* static */
+/* data 188188 */ MESS mess_mc[0];
+/* data 188258 */ MESS mess_menu[0];
+/* data 1883e8 */ extern int rt2t_r1[0]; /* static */
+/* data 1883f8 */ extern int rt2t_r2[0]; /* static */
+/* data 188408 */ extern int rt2t_r3[0]; /* static */
+/* data 188418 */ extern int rt2t_r4[0]; /* static */
+/* data 188428 */ extern RT2TRANS_STR rt2trans_str[4]; /* static */
+/* data 188448 */ extern int ocl1_r1[0]; /* static */
+/* data 188468 */ extern int ocl1_r2[0]; /* static */
+/* data 188488 */ extern int ocl1_r3[0]; /* static */
+/* data 1884a8 */ extern int ocl1_r4[0]; /* static */
+/* data 1884c8 */ extern int *ocl1_rndTbl[0]; /* static */
+/* data 1884d8 */ extern MN_CRWCL1_TBL ocl1_st1; /* static */
+/* data 188518 */ extern MN_CRWCL1_TBL ocl1_st2; /* static */
+/* data 188558 */ extern MN_CRWCL1_TBL ocl1_st3; /* static */
+/* data 188598 */ extern MN_CRWCL1_TBL ocl1_st4; /* static */
+/* data 1885d8 */ extern MN_CRWCL1_TBL ocl1_st5; /* static */
+/* data 188618 */ extern MN_CRWCL1_TBL ocl1_st6; /* static */
+/* data 188658 */ extern MN_CRWCL1_TBL ocl1_st7; /* static */
+/* data 188698 */ extern MN_CRWCL1_TBL ocl1_st8; /* static */
+/* data 1886d8 */ extern MN_CRWCL1_TBL *ocl1_stageTbl[0]; /* static */
 
-extern MESS mess_mc[];
-extern MESS mess_menu[];
+void* MenuDataGetIconSysHed(int mode, int stageNo, int *size) {
+    void *ptr;
 
-/* .sdata */
-extern int _BankChan1Req;
-extern int _BankChan1Stat;
+    stageNo -= 1;
+    ptr = NULL;
 
-INCLUDE_ASM("asm/nonmatchings/menu/menudata", MenuDataGetIconSysHed);
+    if (size != NULL) {
+        *size = 0;
+    }
+
+    switch (mode) {
+    case 0:
+        if (stageNo >= 0 && stageNo <= 3) {
+            ptr = &menumciconL[stageNo].iconSys;
+            if (size != NULL) {
+                *size = sizeof(MenuMcIconSys);
+            }
+        }
+        break;
+    case 1:
+        if (stageNo >= 0 && stageNo <= 7) {
+            ptr = &menumciconR[stageNo].iconSys;
+            if (size != NULL) {
+                *size = sizeof(MenuMcIconSys);
+            }
+        }
+        break;
+    }
+
+    return ptr;
+}
 
 void MenuDataSndInit(void) {
     _BankChan1Req = 0;

@@ -7,6 +7,24 @@
 #include "main/scrctrl.h"
 
 #include <eetypes.h>
+#include <libmc.h>
+
+typedef struct { // 0xc0
+    /* 0x00 */ unsigned char Head[4];
+    /* 0x04 */ unsigned short Reserv1;
+    /* 0x06 */ unsigned short OffsLF;
+    /* 0x08 */ unsigned int Reserv2;
+    /* 0x0c */ unsigned int TransRate;
+    /* 0x10 */ _iconVu0IVECTOR BgColor[4];
+    /* 0x50 */ _iconVu0FVECTOR LightDir[3];
+    /* 0x80 */ _iconVu0FVECTOR LightColor[3];
+    /* 0xb0 */ _iconVu0FVECTOR Ambient;
+} MenuMcIconSys;
+
+typedef struct { // 0xc4
+    /* 0x00 */ int fileId;
+    /* 0x04 */ MenuMcIconSys iconSys;
+} MenuMcIcon;
 
 typedef enum {
     MENU_SPU_CHAN,
