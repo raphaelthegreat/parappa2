@@ -3,12 +3,9 @@
 #include <stdio.h>
 #include <string.h>
 
-/* .data */
-extern sceMcIconSys memc_iconsys;
-extern u_int _memc_type[];
-
-/* .bss */
-extern MEMC_STAT memc_stat;
+/* data 18ddf8 */ extern sceMcIconSys memc_iconsys; /* static */
+/* data 18e1c0 */ extern u_int _memc_type[]; /* static */
+/* bss 1c81540 */ extern MEMC_STAT memc_stat; /* static */
 
 static int memc_SaveFileClust(void);
 static void memc_clearMEMCINFO(MEMC_INFO *info);
@@ -249,7 +246,7 @@ int memc_port_info(int port, MEMC_INFO *info) {
     pmw->port = port;
     pmw->buf = (char*)info;
 
-    pmw->cmd = 14;
+    pmw->cmd = sceMcFuncNoFileInfo;
     pmw->retry = 0;
 
     strcpy(pmw->filename, pmw->saveDir);
@@ -273,7 +270,7 @@ int memc_del_file(int port, int no) {
     MEMC_STAT *pmw = &memc_stat;
     char      *tmpp;
 
-    pmw->cmd = 15;
+    pmw->cmd = sceMcFuncNoDelete;
     pmw->retry = 0;
 
     pmw->port = port;
@@ -316,7 +313,7 @@ int memc_load_file(int port, int no, char *buf, int size) {
 
     re = sceMcGetInfo(pmw->port, pmw->slot, &pmw->type, &pmw->free, &pmw->format);
     if (re == sceMcResSucceed) {
-        pmw->cmd = 14;
+        pmw->cmd = sceMcFuncNoFileInfo;
         pmw->func = 3;
     }
 
@@ -395,7 +392,7 @@ int memc_save_file(int port, int no, char* buf, int size, int bSysRW) {
 
     re = sceMcGetInfo(pmw->port, pmw->slot, &pmw->type, &pmw->free, &pmw->format);
     if (re == sceMcResSucceed) {
-        pmw->cmd  = 14;
+        pmw->cmd = sceMcFuncNoFileInfo;
         pmw->func = 4;
     }
 
@@ -436,7 +433,7 @@ int memc_save_overwrite(void) {
 
     re = sceMcGetInfo(pmw->port, pmw->slot, &pmw->type, &pmw->free, &pmw->format);
     if (re == sceMcResSucceed) {
-        pmw->cmd  = 14;
+        pmw->cmd = sceMcFuncNoFileInfo;
         pmw->func = 14;
     }
 
@@ -449,7 +446,7 @@ int memc_port_check(int port, int *type, int *free) {
   
     re = sceMcGetInfo(port, 0, type, free, &pmw->format);
     if (re == sceMcResSucceed) {
-        pmw->cmd = 14;
+        pmw->cmd = sceMcFuncNoFileInfo;
         pmw->func = 1;
     }
 
@@ -465,7 +462,7 @@ int memc_format(int port) {
 
     re = sceMcGetInfo(port, pmw->slot, &pmw->type, &pmw->free, &pmw->format);
     if (re == sceMcResSucceed) {
-        pmw->cmd = 14;
+        pmw->cmd = sceMcFuncNoFileInfo;
         pmw->func = 7;
     }
 
@@ -483,7 +480,7 @@ int memc_chg_dir(int port, char *name) {
     re = sceMcChdir(port, 0, name, NULL);
     if (re == sceMcResSucceed) {
         pmw->func = 10;
-        pmw->cmd  = 12;
+        pmw->cmd = sceMcFuncNoChDir;
     }
 
     return re;
@@ -505,7 +502,7 @@ int memc_get_dir(int port, char *name, sceMcTblGetDir *dir, int max) {
     re = sceMcGetDir(pmw->port, pmw->slot, pmw->filename, 0, max, dir);
     if (re == sceMcResSucceed) {
         pmw->func = 9;
-        pmw->cmd = 13;
+        pmw->cmd = sceMcFuncNoGetDir;
         pmw->retry = 0;
     }
 
@@ -524,7 +521,7 @@ int memc_get_dir_continue(sceMcTblGetDir *dir, int max) {
     re = sceMcGetDir(pmw->port, pmw->slot, pmw->filename, 1, max, dir);
     if (re == sceMcResSucceed) {
         pmw->func = 9;
-        pmw->cmd = 13;
+        pmw->cmd = sceMcFuncNoGetDir;
         pmw->retry = 0;
     }
 
@@ -551,22 +548,23 @@ static int memc_mansub_ErrChk(int result) {
     case -2:
         pmw->func = 0;
         return 3;
-    case -0x7d0:
+    /* (pmw->func==1||pmw->cmd==sceMcFuncNoFileInfo) -- sceMcResNoFormat */
+    case -2000:
         pmw->func = 0;
         pmw->isChange = 1;
         return 0x30;
     case -3:
         pmw->func = 0;
         return 4;
-    case -4:
+    case sceMcResNoEntry:
         pmw->func = 0;
         switch (pmw->cmd) {
-        case 0xb:
+        case sceMcFuncNoMkdir:
             return 0;
-        case 0xd:
+        case sceMcFuncNoGetDir:
             return 0x11;
-        case 2:
-        case 0xf:
+        case sceMcFuncNoOpen:
+        case sceMcFuncNoDelete:
             return 5;
         }
         return 1;
@@ -582,7 +580,7 @@ static int memc_mansub_Open(char *name, u_int type) {
 
     re = sceMcOpen(pmw->port, pmw->slot, name, type);
     if (re == sceMcResSucceed) {
-        pmw->cmd = 2;
+        pmw->cmd = sceMcFuncNoOpen;
     }
 
     return re;
@@ -594,7 +592,7 @@ static int memc_mansub_Close(void) {
 
     re = sceMcClose(pmw->fd);
     if (re == sceMcResSucceed) {
-        pmw->cmd = 3;
+        pmw->cmd = sceMcFuncNoClose;
     }
 
     return re;
@@ -633,7 +631,7 @@ static int memc_mansub_GetInfo(int result) {
     int re;
 
     switch (pmw->cmd) {
-    case 14:
+    case sceMcFuncNoFileInfo:
         if (pmw->type != sceMcTypePS2) {
             pmw->func = 0;
             return 2;
@@ -668,7 +666,7 @@ static int memc_mansub_GetInfo(int result) {
             }
         }
         break;
-    case 13:
+    case sceMcFuncNoGetDir:
         if (result < 0) {
             pmw->func = 0;
             return memc_mansub_ErrChk(result);
@@ -709,7 +707,7 @@ static int memc_mansub_load(int result) {
     MEMC_STAT *pmw = &memc_stat;
 
     switch (pmw->cmd) {
-    case 14:
+    case sceMcFuncNoFileInfo:
         if (result < 0) {
             return memc_mansub_ErrChk(result);
         }
@@ -725,19 +723,19 @@ static int memc_mansub_load(int result) {
         }
 
         return 1;
-    case 2:
+    case sceMcFuncNoOpen:
         if (result < 0) {
             return memc_mansub_ErrChk(result);
         }
 
         pmw->fd = result;
         if (!sceMcRead(pmw->fd, pmw->buf, pmw->size)) {
-            pmw->cmd = 5;
+            pmw->cmd = sceMcFuncNoRead;
             return 16;
         }
 
         return 16;
-    case 5:
+    case sceMcFuncNoRead:
         if (result < 0) {
             return memc_mansub_ErrChk(result);
         }
@@ -764,7 +762,50 @@ static int memc_mansub_load(int result) {
 
 INCLUDE_ASM("asm/nonmatchings/menu/memc", memc_manager_save);
 
-INCLUDE_ASM("asm/nonmatchings/menu/memc", memc_manager_overwrite);
+static int memc_manager_overwrite(int result) {
+    MEMC_STAT *pmw = &memc_stat;
+    int size, need;
+    char *fname;
+    int func;
+
+    if (pmw->cmd != 0xe) {
+        return 0x10;
+    }
+
+    if ((result = memc_mansub_ErrChk(result)) == 0) {
+        func = 4;
+        size = memc_SaveFileClust() + pmw->sysFileSize;
+        need = size - pmw->oldOWClust;
+
+        if (pmw->free < need) {
+            pmw->func = 0;
+            return func;
+        }
+
+        if (pmw->bChkSys ||
+            memc_searchDirTbl(memc_getfilename(-1), pmw->curDir, 0, 1, sizeof(sceMcIconSys), NULL) == NULL ||
+            memc_searchDirTbl(memc_getfilename(-2), pmw->curDir, 0, 1, pmw->iconSize1,       NULL) == NULL ||
+            ((fname = memc_getfilename(-3)) != NULL &&
+                memc_searchDirTbl(fname, pmw->curDir, 0, 1, pmw->iconSize2, NULL) == NULL) ||
+            ((fname = memc_getfilename(-4)) != NULL &&
+                memc_searchDirTbl(fname, pmw->curDir, 0, 1, pmw->iconSize3, NULL) == NULL)) {
+            pmw->func = 4;
+            pmw->stat |= 0x3;
+            memc_mansub_Open(memc_getfilepath(-1), 0x202);
+            return 0x10;
+        }
+
+        if (memc_mansub_Open(pmw->filename, 0x202) == 1) {
+            pmw->func = 0;
+            return 4;
+        } else {
+            pmw->func = func;
+            return 16;
+        }
+    }
+
+    return result;
+}
 
 static int memc_manager_chk(int mode) {
     int        re;
@@ -781,13 +822,13 @@ static int memc_manager_chk(int mode) {
         case 4:
             return memc_manager_save(result);
         case 1:
-            if (result == -2) {
+            if (result == sceMcResNoFormat) {
                 result = -2000;
             }
             return memc_mansub_ErrChk(result);
         case 7:
             switch (pmw->cmd) {
-            case 0xe:
+            case sceMcFuncNoFileInfo:
                 if (result >= 0) {
                     if (pmw->type != 2) {
                         pmw->func = 0;
@@ -796,7 +837,7 @@ static int memc_manager_chk(int mode) {
 
                     re = sceMcFormat(pmw->port, pmw->slot);
                     if (re == 0) {
-                        pmw->cmd = 0x10;
+                        pmw->cmd = sceMcFuncNoFormat;
                         break;
                     }
 
@@ -806,7 +847,7 @@ static int memc_manager_chk(int mode) {
                 }
 
                 return memc_mansub_ErrChk(result);
-            case 0x10:
+            case sceMcFuncNoFormat:
                 if (result >= 0) {
                     pmw->func = 0;
                     return 0;
