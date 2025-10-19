@@ -181,6 +181,7 @@ compiler_type = "gcc"
 # and have to be converted.
 #
 EUCJP_FILES = {
+    Path("src/menu/menudata.c"),
     Path("src/menu/pksprite.c"),
 }
 

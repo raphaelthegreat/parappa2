@@ -297,7 +297,7 @@ segments:
       - { path: src/main/commake.c.o }
 
       - { path: src/menu/menu.c.o }
-      - { path: asm/data/menu/menudata.data.s.o }
+      - { path: src/menu/menudata.c.o }
       - { path: asm/data/menu/menu_mdl.data.s.o }
       - { path: asm/data/menu/menusub.data.s.o }
       - { path: asm/data/menu/p3mc.data.s.o }
@@ -762,7 +762,7 @@ segments:
       - { path: src/main/commake.c.o }
 
       - { path: src/menu/menu.c.o }
-      - { path: asm/data/menu/menudata.sdata.s.o }
+      - { path: src/menu/menudata.c.o }
       - { path: src/menu/menu_mdl.c.o }
       - { path: asm/data/menu/menusub.sdata.s.o }
       - { path: asm/data/menu/p3mc.sdata.s.o }

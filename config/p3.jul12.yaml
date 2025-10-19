@@ -204,7 +204,7 @@ segments:
         - [0x87400,  data, main/main]
         - [0x874F0,  .data, main/commake]
 
-        - [0x87558,  data, menu/menudata]
+        - [0x87558, .data, menu/menudata]
         - [0x886F8,  data, menu/menu_mdl]
         - [0x8B0E0,  data, menu/menusub]
         - [0x8DD90,  data, menu/p3mc]
@@ -348,7 +348,7 @@ segments:
         - [0x2995D0, sdata, main/main]
         - [0x2996E0, .sdata, main/p3str]
 
-        - [0x2996F0, sdata, menu/menudata]
+        - [0x2996F0, .sdata, menu/menudata]
         - [0x299700, sdata, menu/menusub]
         - [0x299830, sdata, menu/p3mc]
         - [0x299878, sdata, menu/memc]
