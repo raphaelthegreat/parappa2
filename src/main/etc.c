@@ -13,22 +13,22 @@
 #include <stdio.h>
 
 /* .sdata */
-extern PR_SCENEHANDLE usrSceneHandle;
+extern PR_SCENEHANDLE usrSceneHandle; /* static */
 
 /* .data */
-extern SCR_SND_AREA scr_snd_area[4];
+extern SCR_SND_AREA scr_snd_area[4/*0*/]; /* static */
 
-extern u_char hkl_pknum_01[];
-extern u_char hkl_pknum_02[];
-extern u_char hkl_pknum_03[];
-extern u_char hkl_pknum_04[];
-extern u_char hkl_pknum_05[];
-extern u_char hkl_pknum_06[];
-extern u_char hkl_pknum_07[];
-extern HKL_PKSTR hkl_pkstr[];
+extern u_char hkl_pknum_01[]; /* static */
+extern u_char hkl_pknum_02[]; /* static */
+extern u_char hkl_pknum_03[]; /* static */
+extern u_char hkl_pknum_04[]; /* static */
+extern u_char hkl_pknum_05[]; /* static */
+extern u_char hkl_pknum_06[]; /* static */
+extern u_char hkl_pknum_07[]; /* static */
+extern HKL_PKSTR hkl_pkstr[]; /* static */
 
 /* .bss */
-extern u_int vsync_time[51];
+extern u_int vsync_time[51]; /* static */
 
 void GlobalInit(void) {
     WorkClear(&game_status, sizeof(game_status));
@@ -563,11 +563,45 @@ int inCmnHookMaxLineCnt(int stg) {
     return hkl_pkstr[stg].cnt;
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/etc", inCmnHookMaxLinePknum);
+HKLV_SNDREC_ENUM inCmnHookMaxLinePknum(int stg, int line) {
+    if (stg >= 9u || line >= hkl_pkstr[stg].cnt) {
+        return 0;
+    }
 
-INCLUDE_ASM("asm/nonmatchings/main/etc", inCmnHookSet);
+    return hkl_pkstr[stg].hknum_pp[line];
+}
 
-INCLUDE_ASM("asm/nonmatchings/main/etc", inCmnHook2GameCheck);
+int inCmnHookSet(int stg) {
+    int cnt, ret;
+    
+    ret = 0;
+    cnt = inCmnHookMaxLineCnt(stg);
+
+    if (cnt == 0) {
+        ingame_common_str.HookLine = HKLV_SNDREC_NOUSE;
+    } else {
+        ret = randMakeMax(cnt);
+        ingame_common_str.HookLine = inCmnHookMaxLinePknum(stg, ret);
+    }
+
+    printf("HOOK pack:%d line:%d\n",ingame_common_str.HookLine, ret);
+    return ret;
+}
+
+int inCmnHook2GameCheck(int pack_id) {
+    int ret = -1;
+
+    if (ingame_common_str.HookLine == HKLV_SNDREC_NOUSE) {
+        return -1;
+    }
+
+    if (ingame_common_str.HookLine == pack_id) {
+        ret = ingame_common_str.HookLevel;
+        printf("HOOK level use:%d  pack:%d\n", ret, pack_id);
+    }
+
+    return ret;
+}
 
 void inCmnHook2GameSave(int level) {
     ingame_common_str.HookLevel = level;
