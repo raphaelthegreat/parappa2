@@ -1,31 +1,29 @@
 #include "menu/menufont.h"
 
 #include "main/etc.h"
+
+#include "menu/menu_mdl.h"
 #include "menu/mntm2hed.h"
 
-/* .data */
-extern u_long SubtGsTex0_TmpMenuFont[3];
-extern MCODE_ASCII mcode_ascii_TmpMenuFont[];
-extern char Tbl_ASC2EUC[193];
+/* data 18f580 */ extern u_long SubtGsTex0_TmpMenuFont[3]; /* static */
+/* data 18f598 */ extern MCODE_ASCII mcode_ascii_TmpMenuFont[0]; /* static */
+/* data 18fe58 */ extern MCODE_ASCII mcode_HalfSpace; /* static */
+/* data 18fe68 */ extern MCODE_KANJI_ANIME PadSymbolFontA[]; /* static */
+/* data 18ff70 */ MCODE_DAT ArowPat[0];
+/* data 18ffa8 */ extern MCODE_DAT TsFont[0]; /* static */
+/* data 190360 */ extern char Tbl_ASC2EUC[193]; /* static */
+/* sdata 399890 */ extern int _PadFont_SW; /* static */
+/* sdata 399894 */ extern int _PadArrowState; /* static */
+/* sbss 399b7c */ extern int _AnimeFontFlg; /* static */
+/* sbss 399b80 */ extern MCODE_STR *kanji_pp_TmpMenuFont; /* static */
+/* bss 1c81880 */ extern MCODE_CHAR mcode_dat_pp_TmpMenuFont[512]; /* static */
+/* bss 1c82880 */ extern MNFONT_INFO MnSubtFontInfo[3]; /* static */
 
-extern MCODE_CHAR mcode_dat_pp_TmpMenuFont[512];
-extern MCODE_KANJI_ANIME PadSymbolFontA[12];
-
-/* .sdata */
-extern int _PadFont_SW;
-extern int _PadArrowState;
-
-/* .sbss */
-extern int _AnimeFontFlg;
-extern MCODE_STR *kanji_pp_TmpMenuFont;
-
-/* .bss */
-extern MNFONT_INFO MnSubtFontInfo[3];
-
-/* static */ int  _JPFont_GetSubtCode(u_char *str, SUBT_CODE *subt_code);
-static int  _EGFont_GetSubtCode(u_char *str, SUBT_CODE *subt_code, MCODE_DAT *pfnt_ascii);
-/* static */ void _PKFontPut(SPR_PKT pk, SPR_PRM *spr, SUBT_CODE *psubt, int line_num, int xp, int yp, int pflg, int hsize, float rtx, float rty);
-
+static void _PKFontPut(SPR_PKT pk, SPR_PRM *spr, SUBT_CODE *psubt, int line_num, int xp, int yp, int pflg, int hsize, float rtx, float rty);
+static void _PADArrow_Put(SPR_PKT pk, SPR_PRM *spr, MCODE_DAT *pfnt, int x, int y);
+static int _JPFont_GetSubtCode(u_char *str, SUBT_CODE *subt_code);
+static int _EGFont_GetSubtCode(u_char *str, SUBT_CODE *subt_code, MCODE_DAT *pfnt_ascii);
+static MCODE_DAT* codeKanjiCheck(u_char dat0, u_char dat1, MCODE_KANJI *kcode_pp, int kcode_max);
 static MCODE_DAT* codeKanjiACheck(u_char dat0, u_char dat1, MCODE_KANJI_ANIME *kcode_pp, int kcode_max);
 static void euc2sjis(unsigned char *c1, unsigned char *c2);
 
@@ -173,7 +171,7 @@ void MENUFontPutL(SPR_PKT pk, SPR_PRM *spr, int x, int y, u_int abgr, int flg, u
     MnSubtFontInfo[2].tex0 = tex0;
     MnSubtFontInfo[2].abgr = SCE_GS_SET_RGBAQ(128, 128, 128, 128, 0);
 
-    _AnimeFontFlg = ((MNSceneGetMusicFitTimer() % 40) >= 21);
+    _AnimeFontFlg = ((MNSceneGetMusicFitTimer() % 40) > 20);
 
     spr->zx = 1.0f;
     spr->zy = 0.5f;
@@ -242,7 +240,72 @@ static void _PADArrow_Put(/* s6 22 */ SPR_PKT pk, /* s0 16 */ SPR_PRM *spr, /* a
 }
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/menu/menufont", _JPFont_GetSubtCode);
+static int _JPFont_GetSubtCode(u_char *str, SUBT_CODE *subt_code) {
+    int         line_num;
+    MCODE_CHAR *ppMcode;
+    u_char      dat0, dat1;
+
+    if (*str == '\0') {
+        return 0;
+    }
+
+    line_num = 0;
+    ppMcode = mcode_dat_pp_TmpMenuFont;
+
+    while (1) {
+        dat0 = *str++;
+
+        if (dat0 == '\0') {
+            line_num++;
+            break;
+        }
+
+        /* '@' - new line */
+        if (dat0 == '@') {
+            line_num++;
+            continue;
+        }
+
+        if (dat0 == ' ') {
+            ppMcode->pmcode = &mcode_HalfSpace;
+            subt_code[line_num].wsize += ppMcode->pmcode->w;
+            subt_code[line_num].cnt++;
+            ppMcode->flg = 0;
+            ppMcode++;
+            continue;
+        }
+
+        dat1 = *str++;
+        euc2sjis(&dat0, &dat1);
+
+        /* '@' in SJIS - new line */
+        if (dat0 == 0x81 && dat1 == 0x97) {
+            line_num++;
+            continue;
+        }
+
+        if (_PadFont_SW) {
+            ppMcode->pmcode = codeKanjiACheck(dat0, dat1, PadSymbolFontA, 12);
+            if (ppMcode->pmcode != NULL) {
+                subt_code[line_num].cnt++;
+                subt_code[line_num].wsize += ppMcode->pmcode->w;
+                ppMcode->flg = 2;
+                ppMcode++;
+                continue;
+            }
+        }
+
+        ppMcode->pmcode = codeKanjiCheck(dat0, dat1, kanji_pp_TmpMenuFont->mcode_kanji, kanji_pp_TmpMenuFont->mcode_max);
+        if (ppMcode->pmcode != NULL) {
+            subt_code[line_num].cnt++;
+            subt_code[line_num].wsize += ppMcode->pmcode->w;
+            ppMcode->flg = 1;
+            ppMcode++;
+        }
+    }
+
+    return line_num;
+}
 
 static int _EGFont_GetSubtCode(u_char *str, SUBT_CODE *subt_code, MCODE_DAT *pfnt_ascii) {
     int         line_num;
@@ -260,7 +323,7 @@ static int _EGFont_GetSubtCode(u_char *str, SUBT_CODE *subt_code, MCODE_DAT *pfn
     while (1) {
         c = *str++;
 
-        if (c == 0) {
+        if (c == '\0') {
             line_num++;
             break;
         }
@@ -272,7 +335,7 @@ static int _EGFont_GetSubtCode(u_char *str, SUBT_CODE *subt_code, MCODE_DAT *pfn
             continue;
         }
 
-        if (_PadFont_SW != 0) {
+        if (_PadFont_SW) {
             dat0 = c;
             dat1 = *str;
             euc2sjis(&dat0, &dat1);
@@ -303,7 +366,7 @@ static int _EGFont_GetSubtCode(u_char *str, SUBT_CODE *subt_code, MCODE_DAT *pfn
 
 static MCODE_DAT* codeKanjiCheck(u_char dat0, u_char dat1, MCODE_KANJI *kcode_pp, int kcode_max) {
     u_short code = dat0 | (dat1 << 8);
-    int     i    = 0;       
+    int     i    = 0;
 
     for (i = 0; i < kcode_max; i++, kcode_pp++) {
         if (kcode_pp->code == code) {
@@ -316,7 +379,7 @@ static MCODE_DAT* codeKanjiCheck(u_char dat0, u_char dat1, MCODE_KANJI *kcode_pp
 
 static MCODE_DAT* codeKanjiACheck(u_char dat0, u_char dat1, MCODE_KANJI_ANIME *kcode_pp, int kcode_max) {
     u_short code = dat0 | (dat1 << 8);
-    int     i    = 0;       
+    int     i    = 0;
 
     for (i = 0; i < kcode_max; i++, kcode_pp++) {
         if (kcode_pp->code == code) {

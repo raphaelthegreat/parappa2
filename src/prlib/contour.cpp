@@ -1,5 +1,3 @@
-#include "common.h"
-
 #include "model.h"
 
 void PrModelObject::SaveContour() {
