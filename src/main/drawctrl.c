@@ -10,6 +10,7 @@
 #include "os/tim2.h"
 
 #include "main/cdctrl.h"
+#include "main/mbar.h"
 #include "main/sprite.h"
 #include "main/p3str.h"
 
@@ -956,7 +957,101 @@ MEN_CTRL_ENUM GetMendererEnum(void) {
 
 INCLUDE_ASM("asm/nonmatchings/main/drawctrl", MendererCtrlScene);
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", sceneConditionCheck);
+/*
+ * -- Stage condition flag definition --
+ * 
+ * (andor)  (unused)  (stg clr)  (tbl)   (rnd)
+ *    0    0000000000 000000000 00000000 0000
+ * 
+ * Bit(s) 0-3: Round/circuit/hat
+ *   Each bit represents a round from 1 to 4.
+ * 
+ * Bit(s) 4-11: Table number (difficulty/level)
+ *   Each bit represents a table number (difficulty/level) from 0 to 7.
+ * 
+ * Bit(s) 12-20: Stage clear
+ *   Each bit represents a stage from 0 to 8.
+ * 
+ * Bit(s) 31: ANDOR (AND/OR mode)
+ *   0: Conditions use OR logic.
+ *      cond = RND | TBL | STGCLR;
+ *   1: Conditions use AND logic.
+ *      cond = RND & TBL & STGCLR;
+ */
+int sceneConditionCheck(u_int cond_flag) {
+    int andor;
+    int i;
+
+    andor = cond_flag & 0x80000000;
+    cond_flag &= 0x7fffffff;
+    
+    if (cond_flag == 0) {
+        return 1;
+    }
+    
+    for (i = 0; i < 21; i++) {
+        if (((int)cond_flag >> i) & 1) {
+            switch (i) {
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+                if (i != global_data.roundL) {
+                    if (andor != 0) {
+                        return 0;
+                    }
+                } else {
+                    if (andor == 0) {
+                        return 1;
+                    }
+                }
+                break;
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+            case 11:
+                if (GetCurrentTblNumber() != (i - 4)) {
+                    if (andor != 0) {
+                        return 0;
+                    }
+                } else {
+                    if (andor == 0) {
+                        return 1;
+                    }
+                }
+                break;
+            case 12:
+            case 13:
+            case 14:
+            case 15:
+            case 16:
+            case 17:
+            case 18:
+            case 19:
+            case 20:
+                if (clearStageCheck() != (i - 12)) {
+                    if (andor != 0) {
+                        return 0;
+                    }
+                } else {
+                    if (andor == 0) {
+                        return 1;
+                    }
+                }
+                break;
+            default:
+                return 0;
+            }
+        }
+    }
+
+    return (andor != 0);
+}
+
 
 static void DrawCtrlMain(void *x) {
     int        i, j, lsjkl;
@@ -1042,7 +1137,7 @@ static void DrawCtrlMain(void *x) {
             float men_tmp = PrGetMendererRatio();
 
             if (check_scenectrl[lsjkl]->prg_pp == DrawSceneObjData) {
-                if (check_scenectrl[lsjkl]->pri >= 211) {
+                if (check_scenectrl[lsjkl]->pri > 210) {
                     PrSetMendererRatio(0.0f);
                 }
                 
@@ -1080,10 +1175,42 @@ static void DrawSceneStrInit(SCENESTR *scstr_pp) {
         scstr_pp->scenectrl_pp[i].use_flag = 0;
 
         if (scstr_pp->scenectrl_pp[i].prg_pp != NULL) {
-            /* 
-             * Call the overlay function pointer (DrawSceneObjData)
-             * to initialize the scenes and handles for each object 
+        #if defined(PRD_SHIFTABLE)
+            /*
+             * Overlays have pointers to scene draw functions.
+             * Until overlays are linked properly, we need
+             * to fix the pointers at runtime.
+             *
+             * note: Addresses are hardcoded for the Jul. 12
+             *       prototype overlays.
              */
+            u_int prg = (u_int)scstr_pp->scenectrl_pp[i].prg_pp;
+            if (prg == 0x00113bd8) {
+                scstr_pp->scenectrl_pp[i].prg_pp = DrawSceneObjData;
+            } else if (prg == 0x00114200) {
+                scstr_pp->scenectrl_pp[i].prg_pp = DrawVramClear;
+            } else if (prg == 0x00114358) {
+                scstr_pp->scenectrl_pp[i].prg_pp = DrawMoveDispIn;
+            } else if (prg == 0x00114750) {
+                scstr_pp->scenectrl_pp[i].prg_pp = DrawFadeDisp;
+            } else if (prg == 0x00115000) {
+                scstr_pp->scenectrl_pp[i].prg_pp = DrawVramLocalCopy2;
+            } else if (prg == 0x0011b368) {
+                scstr_pp->scenectrl_pp[i].prg_pp = MbarDispSceneDraw;
+            } else if (prg == 0x0011b520) {
+                scstr_pp->scenectrl_pp[i].prg_pp = MbarDispSceneVsDraw;
+            } else {
+                /*
+                 * Can't hang here, DrawSceneStrInit is called
+                 * when retrying a stage. Also, the printf call
+                 * doesn't seem to work?
+                 */
+            #if 0
+                scePrintf("Unknown program [0x%08x]", prg);
+                PR_BREAK();
+            #endif
+            }
+        #endif
             scstr_pp->scenectrl_pp[i].prg_pp(scstr_pp->scenectrl_pp[i].param_pp, 0, -2, scstr_pp->scenectrl_pp[i].useDisp, scstr_pp->scenectrl_pp[i].drDisp);
         }
     }
@@ -1101,10 +1228,6 @@ static void DrawSceneStrReset(SCENESTR *scstr_pp) {
             scstr_pp->scenectrl_pp[i].use_flag = 0;
 
             if (scstr_pp->scenectrl_pp[i].prg_pp != NULL) {
-                /* 
-                 * Call the overlay function pointer (DrawSceneObjData)
-                 * to reset the objects 
-                 */
                 scstr_pp->scenectrl_pp[i].prg_pp(scstr_pp->scenectrl_pp[i].param_pp, 0, -1, 0, 0);
             }
         }
@@ -1378,7 +1501,7 @@ static void ddbg_event_sub_bmp(void) {
     }
 
     /* BUG: should use usrMalloc */
-    dat1_pp = malloc(0x8C000); // ~573.4 KB
+    dat1_pp = malloc(0x8C000); /* ~573.4 KB */
     dat2_pp = malloc(0x8C000);
 
     sceGsSetHalfOffset(&DBufDc.draw11,  2048, 2048, 0);
