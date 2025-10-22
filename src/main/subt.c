@@ -214,7 +214,7 @@ void SubtCtrlPrint(JIMAKU_STR *jstr_pp, int line, int time, int lang) {
 }
 
 void SubtTapPrint(u_char *tap_msg_pp, int lang) {
-    // BUG: should be logical OR instead of bitwise?
+    /* BUG: should be logical OR instead of bitwise? */
     if (tap_msg_pp == NULL | *tap_msg_pp == '\0') {
         return;
     }
@@ -263,7 +263,7 @@ int SubtMsgDataKaijyouCnt(u_char *msg_pp, int jap_flag) {
             euc2sjis(&dat0, &dat1);
             tmp_pp++;
 
-            // '@' (SHIFT-JIS)
+            /* '@' in SJIS - new line */
             if (dat0 == 0x81 && dat1 == 0x97) {
                 ret++;
             }
@@ -296,13 +296,13 @@ u_char* SubtMsgDataPos(u_char *msg_pp, int jap_flag, int pos) {
         dat1 = tmp_pp[1];
         tmp_pp++;
 
+        /* New line */
         if (dat0 == '@') {
-            // New line
             ret++;
         } else if (jap_flag) {
             euc2sjis(&dat0, &dat1);
 
-            // '@' (shift-jis)
+            /* '@' in SJIS - new line */
             if (dat0 == 0x81 && dat1 == 0x97) {
                 ret++;
             }

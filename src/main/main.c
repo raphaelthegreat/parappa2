@@ -7,6 +7,7 @@
 #include "os/mtc.h"
 #include "os/syssub.h"
 #include "os/system.h"
+#include "os/tim2.h"
 #include "os/usrmem.h"
 
 #include "main/cdctrl.h"
@@ -62,7 +63,7 @@ extern u_char *dbg_score_msg[]; /* = {
     "OFF", "ON"
 }; */
 
-extern DBG_MODE_STR dbg_mode_str[]; /* = {
+extern DBG_MODE_STR dbg_mode_str[4/*0*/]; /* = {
     {
         .msg_pp = "START",
         .set_pp = NULL,
@@ -104,8 +105,74 @@ extern int first_f; /* mainStart */
 INCLUDE_RODATA("asm/nonmatchings/main/main", D_00393810);
 INCLUDE_RODATA("asm/nonmatchings/main/main", D_00393820);
 
-INCLUDE_ASM("asm/nonmatchings/main/main", dbg_select_disp);
-void dbg_select_disp(void);
+static void dbg_select_disp(void) {
+    int selpos;
+    DBG_MODE_STR *dbg_pp;
+    int i;
+    int numkun; /* note: can't find an use for this (v0). */
+
+    selpos = 0;
+    DbgMsgInit();
+
+    while (1) {
+        MtcWait(1);
+        dbg_pp = &dbg_mode_str[selpos];
+        if (pad[0].one & (SCE_PADRleft | SCE_PADRright)) {
+            if (dbg_pp->set_pp == NULL) {
+                break;
+            }
+            
+            if (pad[0].one & SCE_PADRright) {
+                (*dbg_pp->set_pp)++;
+            } else {
+                (*dbg_pp->set_pp)--;
+            }
+    
+            if (*dbg_pp->set_pp < dbg_pp->min) {
+                *dbg_pp->set_pp = dbg_pp->max - 1;
+            }
+    
+            if (*dbg_pp->set_pp >= dbg_pp->max) {
+                *dbg_pp->set_pp = dbg_pp->min;
+            }
+        } else {
+            if (pad[0].one & SCE_PADLup) {
+                selpos--;
+            } else if (pad[0].one & SCE_PADLdown) {
+                selpos++;
+            }
+        }
+
+        if (selpos < 0) {
+            selpos = 3;
+        }
+        if (selpos > PR_ARRAYSIZEU(dbg_mode_str) - 1) {
+            selpos = 0;
+        }
+
+        DbgMsgClear();
+        DbgMsgSetSize(16, 10);
+        DbgMsgSetColor(0, 128, 0);
+        DbgMsgPrint("= DEBUG MENU =", 1800, 1950);
+
+        for (i = 0; i < PR_ARRAYSIZEU(dbg_mode_str); i++) {
+            if (i == selpos) {
+                DbgMsgSetColor(128, 128, 0);
+            } else {
+                DbgMsgSetColor(128, 128, 128);
+            }
+
+            DbgMsgPrint(dbg_mode_str[i].msg_pp, 1800, (1968 + (i*12)));
+            if (dbg_mode_str[i].selmsg_pp != NULL) {
+                DbgMsgPrint(dbg_mode_str[i].selmsg_pp[*dbg_mode_str[i].set_pp - dbg_mode_str[i].min], 2000, (1968 + (i*12)));
+            }
+        }
+
+        DbgMsgFlash();
+    }
+
+    MtcWait(1);
+}
 
 INCLUDE_RODATA("asm/nonmatchings/main/main", D_00393840);
 INCLUDE_RODATA("asm/nonmatchings/main/main", D_00393860);
@@ -409,8 +476,8 @@ int selPlayDisp(int sel_stage, int sel_disp, int firstf) {
 
     PrSetPostureWorkArea(UsrMemAllocNext(), UsrMemAllocEndNext() - UsrMemAllocNext());
     DrawCtrlInit(stdat_dat_pp->ev_pp, global_data.draw_tbl_top, (void*)UsrMemGetAdr(0));
+    PrSetPostureWorkArea(NULL, NULL);
 
-    PrSetPostureWorkArea(0, 0);
     DrawCtrlTimeSet(0);
     MtcWait(1);
 
@@ -456,53 +523,51 @@ int selPlayDisp(int sel_stage, int sel_disp, int firstf) {
 INCLUDE_ASM("asm/nonmatchings/main/main", SpHatChangeSub);
 void SpHatChangeSub(void);
 #else // TODO: fix rodata
-static void SpHatChangeSub(void)
-{
+static void SpHatChangeSub(void) {
     PADD *pad_pp;
 
     hat_change_enum = HCNG_AUTO;
 
-    if (game_status.roundG < TRND_R4)
+    if (game_status.roundG < TRND_R4) {
         return;
+    }
 
     pad_pp = &pad[0];
 
-    if (pad_pp->ana[1] < 0x40)
-    {
+    if (pad_pp->ana[1] < 0x40) {
         hat_change_enum = HCNG_R1;
-    }
-    else if (pad_pp->ana[0] >= 0xC0)
-    {
+    } else if (pad_pp->ana[0] >= 0xc0) {
         hat_change_enum = HCNG_R2;
-    }
-    else if (pad_pp->ana[1] >= 0xc0)
-    {
+    } else if (pad_pp->ana[1] >= 0xc0) {
         hat_change_enum = HCNG_R3;
-    }
-    else if (pad_pp->ana[0] < 0x40)
-    {
+    } else if (pad_pp->ana[0] < 0x40) {
         hat_change_enum = HCNG_R4;
     }
 
-    {
-        int           rt2t_r1[3]      = { 0xB6, 0xB7, 0xB8 };
-        int           rt2t_r2[3]      = { 0xB9, 0xBA, 0xBB };
-        int           rt2t_r3[3]      = { 0xBC, 0xBD, 0xBE };
-        int           rt2t_r4[3]      = { 0xBF, 0xC0, 0xC1 };
-        RT2TRANS_STR  rt2trans_str[4] = {{3, rt2t_r1}, {3, rt2t_r2}, {3, rt2t_r3}, {3, rt2t_r4}};
-        
-        RT2TRANS_STR *rt2trans_str_pp = &rt2trans_str[GetHatRound()];
-        int           i;
+    PR_SCOPE
+    int           rt2t_r1[3] = { 0xb6, 0xb7, 0xb8 };
+    int           rt2t_r2[3] = { 0xb9, 0xba, 0xbb };
+    int           rt2t_r3[3] = { 0xbc, 0xbc, 0xbe };
+    int           rt2t_r4[3] = { 0xbf, 0xc0, 0xc1 };
+    RT2TRANS_STR  rt2trans_str[4] = {
+        { .num = 3, .data_pp = rt2t_r1},
+        { .num = 3, .data_pp = rt2t_r2},
+        { .num = 3, .data_pp = rt2t_r3},
+        { .num = 3, .data_pp = rt2t_r4},
+    };
+    
+    RT2TRANS_STR *rt2trans_str_pp = &rt2trans_str[GetHatRound()];
+    int           i;
 
-        for (i = 0; i < rt2trans_str_pp->num; i++)
-        {
-            Tim2Trans(GetIntAdrsCurrent(rt2trans_str_pp->data_pp[i]));
-        }
+    for (i = 0; i < rt2trans_str_pp->num; i++)
+    {
+        Tim2Trans(GetIntAdrsCurrent(rt2trans_str_pp->data_pp[i]));
     }
+    PR_SCOPEEND
 }
 #endif
 
-extern char D_003996C0[]; /* sdata  - "DEBUG" */
+extern char D_003996C0[]; /* sdata - "DEBUG" */
 
 int selPlayDispTitleDisp(int sel_stage, int sel_disp, int ovl_load) {
     STDAT_DAT *stdat_dat_pp;
@@ -539,7 +604,8 @@ int selPlayDispTitleDisp(int sel_stage, int sel_disp, int ovl_load) {
 
     PrSetPostureWorkArea(UsrMemAllocNext(), UsrMemAllocEndNext() - UsrMemAllocNext());
     DrawCtrlInit(stdat_dat_pp->ev_pp, global_data.draw_tbl_top, (void*)UsrMemGetAdr(0));
-    PrSetPostureWorkArea(0, 0);
+    PrSetPostureWorkArea(NULL, NULL);
+
     DrawCtrlTimeSet(0);
     MtcWait(1);
 
@@ -688,12 +754,10 @@ static void uramenFileSearchSet(void) {
 }
 
 static void uramenFileSearchEnd(void) {
-    if (!uramen_end_flag) {
-        return;
-    }
-
-    while (uramen_end_flag) {
-        MtcWait(1);
+    if (uramen_end_flag) {
+        while (uramen_end_flag) {
+            MtcWait(1);
+        }
     }
 }
 
@@ -734,7 +798,47 @@ INCLUDE_ASM("asm/nonmatchings/main/main", selPlayDispType);
 
 INCLUDE_ASM("asm/nonmatchings/main/main", selPlayDispSetPlay);
 
-INCLUDE_ASM("asm/nonmatchings/main/main", selPlayDispSetPlayOne);
+int selPlayDispSetPlayOne(int sel_stage) {
+    int        i;
+    STDAT_DAT *stdat_dat_pp;
+    int        fsize;
+    int        ret;
+    int        decp;
+
+    ret = 0;
+
+    printf(D_00393A18);
+    CdctrlRead(&stdat_rec[sel_stage].ovlfile, overlay_loadaddr, NULL);
+    printf(D_00393A00);
+    CdctrlReadWait();
+
+    i = stdat_rec[sel_stage].stdat_dat_num - 1;
+    stdat_dat_pp = &stdat_rec[sel_stage].stdat_dat_pp[i];
+
+    fsize = CdctrlGetFileSize(&stdat_dat_pp->intfile);
+    CdctrlReadOne(&stdat_dat_pp->intfile, UsrMemEndAlloc(((fsize + 2047) / 2048) * 2048), NULL);
+    CdctrlReadWait();
+
+    decp = UsrMemAllocEndNext();
+    UsrMemEndFree();
+
+    CdctrlMemIntgDecode(decp, UsrMemAllocNext());
+
+    cmnfTim2Trans();
+
+    if (stdat_dat_pp->play_step == PSTEP_HOOK) {
+        ret = selPlayDispType(sel_stage, i, CBE_HOOK);
+    } else if (global_data.play_modeL == PLAY_MODE_SINGLE) {
+        ret = selPlayDispType(sel_stage, i, CBE_SINGLE);
+    } else if (global_data.play_modeL == PLAY_MODE_VS_MAN) {
+        ret = selPlayDispType(sel_stage, i, CBE_VS_MAN);
+    } else if (global_data.play_modeL == PLAY_MODE_VS_COM) {
+        ret = selPlayDispType(sel_stage, i, CBE_VS_COM);
+    }
+
+    UsrMemClearTop();
+    return ret;
+}
 
 INCLUDE_ASM("asm/nonmatchings/main/main", gamePlayDisp);
 int gamePlayDisp(void);
@@ -757,7 +861,7 @@ void titleDisp(int firstf) {
 
         stdat_dat_pp = stdat_rec[19].stdat_dat_pp;
         fsize = CdctrlGetFileSize(&stdat_dat_pp->intfile);
-        CdctrlReadOne(&stdat_dat_pp->intfile, UsrMemEndAlloc(((fsize + 2047) / 2048) * 2048), 0);
+        CdctrlReadOne(&stdat_dat_pp->intfile, UsrMemEndAlloc(((fsize + 2047) / 2048) * 2048), NULL);
         CdctrlReadWait();
 
         if (loop == 0) {

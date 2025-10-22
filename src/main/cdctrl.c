@@ -473,7 +473,7 @@ void CdctrlReadOne(FILE_STR *fstr_pp, u_int buf, int tmpbuf) {
     MtcExec(cdctrlReadDataOne, MTC_TASK_CDCTRL);
 }
 
-// さき(saki) -> Destination / もと(moto) -> Source
+/* さき(saki) -> Destination / もと(moto) -> Source */
 void usrMemcpy(void *sakip, void *motop, int size) {
     int     i = size / sizeof(int);
     int *m_pp = motop;

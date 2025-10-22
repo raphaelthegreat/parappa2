@@ -222,10 +222,11 @@ int Tim2Load(TIM2INFO *info_pp, int img_pos, int col_pos) {
         sceGsSyncPath(0, 0);
     }
 
-    // Preserve TBP0, CBP, TCC and CLD from TEX0.
-    info_pp->picturH->GsTex0 &= SCE_GS_SET_TEX0(0, 0x3f, 0x3f, 0xf, 0xf, 1, 0x3, 0, 0xf, 0x1, 0x1f, 0);
-    // Now put our values in.
-    info_pp->picturH->GsTex0 |= SCE_GS_SET_TEX0(img_pos, 0, SCE_GS_PSMCT32, 0, 0, 1, 0, col_pos, SCE_GS_PSMCT32, 0, 0, 1);
+    /*
+     * Preserve TBP0, CBP, TCC and CLD from TEX0.
+     */
+    info_pp->picturH->GsTex0 &= SCE_GS_SET_TEX0(0,       0x3f, 0x3f,           0xf, 0xf, 1, 0x3, 0,       0xf,            0x1, 0x1f, 0);
+    info_pp->picturH->GsTex0 |= SCE_GS_SET_TEX0(img_pos, 0,    SCE_GS_PSMCT32, 0,   0,   1, 0,   col_pos, SCE_GS_PSMCT32, 0,   0,    1);
     return 1;
 }
 

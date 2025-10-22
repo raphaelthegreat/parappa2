@@ -1551,7 +1551,7 @@ void ScrMoveSetSub(SCORE_INDV_STR *sindv_pp, /* s0 16 */ int Pnum, /* s4 20 */ i
 #endif
 
 /* Big function! Decompiler discretion advised */
-/*      https://decomp.me/scratch/woLno        */
+/*      https://decomp.me/scratch/jYNZx        */
 INCLUDE_ASM("asm/nonmatchings/main/scrctrl", ScrExamSetCheck);
 
 void subjobEvent(SCORE_INDV_STR *sindv_pp, int ctime_next) {
