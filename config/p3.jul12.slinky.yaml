@@ -288,7 +288,7 @@ segments:
       - { path: src/main/effect.c.o }
       - { path: asm/data/main/mbar.data.s.o }
       - { path: src/main/pack.c.o }
-      - { path: asm/data/main/etc.data.s.o }
+      - { path: src/main/etc.c.o }
       - { path: asm/data/main/wipe.data.s.o }
       - { path: src/main/mcctrl.c.o }
       - { path: asm/data/main/main.data.s.o }

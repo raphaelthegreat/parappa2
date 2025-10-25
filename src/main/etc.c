@@ -13,20 +13,6 @@
 
 #include <stdio.h>
 
-/* .data */
-extern SCR_SND_AREA scr_snd_area[4/*0*/]; /* static */
-
-extern u_char hkl_pknum_01[]; /* static */
-extern u_char hkl_pknum_02[]; /* static */
-extern u_char hkl_pknum_03[]; /* static */
-extern u_char hkl_pknum_04[]; /* static */
-extern u_char hkl_pknum_05[]; /* static */
-extern u_char hkl_pknum_06[]; /* static */
-extern u_char hkl_pknum_07[]; /* static */
-extern HKL_PKSTR hkl_pkstr[]; /* static */
-
-static u_int vsync_time[51];
-
 void GlobalInit(void) {
     WorkClear(&game_status, sizeof(game_status));
     WorkClear(&global_data, sizeof(global_data));
@@ -403,6 +389,8 @@ PAD_TYPE GetPcode2PadType(PLAYER_CODE player_code) {
     return ret;
 }
 
+static u_int vsync_time[51];
+
 static int TimeCallback(int x) {
     int    i;
     u_int *time = vsync_time;
@@ -509,9 +497,29 @@ int GetKeyCode2Index(int code) {
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/etc", GetIndex2KeyCode);
+int GetIndex2KeyCode(int index) {
+    static int KeyCode[7] = {
+        0, 16, 32, 64, 128, 4, 8,
+    };
 
-INCLUDE_ASM("asm/nonmatchings/main/etc", GetIndex2PressId);
+    if (index > 0 && index < PR_ARRAYSIZEU(KeyCode)) {
+        return KeyCode[index];
+    }
+
+    return 0;
+}
+
+int GetIndex2PressId(int index) {
+    static int KeyPressNum[7] = {
+        -1, 4, 5, 6, 7, 8, 9,
+    };
+
+    if (index > PR_ARRAYSIZEU(KeyPressNum)) {
+        return -1;
+    }
+
+    return KeyPressNum[index];
+}
 
 int GetKeyCode2PressId(int code) {
     if (code & 0x10) {
@@ -564,6 +572,13 @@ void UsrPrSetScene(void) {
     usrSceneHandle = NULL;
 }
 
+static SCR_SND_AREA scr_snd_area[] = {
+    { .spu_size = 0x120000, .spu_adrs = 0x5010,   .iop_size = 0x3000 },
+    { .spu_size = 0x50000,  .spu_adrs = 0x125010, .iop_size = 0x3000 },
+    { .spu_size = 0x50000,  .spu_adrs = 0x175010, .iop_size = 0x3000 },
+    { .spu_size = 0x36700,  .spu_adrs = 0x1C5010, .iop_size = 0x3000 },
+};
+
 void SpuBankSet(void) {
     int i;
 
@@ -587,15 +602,55 @@ void inCmnInit(int stg) {
     ingame_common_str.BonusStage = stg;
 }
 
+static u_char hkl_pknum_01[] = {
+    HKLV_SNDREC_12, HKLV_SNDREC_13, HKLV_SNDREC_14,
+};
+
+static u_char hkl_pknum_02[] = {
+    HKLV_SNDREC_14, HKLV_SNDREC_15, HKLV_SNDREC_16,
+};
+
+static u_char hkl_pknum_03[] = {
+    HKLV_SNDREC_06, HKLV_SNDREC_07, HKLV_SNDREC_08,
+};
+
+static u_char hkl_pknum_04[] = {
+    HKLV_SNDREC_11, HKLV_SNDREC_12, HKLV_SNDREC_13,
+};
+
+static u_char hkl_pknum_05[] = {
+    HKLV_SNDREC_16, HKLV_SNDREC_17,
+};
+
+static u_char hkl_pknum_06[] = {
+    HKLV_SNDREC_20,
+};
+
+static u_char hkl_pknum_07[] = {
+    HKLV_SNDREC_12,
+};
+
+static HKL_PKSTR hkl_pkstr[] = {
+    { .cnt = 0,                          .hknum_pp = NULL         },
+    { .cnt = PR_ARRAYSIZE(hkl_pknum_01), .hknum_pp = hkl_pknum_01 },
+    { .cnt = PR_ARRAYSIZE(hkl_pknum_02), .hknum_pp = hkl_pknum_02 },
+    { .cnt = PR_ARRAYSIZE(hkl_pknum_03), .hknum_pp = hkl_pknum_03 },
+    { .cnt = PR_ARRAYSIZE(hkl_pknum_04), .hknum_pp = hkl_pknum_04 },
+    { .cnt = PR_ARRAYSIZE(hkl_pknum_05), .hknum_pp = hkl_pknum_05 },
+    { .cnt = PR_ARRAYSIZE(hkl_pknum_06), .hknum_pp = hkl_pknum_06 },
+    { .cnt = PR_ARRAYSIZE(hkl_pknum_07), .hknum_pp = hkl_pknum_07 },
+    { .cnt = 0,                          .hknum_pp = NULL         },
+};
+
 int inCmnHookMaxLineCnt(int stg) {
-    if (stg >= 9u) {
+    if (stg >= PR_ARRAYSIZEU(hkl_pkstr)) {
         return 0;
     }
     return hkl_pkstr[stg].cnt;
 }
 
 HKLV_SNDREC_ENUM inCmnHookMaxLinePknum(int stg, int line) {
-    if (stg >= 9u || line >= hkl_pkstr[stg].cnt) {
+    if (stg >= PR_ARRAYSIZEU(hkl_pkstr) || line >= hkl_pkstr[stg].cnt) {
         return 0;
     }
 
@@ -615,7 +670,7 @@ int inCmnHookSet(int stg) {
         ingame_common_str.HookLine = inCmnHookMaxLinePknum(stg, ret);
     }
 
-    printf("HOOK pack:%d line:%d\n",ingame_common_str.HookLine, ret);
+    printf("HOOK pack:%d line:%d\n", ingame_common_str.HookLine, ret);
     return ret;
 }
 
