@@ -2,6 +2,7 @@
 
 #include "main/mbar.h"
 
+#include "os/syssub.h"
 #include "os/system.h"
 
 #include "iop_mdl/tapctrl_rpc.h"
@@ -11,9 +12,6 @@
 #include <libpad.h>
 
 #include <stdio.h>
-
-/* .sdata */
-extern PR_SCENEHANDLE usrSceneHandle; /* static */
 
 /* .data */
 extern SCR_SND_AREA scr_snd_area[4/*0*/]; /* static */
@@ -27,8 +25,7 @@ extern u_char hkl_pknum_06[]; /* static */
 extern u_char hkl_pknum_07[]; /* static */
 extern HKL_PKSTR hkl_pkstr[]; /* static */
 
-/* .bss */
-extern u_int vsync_time[51]; /* static */
+static u_int vsync_time[51];
 
 void GlobalInit(void) {
     WorkClear(&game_status, sizeof(game_status));
@@ -49,7 +46,24 @@ void GlobalInit(void) {
     game_status.level_vs_enumG   = LVS_1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/etc", clearStageCheck);
+P3_STAGE_ENUM clearStageCheck(void) {
+    int           clrbit, i;
+    P3_STAGE_ENUM ret;
+
+    ret    = P3_STAGE_0;
+    clrbit = game_status.stClearBit;
+
+    for (i = 1; i < 9; i++) {
+        if (!(clrbit & 1)) {
+            break;
+        }
+
+        ret++;
+        clrbit >>= 1;
+    }
+
+    return ret;
+}
 
 void GlobalTimeInit(GLOBAL_DATA *gl_pp) {
     gl_pp->currentTime     = 0;
@@ -82,8 +96,8 @@ void GlobalTimeJob(void) {
         
         snd_currentTime = (((gl_pp->currentTime * 96.0f * gl_pp->tempo) + 1800.0f) / 3600.0f);
 
-        gl_pp->Snd_currentTime = snd_currentTime;
         gl_pp->Snd_vsyncTime = snd_currentTime;
+        gl_pp->Snd_currentTime = snd_currentTime;
 
         gl_pp->Snd_cdSampleCnt = CdctrlSndTime2WP2sample(gl_pp->tempo, gl_pp->Snd_currentTime);
     } else if (gl_pp->TimeType == FGF_CD) {
@@ -182,8 +196,6 @@ void GlobalLobcalCopy(void) {
         break;
     }
 }
-
-extern const char D_00399588[]; /* .sdata - "2p com\n" */
 
 void GlobalPlySet(GLOBAL_DATA *gl_pp, PLAY_STEP stp, int stage_num) {
     GLOBAL_PLY *gply_pp;
@@ -334,7 +346,7 @@ void GlobalPlySet(GLOBAL_DATA *gl_pp, PLAY_STEP stp, int stage_num) {
             printf("2p demo\n");
         } else if (global_data.play_modeL == PLAY_MODE_VS_COM) {
             gply_pp->pad_type = PAD_COM;
-            printf(D_00399588);
+            printf("2p com\n");
             global_data.tap_ctrl_level = global_data.level_vs_enumL + 1;
         } else {
             gply_pp->pad_type = PAD_2CON;
@@ -389,7 +401,6 @@ PAD_TYPE GetPcode2PadType(PLAYER_CODE player_code) {
 
     for (i = 0; i < PR_ARRAYSIZE(global_data.global_ply); i++) {
         gl_pp = &global_data.global_ply[i];
-
         if (gl_pp->player_code & player_code) {
             ret = gl_pp->pad_type;
             break;
@@ -458,7 +469,21 @@ void TimeCallbackTimeSet(u_int time) {
     TimeCallbackTimeSetChan(0, time);
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/etc", Pcode2Pindex);
+PLAYER_INDEX Pcode2Pindex(PLAYER_CODE pc) {
+    int i;
+
+    if (pc == 0) {
+        return 0;
+    }
+
+    for (i = 0; i < 32; i++) {
+        if (((int)pc >> i) & 0x1) {
+            return i;
+        }
+    }
+
+    return 0;
+}
 
 int GetKeyCode2Index(int code) {
     if (code & SCE_PADRup) {
@@ -523,6 +548,8 @@ TAP_LINE_LEVEL_ENUM ChangeTapLevel(TAP_LINE_LEVEL_ENUM now_lvl) {
     return now_lvl;
 }
 
+static PR_SCENEHANDLE usrSceneHandle = NULL;
+
 void UsrPrInitScene(void) {
     /* Empty */
 }
@@ -531,7 +558,18 @@ void UsrPrQuitScene(void) {
     /* Empty */
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/etc", UsrPrSetScene);
+void UsrPrSetScene(void) {
+    usrSceneHandle = PrInitializeScene(&DBufDc.draw01, "safe scene", FBP_VRAM_DRAW2);
+
+    PrPreprocessSceneModel(usrSceneHandle);
+    PrSetSceneEnv(usrSceneHandle, DrawGetDrawEnvP(DNUM_DRAW));
+
+    PrRender(usrSceneHandle);
+    PrWaitRender();
+
+    PrCleanupScene(usrSceneHandle);
+    usrSceneHandle = NULL;
+}
 
 void SpuBankSet(void) {
     int i;
@@ -557,7 +595,7 @@ void inCmnInit(int stg) {
 }
 
 int inCmnHookMaxLineCnt(int stg) {
-    if (stg > 8u) {
+    if (stg >= 9u) {
         return 0;
     }
     return hkl_pkstr[stg].cnt;

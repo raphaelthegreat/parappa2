@@ -753,7 +753,7 @@ segments:
       - { path: src/main/effect.c.o }
       - { path: asm/data/main/mbar.sdata.s.o }
       - { path: src/main/pack.c.o }
-      - { path: asm/data/main/etc.sdata.s.o }
+      - { path: src/main/etc.c.o }
       - { path: asm/data/main/wipe.sdata.s.o }
       - { path: src/main/mcctrl.c.o }
       - { path: asm/data/main/main.sdata.s.o }
@@ -977,7 +977,7 @@ segments:
       - { path: asm/data/main/effect.bss.s.o }
       - { path: asm/data/main/mbar.bss.s.o }
       - { path: src/main/pack.c.o }
-      - { path: asm/data/main/etc.bss.s.o }
+      - { path: src/main/etc.c.o }
       - { path: src/main/wipe.c.o }
       - { path: asm/data/main/mcctrl.bss.s.o }
       - { path: asm/data/main/main.bss.s.o }
