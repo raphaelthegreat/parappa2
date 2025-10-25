@@ -83,37 +83,30 @@ void GlobalTimeJobChange(TIME_GET_FLAG tfg) {
     printf("time job change!!![%x]\n", tfg);
 }
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("asm/nonmatchings/main/etc", GlobalTimeJob);
-#else
 void GlobalTimeJob(void) {
     /* Not on STABS, but makes things shorter */
     GLOBAL_DATA *gl_pp = &global_data;
-    int snd_currentTime;
 
     if (gl_pp->TimeType == FGF_VSYNC) {
-        gl_pp->currentTime = gl_pp->vsyncTime = TimeCallbackTimeGet();
-        
-        snd_currentTime = (((gl_pp->currentTime * 96.0f * gl_pp->tempo) + 1800.0f) / 3600.0f);
+        gl_pp->vsyncTime = TimeCallbackTimeGet();
 
-        gl_pp->Snd_vsyncTime = snd_currentTime;
-        gl_pp->Snd_currentTime = snd_currentTime;
+        gl_pp->currentTime = gl_pp->vsyncTime;
+        gl_pp->Snd_vsyncTime = (((gl_pp->currentTime * 96.0f * gl_pp->tempo) + 1800.0f) / 3600.0f);
+        gl_pp->Snd_currentTime = gl_pp->Snd_vsyncTime;
 
-        gl_pp->Snd_cdSampleCnt = CdctrlSndTime2WP2sample(gl_pp->tempo, gl_pp->Snd_currentTime);
+        gl_pp->Snd_cdSampleCnt = CdctrlSndTime2WP2sample(gl_pp->tempo, gl_pp->Snd_vsyncTime);
     } else if (gl_pp->TimeType == FGF_CD) {
         CdctrlWp2GetSampleTmpBuf();
-        gl_pp->Snd_currentTime = CdctrlWp2GetSndTimeTmp(gl_pp->tempo);
 
-        gl_pp->currentTime =
-            ((gl_pp->Snd_currentTime * 3600.0f + gl_pp->tempo * 96.0f * 0.5f)
-            / (gl_pp->tempo * 96.0f));
-        gl_pp->cdTime = gl_pp->currentTime;
+        gl_pp->Snd_cdTime = CdctrlWp2GetSndTimeTmp(gl_pp->tempo);
 
-        gl_pp->Snd_cdTime = gl_pp->Snd_currentTime;
+        gl_pp->Snd_currentTime = gl_pp->Snd_cdTime;
+        gl_pp->cdTime = ((gl_pp->Snd_currentTime * 3600.0f + gl_pp->tempo * 96.0f * 0.5f) / (gl_pp->tempo * 96.0f));
+        gl_pp->currentTime = gl_pp->cdTime;
+
         gl_pp->Snd_cdSampleCnt = CdctrlWp2GetSampleTmp();
     }
 }
-#endif
 
 int GlobalTimeGet(void) {
     return global_data.currentTime;
