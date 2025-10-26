@@ -1069,6 +1069,8 @@ segments:
     files:
       - { path: asm/data/prlib/mfifo.mfifo.s.o }
 
+entry: _start
+
 asserts:
   - check: mfifo_VRAM <= 0x01ca0000
     error_message: .mfifo section overflowed into overlay area.

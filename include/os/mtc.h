@@ -10,12 +10,12 @@ typedef enum {
     MTC_TASK_CTRL       = 0x0,
     MTC_TASK_MAIN       = 0x1,
     MTC_TASK_02         = 0x2,
-    MTC_TASK_03         = 0x3,
+    MTC_TASK_03         = 0x3, /* File search thread (uramenFileSearchTask @ main.c) */
     MTC_TASK_04         = 0x4,
     MTC_TASK_05         = 0x5,
     MTC_TASK_SCORECTRL  = 0x5,
     MTC_TASK_06         = 0x6,
-    MTC_TASK_07         = 0x7,
+    MTC_TASK_07         = 0x7, /* Menu draw thread (menuDraw @ menu.c) */
     MTC_TASK_DRAWCTRL   = 0x7,
     MTC_TASK_08         = 0x8,
     MTC_TASK_09         = 0x9,
