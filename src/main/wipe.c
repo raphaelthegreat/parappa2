@@ -16,29 +16,188 @@
 
 #include <stdio.h>
 
-/* .data */
-extern SNDTAP sndtap_wipe[];
-extern LDMAP ldmap[];
+static SNDTAP sndtap_wipe[] = {
+    { .prg = 0, .key = 0xc,  .volume = 80 },
+    { .prg = 0, .key = 0xd,  .volume = 80 },
+    { .prg = 0, .key = 0xe,  .volume = 80 },
+    { .prg = 0, .key = 0xf,  .volume = 80 },
+    { .prg = 0, .key = 0x10, .volume = 90 },
+    { .prg = 0, .key = 0x11, .volume = 90 },
+    { .prg = 0, .key = 0x12, .volume = 90 },
+    { .prg = 0, .key = 0x13, .volume = 90 },
+};
 
-extern WIPE_SCRATCH_CTRL wipe_scratch_ctrl[];
+/* sdata 399598 */ extern WIPE_TYPE wipe_type; /* static */
+/* sdata 39959c */ extern int wipe_end_flag; /* static */
+/* sdata 3995a0 */ extern int loading_wipe_switch; /* static */
 
-extern JIMAKU_STR jimaku_str[];
+/* WSHC_IN */
+static WIPE_SCRATCH_TBL wipe_scratch_tbl_00[] = {
+    { .frame = 0,  .data = 0    },
+    { .frame = 4,  .data = 403  },
+    { .frame = 11, .data = 144  },
+    { .frame = 19, .data = 835  },
+    { .frame = 27, .data = 547  },
+    { .frame = 29, .data = 720  },
+    { .frame = 35, .data = 489  },
+    { .frame = 44, .data = 1267 },
+    { .frame = 51, .data = 1008 },
+    { .frame = 52, .data = 1152 },
+    { .frame = 59, .data = 864  },
+    { .frame = 67, .data = 1440 },
+};
+
+/* WSHC_LOOP */
+static WIPE_SCRATCH_TBL wipe_scratch_tbl_01[] = {
+    { .frame = 0,   .data = 1440 },
+    { .frame = 17,  .data = 1728 },
+    { .frame = 42,  .data = 1152 },
+    { .frame = 58,  .data = 1584 },
+    { .frame = 68,  .data = 1296 },
+    { .frame = 84,  .data = 1584 },
+    { .frame = 100, .data = 1296 },
+    { .frame = 103, .data = 1440 },
+    { .frame = 107, .data = 1296 },
+    { .frame = 111, .data = 1440 },
+    { .frame = 117, .data = 1296 },
+    { .frame = 127, .data = 1584 },
+    { .frame = 135, .data = 1440 },
+};
+
+/* WSHC_IN_MOVE */
+static WIPE_SCRATCH_TBL wipe_scratch_tbl_02[] = {
+    { .frame = 0,  .data = 0   },
+    { .frame = 67, .data = 240 },
+};
+
+/* WSHC_LOOP_MOVE */
+static WIPE_SCRATCH_TBL wipe_scratch_tbl_03[] = {
+    { .frame = 0,   .data = 240 },
+    { .frame = 10,  .data = 216 },
+    { .frame = 26,  .data = 132 },
+    { .frame = 30,  .data = 120 },
+    { .frame = 39,  .data = 120 },
+    { .frame = 43,  .data = 132 },
+    { .frame = 55,  .data = 216 },
+    { .frame = 67,  .data = 240 },
+    { .frame = 72,  .data = 240 },
+    { .frame = 78,  .data = 216 },
+    { .frame = 94,  .data = 132 },
+    { .frame = 100, .data = 120 },
+    { .frame = 107, .data = 120 },
+    { .frame = 115, .data = 132 },
+    { .frame = 129, .data = 216 },
+    { .frame = 135, .data = 240 },
+};
+
+/* WSHC_OUT */
+static WIPE_SCRATCH_TBL wipe_scratch_tbl_04[] = {
+    { .frame = 0,  .data = 576 },
+    { .frame = 12, .data = 216 },
+    { .frame = 24, .data = 72  },
+    { .frame = 28, .data = 0   },
+};
+
+/* WSHC_OUT_MOVE */
+static WIPE_SCRATCH_TBL wipe_scratch_tbl_05[] = {
+    { .frame = 0,  .data = 240 },
+    { .frame = 28, .data = 360 },
+};
+
+static WIPE_SCRATCH_CTRL wipe_scratch_ctrl[] = {
+    /* WSHC_IN */
+    { .frt_size = PR_ARRAYSIZE(wipe_scratch_tbl_00), .frt_pp = wipe_scratch_tbl_00 },
+    /* WSHC_LOOP */
+    { .frt_size = PR_ARRAYSIZE(wipe_scratch_tbl_01), .frt_pp = wipe_scratch_tbl_01 },
+    /* WSHC_IN_MOVE */
+    { .frt_size = PR_ARRAYSIZE(wipe_scratch_tbl_02), .frt_pp = wipe_scratch_tbl_02 },
+    /* WSHC_LOOP_MOVE */
+    { .frt_size = PR_ARRAYSIZE(wipe_scratch_tbl_03), .frt_pp = wipe_scratch_tbl_03 },
+    /* WSHC_OUT */
+    { .frt_size = PR_ARRAYSIZE(wipe_scratch_tbl_04), .frt_pp = wipe_scratch_tbl_04 },
+    /* WSHC_OUT_MOVE */
+    { .frt_size = PR_ARRAYSIZE(wipe_scratch_tbl_05), .frt_pp = wipe_scratch_tbl_05 },
+};
+
+/* sdata 3995a4 */ extern int ldmove_rate; /* static */
+/* sdata 3995a8 */ extern int ldrecode_rate; /* static */
+/* sdata 3995ac */ extern int ldlogo_rate; /* static */
+
+static LDMAP ldmap[] = {
+    /* LDMAP_TURN */
+    {
+        .spmmap = 0x4,
+        .spamap = 0xc,
+        .spamapP = -1,
+
+        .spmHdl = NULL,
+        .spaHdl = NULL,
+        .spaHdlP = NULL,
+
+        .frame_pp = &ldmove_rate,
+        .frame_ppP = NULL,
+    },
+    /* LDMAP_LOGO */
+    {
+        .spmmap = 0x2,
+        .spamap = 0x9,
+        .spamapP = -1,
+
+        .spmHdl = NULL,
+        .spaHdl = NULL,
+        .spaHdlP = NULL,
+
+        .frame_pp = &ldlogo_rate,
+        .frame_ppP = NULL,
+    },
+    /* LDMAP_RECODE */
+    {
+        .spmmap = 0x3,
+        .spamap = 0xa,
+        .spamapP = 0xb,
+
+        .spmHdl = NULL,
+        .spaHdl = NULL,
+        .spaHdlP = NULL,
+
+        .frame_pp = &ldrecode_rate,
+        .frame_ppP = &ldmove_rate,
+    },
+    /* LDMAP_RECODE_LT */
+    {
+        .spmmap = 0x0,
+        .spamap = 0x5,
+        .spamapP = 0x6,
+
+        .spmHdl = NULL,
+        .spaHdl = NULL,
+        .spaHdlP = NULL,
+
+        .frame_pp = &ldrecode_rate,
+        .frame_ppP = &ldmove_rate,
+    },
+    /* LDMAP_LABEL */
+    {
+        .spmmap = 0x1,
+        .spamap = 0x7,
+        .spamapP = 0x8,
+
+        .spmHdl = NULL,
+        .spaHdl = NULL,
+        .spaHdlP = NULL,
+
+        .frame_pp = &ldrecode_rate,
+        .frame_ppP = &ldmove_rate,
+    },
+};
+
+/* sdata 3995c0 */ extern int wipe_para_spa_type; /* static */
+/* sdata 3995c8 */ extern VCLR_PARA vclr_para_disp; /* static */
+
+static PR_SCENEHANDLE ldmap_hdl;
 
 extern WIPE_PARA_STR wipe_para_str;
 extern sceGsDrawEnv1 sceGsDrawEnv1_tmp;
-
-/* .sdata */
-extern WIPE_TYPE wipe_type;
-extern int wipe_end_flag;
-extern int loading_wipe_switch;
-extern int ldmove_rate;
-extern int ldrecode_rate;
-extern int ldlogo_rate;
-extern int wipe_para_spa_type;
-extern VCLR_PARA vclr_para_disp;
-
-/* .sbss */
-extern PR_SCENEHANDLE ldmap_hdl;
 
 void wipeParaOutReq(void);
 
@@ -227,7 +386,7 @@ void WipeLoadInDisp(void *x) {
     int firstf;
     int ttmp;
 
-    firstf = 1;
+    firstf = TRUE;
 
     wipeSndReq(STW_TURN_IN);
     TimeCallbackTimeSetChan(TCBK_CHANNEL_WIPE, 0);
@@ -262,7 +421,7 @@ void WipeLoadInDisp(void *x) {
 
         if (timer > 67) {
             if (firstf) {
-                firstf = 0;
+                firstf = FALSE;
 
                 wipeSndReq(STW_TURN_WAIT);
                 wipe_end_flag = 1;
@@ -791,13 +950,28 @@ void wipeParaOutReq(void) {
     MtcExec(WipeParaOutDisp, MTC_TASK_WIPECTRL);
 }
 
-INCLUDE_RODATA("asm/nonmatchings/main/wipe", D_003936B8);
+static JIMAKU_DAT jimaku_dat0[] = {
+    {
+        .starTime = 114,
+        .endTime = 230,
+        .txtData = {
+            "Come on Parappa,@relax,",
+            "さあ、パラッパ　リラックスして",
+        }
+    },
+    {
+        .starTime = 230,
+        .endTime = 318,
+        .txtData = {
+            "it's practice time",
+            "練習タイムだよ",
+        }
+    },
+};
 
-INCLUDE_RODATA("asm/nonmatchings/main/wipe", D_003936C8);
-
-INCLUDE_RODATA("asm/nonmatchings/main/wipe", D_003936E0);
-
-INCLUDE_RODATA("asm/nonmatchings/main/wipe", D_00393700);
+JIMAKU_STR jimaku_str[] = {
+    { .size = 2, .jimaku_dat_pp = jimaku_dat0 },
+};
 
 static void WipeBoxyInDisp(void *x) {
     void *scn_hdl;
@@ -1012,3 +1186,6 @@ void wipeBoxyWaitReq(void) {
 
     MtcExec(WipeBoxyWaitDisp, MTC_TASK_WIPECTRL);
 }
+
+WIPE_PARA_STR wipe_para_str = {};
+sceGsDrawEnv1 sceGsDrawEnv1_tmp = {};

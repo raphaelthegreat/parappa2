@@ -43,6 +43,8 @@ build/SCPS_150.17.rom: OK
 1. After a successful build, run `./configure.py --objdiff`
 2. `./tools/objdiff-cli report generate -p . -o progress/report.json -f json-pretty`
 
+*Note: You will need to make a clean build by running the configure script again before attempting to run ninja.*
+
 ## asm-differ setup
 1. After a successful build, create a folder named `expected`.
 2. Copy the `build` folder inside the `expected` folder.

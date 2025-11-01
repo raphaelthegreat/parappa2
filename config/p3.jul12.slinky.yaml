@@ -289,8 +289,8 @@ segments:
       - { path: asm/data/main/mbar.data.s.o }
       - { path: src/main/pack.c.o }
       - { path: src/main/etc.c.o }
-      - { path: asm/data/main/wipe.data.s.o }
-      - { path: src/main/mcctrl.c.o }
+      - { path: src/main/wipe.c.o }
+      - { path: asm/data/main/mcctrl.data.s.o }
       - { path: asm/data/main/main.data.s.o }
       - { path: src/main/cmnfile.c.o }
       - { path: src/main/p3str.c.o }
@@ -866,7 +866,7 @@ segments:
       - { path: asm/data/main/mbar.sbss.s.o }
       - { path: src/main/pack.c.o }
       - { path: src/main/etc.c.o }
-      - { path: asm/data/main/wipe.sbss.s.o }
+      - { path: src/main/wipe.c.o }
       - { path: src/main/mcctrl.c.o }
       - { path: src/main/main.c.o }
       - { path: src/main/cmnfile.c.o }

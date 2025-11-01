@@ -1022,8 +1022,7 @@ mccReqTapForwardOwn                 = 0x0011f420; // type:func
 mccLocalGlobalCopy                  = 0x0011f558; // type:func
 mccGlobalLocalCopy                  = 0x0011f658; // type:func
 
-// Define size?
-ascii2sjiscng_tbl                   = 0x00187340;
+ascii2sjiscng_tbl                   = 0x00187340; // size:0xc0
 
 mc_rep_str_local                    = 0x01c730e8; // size:0x4528
 mc_rep_ctrl                         = 0x01c77610; // size:0x1c
