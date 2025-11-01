@@ -29,3 +29,6 @@ output/
 objdiff.json
 
 .venv/
+
+dump/
+tools/ccc/

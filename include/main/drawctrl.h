@@ -220,6 +220,11 @@ typedef struct { // 0x8
     /* 0x4 */ SCENESTR *scenestr_pp;
 } EVENTREC;
 
+typedef struct { // 0x8
+    /* 0x0 */ int frame;
+    /* 0x4 */ float ratio;
+} MENTITLE_DAT;
+
 typedef struct { // 0xc
     /* 0x0 */ char *dbgmsg;
     /* 0x4 */ int  (*prg_pp)(int pad);

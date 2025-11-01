@@ -38,8 +38,8 @@ WP2_ROM_PATH = f"build/{WP2_BASENAME}.rom"
 WP2_MAP_PATH = f"build/{WP2_BASENAME}.map"
 WP2_ELF_PATH = f"build/{WP2_BASENAME}.elf"
 
-EE_COMPILER_DIR = f"{TOOLS_DIR}/cc/ee-gcc29/bin"
-IOP_COMPILER_DIR = f"{TOOLS_DIR}/cc/iop-gcc281/bin"
+EE_COMPILER_DIR = f"{TOOLS_DIR}/toolchain/ee-gcc29/bin"
+IOP_COMPILER_DIR = f"{TOOLS_DIR}/toolchain/iop-gcc281/bin"
 
 EE_COMMON_INCLUDES = "-Iinclude -Isrc -Iinclude/rtl/common -Iinclude/rtl/ee -Iinclude/rtl/ee_gcc -Iinclude/rtl/ee_gcc/gcc-lib"
 IOP_COMMON_INCLUDES = "-Iinclude -Isrc/iop_mdl/wp2cd/iop -Iinclude/rtl/common -Iinclude/rtl/iop -Iinclude/rtl/iop_gcc -Iinclude/rtl/iop_gcc/gcc-lib"
@@ -48,7 +48,7 @@ EE_COMPILER_FLAGS = "-O2 -G8 -g -Wa,-Iinclude"
 # We need to get rid of symbols on the C++ code to have a match.
 EE_COMPILER_FLAGS_CXX = "-O2 -G8 -x c++ -fno-exceptions -fno-strict-aliasing -Wa,-Iinclude"
 
-IOP_COMPILER_FLAGS = f"-B {TOOLS_DIR}/cc/iop-gcc281/lib/gcc-lib/mipsel-scei-elfl/2.8.1/ -O0 -G0 -g -Wa,-Iinclude"
+IOP_COMPILER_FLAGS = f"-B {TOOLS_DIR}/toolchain/iop-gcc281/lib/gcc-lib/mipsel-scei-elfl/2.8.1/ -O0 -G0 -g -Wa,-Iinclude"
 
 EE_COMPILE_CMD = f"{EE_COMPILER_DIR}/ee-gcc -c {EE_COMMON_INCLUDES} {EE_COMPILER_FLAGS}"
 EE_COMPILE_CMD_CXX = f"{EE_COMPILER_DIR}/ee-gcc -c {EE_COMMON_INCLUDES} {EE_COMPILER_FLAGS_CXX}"
@@ -165,14 +165,14 @@ def eucjp_convert():
 def write_permuter_settings():
     with open("permuter_settings.toml", "w") as f:
         f.write(
-            """compiler_command = "tools/cc/ee-gcc2.96/bin/ee-gcc -c -Iinclude -Iinclude/sdk/ee -Iinclude/gcc -Iinclude/gcc/gcc-lib -O2 -G8 -gstabs -D__GNUC__"
+            """compiler_command = "tools/toolchain/ee-gcc2.96/bin/ee-gcc -c -Iinclude -Iinclude/sdk/ee -Iinclude/gcc -Iinclude/gcc/gcc-lib -O2 -G8 -gstabs -D__GNUC__"
 assembler_command = "mips-linux-gnu-as -march=r5900 -mabi=eabi -Iinclude"
 compiler_type = "gcc"
 
 [preserve_macros]
 
 [decompme.compilers]
-"tools/cc/ee-gcc2.96/bin/ee-gcc" = "ee-gcc2.9-991111-01"
+"tools/toolchain/ee-gcc2.96/bin/ee-gcc" = "ee-gcc2.9-991111-01"
 """
         )
 

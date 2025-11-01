@@ -1,15 +1,15 @@
 {
   "measures": {
-    "fuzzy_match_percent": 43.297962,
+    "fuzzy_match_percent": 43.91733,
     "total_code": "342284",
-    "matched_code": "146112",
-    "matched_code_percent": 42.68736,
-    "total_data": "26063408",
-    "matched_data": "26014864",
-    "matched_data_percent": 99.81375,
+    "matched_code": "148232",
+    "matched_code_percent": 43.30673,
+    "total_data": "26063872",
+    "matched_data": "26015072",
+    "matched_data_percent": 99.81277,
     "total_functions": 1429,
-    "matched_functions": 914,
-    "matched_functions_percent": 63.960815,
+    "matched_functions": 926,
+    "matched_functions_percent": 64.80056,
     "total_units": 70
   },
   "units": [
@@ -3100,14 +3100,14 @@
     {
       "name": "main/drawctrl",
       "measures": {
-        "fuzzy_match_percent": 42.914665,
+        "fuzzy_match_percent": 44.881523,
         "total_code": "25828",
-        "matched_code": "11084",
-        "matched_code_percent": 42.91467,
+        "matched_code": "11592",
+        "matched_code_percent": 44.881523,
         "total_data": "752",
         "total_functions": 98,
-        "matched_functions": 68,
-        "matched_functions_percent": 69.38776,
+        "matched_functions": 70,
+        "matched_functions_percent": 71.42857,
         "total_units": 1
       },
       "sections": [
@@ -3129,7 +3129,7 @@
         {
           "name": ".text",
           "size": "25992",
-          "fuzzy_match_percent": 42.914665,
+          "fuzzy_match_percent": 44.881523,
           "metadata": {}
         }
       ],
@@ -3594,6 +3594,7 @@
         {
           "name": "mendRatioTitleGet",
           "size": "260",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "20184"
         },
@@ -3626,6 +3627,7 @@
         {
           "name": "sceneConditionCheck",
           "size": "248",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "20656"
         },
@@ -3800,14 +3802,14 @@
     {
       "name": "main/effect",
       "measures": {
-        "fuzzy_match_percent": 56.814922,
+        "fuzzy_match_percent": 69.36872,
         "total_code": "5576",
-        "matched_code": "3168",
-        "matched_code_percent": 56.814922,
+        "matched_code": "3868",
+        "matched_code_percent": 69.36873,
         "total_data": "48",
         "total_functions": 14,
-        "matched_functions": 11,
-        "matched_functions_percent": 78.57143,
+        "matched_functions": 12,
+        "matched_functions_percent": 85.71429,
         "total_units": 1
       },
       "sections": [
@@ -3829,7 +3831,7 @@
         {
           "name": ".text",
           "size": "5616",
-          "fuzzy_match_percent": 56.814922,
+          "fuzzy_match_percent": 69.36872,
           "metadata": {}
         }
       ],
@@ -3899,6 +3901,7 @@
         {
           "name": "UG_FadeDisp2",
           "size": "700",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "3016"
         },
@@ -4584,25 +4587,29 @@
     {
       "name": "main/etc",
       "measures": {
-        "fuzzy_match_percent": 75.0,
+        "fuzzy_match_percent": 100.0,
         "total_code": "3648",
-        "matched_code": "2736",
-        "matched_code_percent": 75.0,
-        "total_data": "264",
+        "matched_code": "3648",
+        "matched_code_percent": 100.0,
+        "total_data": "728",
+        "matched_data": "208",
+        "matched_data_percent": 28.57143,
         "total_functions": 38,
-        "matched_functions": 29,
-        "matched_functions_percent": 76.31579,
+        "matched_functions": 38,
+        "matched_functions_percent": 100.0,
         "total_units": 1
       },
       "sections": [
         {
           "name": ".bss",
+          "size": "208",
           "fuzzy_match_percent": 100.0,
           "metadata": {}
         },
         {
           "name": ".data",
-          "fuzzy_match_percent": 100.0,
+          "size": "240",
+          "fuzzy_match_percent": 97.083336,
           "metadata": {}
         },
         {
@@ -4611,9 +4618,15 @@
           "metadata": {}
         },
         {
+          "name": ".sdata",
+          "size": "16",
+          "fuzzy_match_percent": 85.71429,
+          "metadata": {}
+        },
+        {
           "name": ".text",
           "size": "3736",
-          "fuzzy_match_percent": 75.0,
+          "fuzzy_match_percent": 100.0,
           "metadata": {}
         }
       ],
@@ -4628,6 +4641,7 @@
         {
           "name": "clearStageCheck",
           "size": "68",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "120"
         },
@@ -4655,6 +4669,7 @@
         {
           "name": "GlobalTimeJob",
           "size": "296",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "256"
         },
@@ -4766,6 +4781,7 @@
         {
           "name": "Pcode2Pindex",
           "size": "68",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "2576"
         },
@@ -4779,12 +4795,14 @@
         {
           "name": "GetIndex2KeyCode",
           "size": "44",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "2768"
         },
         {
           "name": "GetIndex2PressId",
           "size": "40",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "2816"
         },
@@ -4819,6 +4837,7 @@
         {
           "name": "UsrPrSetScene",
           "size": "104",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "2984"
         },
@@ -4853,18 +4872,21 @@
         {
           "name": "inCmnHookMaxLinePknum",
           "size": "64",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "3400"
         },
         {
           "name": "inCmnHookSet",
           "size": "136",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "3464"
         },
         {
           "name": "inCmnHook2GameCheck",
           "size": "92",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "3600"
         },
@@ -13079,16 +13101,16 @@
     {
       "id": "main",
       "measures": {
-        "fuzzy_match_percent": 55.14125,
+        "fuzzy_match_percent": 56.85043,
         "total_code": "124036",
-        "matched_code": "67552",
-        "matched_code_percent": 54.46161,
-        "total_data": "46912",
-        "matched_data": "38156",
-        "matched_data_percent": 81.335266,
+        "matched_code": "69672",
+        "matched_code_percent": 56.17079,
+        "total_data": "47376",
+        "matched_data": "38364",
+        "matched_data_percent": 80.97771,
         "total_functions": 570,
-        "matched_functions": 427,
-        "matched_functions_percent": 74.91228,
+        "matched_functions": 439,
+        "matched_functions_percent": 77.01755,
         "total_units": 17
       }
     },

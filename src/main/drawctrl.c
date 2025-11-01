@@ -32,8 +32,8 @@
 // /* data 185a80 */ extern MOZAIKU_STR mozaiku_str_poll_02[/*undef*/]; /* static */
 /* data 185ca0 */ extern MOZAIKU_POLL_STR mozaiku_poll_str[3/*undef*/]; /* static */
 // /* sdata 399528 */ extern int mend_title_req; /* static */
-// /* data 185cc8 */ extern MENTITLE_DAT mentitle_dat[/*undef*/]; /* static */
-// /* data 185d08 */ extern MENTITLE_DAT mentitle_dat_dera[/*undef*/]; /* static */
+/* data 185cc8 */ extern MENTITLE_DAT mentitle_dat[/*undef*/]; /* static */
+/* data 185d08 */ extern MENTITLE_DAT mentitle_dat_dera[/*undef*/]; /* static */
 /* sdata 39952c */ extern int ddbg_event_num; /* static */
 /* sdata 399530 */ extern int ddbg_scene_num; /* static */
 /* sdata 399534 */ extern int ddbg_go_event_scene; /* static */
@@ -943,7 +943,62 @@ INCLUDE_RODATA("asm/nonmatchings/main/drawctrl", D_00393300);
 
 INCLUDE_ASM("asm/nonmatchings/main/drawctrl", MendererCtrl);
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", mendRatioTitleGet);
+static float mendRatioTitleGet(int frame, int dera_f) {
+    int           i;
+    int           stp, endp;
+    MENTITLE_DAT *men_pp, *men_mot_pp;
+    int           sizeMen;
+    int           lntT, nowT;
+    float         per, retT;
+
+    stp = 0;
+    endp = -1;
+
+    if (dera_f) {
+        sizeMen = 168;
+        men_pp = mentitle_dat_dera;
+    } else {
+        sizeMen = 8;
+        men_pp = mentitle_dat;
+    }
+
+    men_mot_pp = men_pp;
+
+    for (i = 0; i < sizeMen; i++, men_pp++) {
+        if (men_pp->frame == frame) {
+            stp = i;
+            endp = i;
+            break;
+        }
+
+        if (men_pp->frame < frame) {
+            stp = i;
+        }
+
+        if (men_pp->frame > frame) {
+            endp = i;
+            break;
+        }
+    }
+
+    if (endp == -1) {
+        endp = stp;
+    }
+
+    if (endp == stp) {
+        retT = men_mot_pp[stp].ratio;
+        return retT;
+    } else {
+        lntT = men_mot_pp[endp].frame;
+        nowT = frame - men_mot_pp[stp].frame;
+        retT = men_mot_pp[endp].ratio - men_mot_pp[stp].ratio;
+
+        per = (float)nowT / (float)(lntT - men_mot_pp[stp].frame);
+        retT = (retT * per) + men_mot_pp[stp].ratio;
+        return retT;
+    }
+}
+
 
 INCLUDE_ASM("asm/nonmatchings/main/drawctrl", MendererCtrlTitleDisp);
 
