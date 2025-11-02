@@ -88,7 +88,33 @@ static void   mbar_othon_frame_set(MBAR_REQ_STR *mr_pp);
 static void   guidisp_init_pr(void);
 static void   guidisp_draw_quit(int drapP);
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", examCharSet);
+void examCharSet(EX_CHAR_DISP *ecd_pp, sceGifPacket *gifpk_pp) {
+    int wl, hl;
+    int xp, yp;
+
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_TEXFLUSH, 0);
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_PRMODECONT, 1);
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_CLAMP_1, SCE_GS_SET_CLAMP_1(1, 1, 0, 0, 0, 0));
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_ALPHA_1, SCE_GS_SET_ALPHA_1(0, 1, 0, 1, 0));
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_TEX0_1, ecd_pp->GsTex0);
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_TEX1_1, ecd_pp->GsTex1);
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_PABE, SCE_GS_SET_PABE(PR_REGS(ecd_pp).pabe));
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_FBA_1, SCE_GS_SET_FBA(PR_REGS(ecd_pp).fba));
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_COLCLAMP, 1);
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(ecd_pp->kido[0], ecd_pp->kido[1], ecd_pp->kido[2], 128, 0x3f800000));
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_TEST_1, SCE_GS_SET_TEST_1(1, 6, 0, 0, 0, 0, 1, 1));
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_TEXA, SCE_GS_SET_TEXA(0, 1, 128));
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_PRIM, SCE_GS_SET_PRIM(6, 0, 1, 0, ecd_pp->alpha, 0, 1, 0, 0));
+
+    wl = ecd_pp->w * ecd_pp->scalex * 16.0f;
+    hl = ecd_pp->h * ecd_pp->scaley * 16.0f;
+    xp = ecd_pp->x - (int)(ecd_pp->cx * ecd_pp->scalex);
+    yp = ecd_pp->y - (int)(ecd_pp->cy * ecd_pp->scaley);
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_UV, SCE_GS_SET_UV(ecd_pp->u << 4, ecd_pp->v << 4));
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_XYZ2, SCE_GS_SET_XYZ2(xp & 0xffff, yp & 0xffff, 1));
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_UV, SCE_GS_SET_UV(((ecd_pp->u + ecd_pp->w) << 4) + 8, ((ecd_pp->v + ecd_pp->h) << 4) + 8));
+    sceGifPkAddGsAD(gifpk_pp, SCE_GS_XYZ2, SCE_GS_SET_XYZ2((xp + wl) & 0xffff, (yp + hl) & 0xffff, 1));
+}
 
 INCLUDE_ASM("asm/nonmatchings/main/mbar", clrColorBuffer);
 
