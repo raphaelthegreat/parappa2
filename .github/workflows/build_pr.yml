@@ -18,7 +18,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         repository: polybiusproxy/p3_binaries
-        ssh-key: ${{ secrets.BINARY_ACCESS_TOKEN }}
+        token: ${{ secrets.BINARY_ACCESS_TOKEN }}
         path: iso
     
     - name: Setup Python
