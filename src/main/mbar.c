@@ -528,7 +528,7 @@ INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarSclRotMake);
 void MbarGuideLightMake(MBARR_CHR *mbarr_pp, int mbtime) {
     u_char col = 128;
 
-    if (mbtime < 144u) {
+    if (mbtime >= 0 && mbtime < 144) {
         col = (144 - mbtime) * 128 / 144 + 128u;
     }
 

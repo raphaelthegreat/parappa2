@@ -10,7 +10,7 @@
 
 ## Setup
 
-If you ran `setup.py`, you should have a dump of the debug symbols inside of the `symdump` folder. It includes everything you need regarding debug information (prototypes, local variables, globals, etc).
+If you ran `setup.py`, you should have a dump of the debug symbols inside of the `dump/sym` folder. It includes everything you need regarding debug information (prototypes, local variables, globals, etc).
 
 Look for any function that catches your eye, and search for it on the dumped debug symbols (`p3_functions.cpp`).
 
