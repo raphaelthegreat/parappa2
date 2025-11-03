@@ -7,14 +7,14 @@
 #include <stdio.h>
 
 /* data 186288 */ extern TIM2_DAT tim2spr_tbl_tmp1[]; /* static, tim2spr_tbl */
-// /* data 186a68 */ static u_int tmpColor[];
+/* data 186a68 */ extern u_int tmpColor[];
 /* data 186aa8 */ extern NIKO_CHAN_STR niko_chan_str_hook[]; /* static */
 /* data 186af8 */ extern NIKO_CHAN_STR niko_chan_str_vs[]; /* static */
 /* sdata 399558 */ extern NIKO_CHAN_STR *niko_chan_str_pp; /* static */
 /* sdata 39955c */ extern int niko_chan_str_cnt; /* static */
 /* sdata 399560 */ extern int hook_use_flag; /* static */
 /* data 186b28 */ extern MBHOOK_STR mbhook_str[2]; /* static */
-// /* data 186b38 */ static u_int hook_fr_dat[];
+/* data 186b38 */ extern u_int hook_fr_dat[];
 /* sdata 399564 */ extern int exam_disp_cursor_timer; /* static */
 /* sdata 399568 */ extern int scoreTentouFlag; /* static */
 /* data 186b78 */ extern u_char scr_tenmetu_col[4][3]; /* static */
@@ -116,7 +116,21 @@ void examCharSet(EX_CHAR_DISP *ecd_pp, sceGifPacket *gifpk_pp) {
     sceGifPkAddGsAD(gifpk_pp, SCE_GS_XYZ2, SCE_GS_SET_XYZ2((xp + wl) & 0xffff, (yp + hl) & 0xffff, 1));
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", clrColorBuffer);
+static void clrColorBuffer(int id) {
+    static sceGsLoadImage tp;
+    TIM2_DAT *tim2_dat_pp;
+    u_char *tr_adr;
+    u_int cpsm, cbp;
+
+    tim2_dat_pp = &tim2spr_tbl_tmp1[id];
+    tr_adr = (u_char*)&tmpColor;
+    cpsm = (int)(PR_TEX0(tim2_dat_pp).CPSM << 32) >> 32;
+    cbp = (int)(PR_TEX0(tim2_dat_pp).CBP << 32) >> 32;
+    sceGsSetDefLoadImage(&tp, cbp, 1, cpsm, 0, 0, 8, 2);
+    FlushCache(0);
+    sceGsExecLoadImage(&tp, (u_long128*)tr_adr);
+    sceGsSyncPath(0, 0);
+}
 
 void MbarMemberClear(int stg) {
     if (stg < 6) {
@@ -317,11 +331,37 @@ void MbarHookUnUse(void) {
     hook_use_flag = FALSE;
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarHookUseOK);
+void MbarHookUseOK(void) {
+    mbhook_str[1].timer = 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarHookUseNG);
+void MbarHookUseNG(void) {
+    mbhook_str[0].timer = 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarHookPoll);
+static void MbarHookPoll(void) {
+	int i;
+	u_char *saki_pp;
+	u_char *moto_pp;
+
+    if (!hook_use_flag) {
+        return;
+    }
+
+    for (i = 0; i < 2; i++) {
+        if (mbhook_str[i].timer != 0) {
+            mbhook_str[i].timer += 1;
+            moto_pp = cmnfGetFileAdrs(mbhook_str[i].moto);
+            saki_pp = cmnfGetFileAdrs(mbhook_str[i].saki);
+            if (mbhook_str[i].timer >= 0x10u) {
+                Tim2Trans(moto_pp);
+                mbhook_str[i].timer = 0;
+            } else {
+                Cl2MixTrans(hook_fr_dat[mbhook_str[i].timer], 128, saki_pp, moto_pp);
+            }
+        }
+    }
+}
 
 void vsAnimationInit(void) {
     int i;
@@ -334,13 +374,60 @@ void vsAnimationInit(void) {
     WorkClear(vs_scr_ctrl, sizeof(vs_scr_ctrl));
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", vsAnimationReq);
+void vsAnimationReq(int ply, long int scrMoto, long int scrSaki, VS_MV_TYPE vt) {
+    VS_SCR_CTRL *vsc_pp;
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", vsAnimationReset);
+    vsc_pp = &vs_scr_ctrl[ply];
+    vsc_pp->motoScr = scrMoto;
+    vsc_pp->sakiScr = scrSaki;
+    vsc_pp->animation_time = 0x3c;
+    vsc_pp->vt = vt;
+}
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", vsScr2Move);
+void vsAnimationReset(int ply, long int scr) {
+    VS_SCR_CTRL *vsc_pp;
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", vsAnimationPoll);
+    vsc_pp = &vs_scr_ctrl[ply];
+    vsc_pp->motoScr = scr;
+    vsc_pp->sakiScr = scr;
+    vsc_pp->animation_time = 0;
+    vsc_pp->vt = VSMT_NONE;
+}
+
+static int vsScr2Move(long scr) {
+    if (scr > 500) {
+        scr = 500;
+    }
+
+    return scr * 2;
+}
+
+static void vsAnimationPoll(void) {
+    int i, score;
+
+    for (i = 0; i < 4; i++) {
+        if (vs_scr_ctrl[i].animation_time != 0) {
+            vsScoreAni[i] = 60 - vs_scr_ctrl[i].animation_time;
+            score = ((vs_scr_ctrl[i].sakiScr - vs_scr_ctrl[i].motoScr) * vsScoreAni[i]) / 60;
+            score += vs_scr_ctrl[i].motoScr;
+            vsScoreMove[i] = score;
+            vsScoreMove[i] = vsScr2Move(vsScoreMove[i]);
+            if (vs_scr_ctrl[i].vt == VSMT_UP) {
+                vsScoreAni[i] += 62;
+            }
+            if (vs_scr_ctrl[i].vt == VSMT_DW) {
+                vsScoreAni[i] += 2;
+            }
+            vs_scr_ctrl[i].animation_time -= 1;
+            if (vs_scr_ctrl[i].animation_time == 0) {
+                vs_scr_ctrl[i].motoScr = vs_scr_ctrl[i].sakiScr;
+            }
+        } else {
+            vsScoreAni[i] = 0;
+            vsScoreMove[i] = vsScr2Move(vs_scr_ctrl[i].sakiScr);
+        }
+    }
+}
 
 static void metColorInit(void) {
     int i;
@@ -350,7 +437,38 @@ static void metColorInit(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", metColorSet);
+// TODO
+static void metColorSet(EXAM_TYPE exam_type, float per) {
+	u_char *moto_pp;
+	u_char *saki_pp;
+	int sakiper;
+
+    if (per == 0.0f) {
+        return Tim2Trans(cmnfGetFileAdrs(metcol_str[exam_type].df_num));
+    }
+    if (per == -1.0f) {
+        return Tim2Trans(cmnfGetFileAdrs(metcol_str[exam_type].ng_num));
+    }
+    if (per == 1.0f) {
+        return Tim2Trans(cmnfGetFileAdrs(metcol_str[exam_type].ok_num));
+    }
+    sakiper = metcol_str[exam_type].df_num;
+    moto_pp = cmnfGetFileAdrs(sakiper);
+    if (per < 0.0f) {
+        per = -per;
+        if (1.0f < per) {
+            per = 1.0f;
+        }
+        sakiper = metcol_str[exam_type].ng_num;
+    } else {
+        if (1.0f < per) {
+            per = 1.0f;
+        }
+        sakiper = metcol_str[exam_type].ok_num;
+    }
+    saki_pp = cmnfGetFileAdrs(sakiper);
+    Cl2MixTrans(per * 128.0f, 128, saki_pp, moto_pp);
+}
 
 void metFrameInit(void) {
     int i;
@@ -401,7 +519,9 @@ void ExamDispInit(void) {
     vsAnimationInit();
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", ExamDispPlySet);
+void ExamDispPlySet(GLOBAL_PLY *ply, int pos) {
+    exam_global_ply[pos] = ply;
+}
 
 INCLUDE_ASM("asm/nonmatchings/main/mbar", ExamDispReq);
 
