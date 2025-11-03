@@ -32,7 +32,7 @@
 // /* data 186f00 */ static int guimap_sr[];
 // /* data 186f08 */ static int guimap_hk[];
 /* bss 1c70030 */ extern GLOBAL_PLY *exam_global_ply[4]; /* static */
-// /* sbss 399a80 */ static GLOBAL_PLY *exam_global_ply_current;
+/* sbss 399a80 */ extern GLOBAL_PLY *exam_global_ply_current;
 /* bss 1c70040 */ extern int exam_global_ply_current_ply[4]; /* static */
 /* bss 1c70050 */ extern int metFrameCnt[3]; /* static */
 /* bss 1c70060 */ extern int metFrameCntLight[3]; /* static */
@@ -523,7 +523,15 @@ void ExamDispPlySet(GLOBAL_PLY *ply, int pos) {
     exam_global_ply[pos] = ply;
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", ExamDispReq);
+void ExamDispReq(int ply, int plmi) {
+    exam_disp_cursor_timer = 0;
+    exam_global_ply_current = exam_global_ply[ply];
+    if (plmi != 0) {
+        exam_global_ply_current_ply[ply] = 1;
+    } else {
+        exam_global_ply_current_ply[ply] = 0;
+    }
+}
 
 void ExamDispReset(void) {
     exam_disp_cursor_timer = -1;
