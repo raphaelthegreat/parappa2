@@ -7,10 +7,16 @@
 
 #include "main/etc.h"
 #include "main/effect.h"
+#include "main/sprite.h"
 
 #include <prlib/prlib.h>
 
 typedef int (*OVL_FUNC)(void *para_pp, int frame, int first_f, int useDisp, int drDisp);
+
+typedef struct { // 0x8
+    /* 0x0 */ TIM2_DAT *tim2_dat;
+    /* 0x4 */ SPR_PRIM *spr_prim;
+} TIM2DISP_STR;
 
 enum ANI_BLUMOVE_ENUM {
     BLMV_NONE = 0,
@@ -219,6 +225,13 @@ typedef struct { // 0x8
     /* 0x0 */ int scenestr_size;
     /* 0x4 */ SCENESTR *scenestr_pp;
 } EVENTREC;
+
+typedef struct { // 0x3
+    /* 0x0:00 */ u_char r : 5;
+    /* 0x1:00 */ u_char g : 5;
+    /* 0x2:00 */ u_char b : 5;
+    /* 0x2:05 */ u_char a : 1;
+} RGB15TR;
 
 typedef struct { // 0x8
     /* 0x0 */ int frame;

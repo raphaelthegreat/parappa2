@@ -31,7 +31,7 @@
 // /* data 185720 */ extern MOZAIKU_STR mozaiku_str_poll_01[/*undef*/]; /* static */
 // /* data 185a80 */ extern MOZAIKU_STR mozaiku_str_poll_02[/*undef*/]; /* static */
 /* data 185ca0 */ extern MOZAIKU_POLL_STR mozaiku_poll_str[3/*undef*/]; /* static */
-// /* sdata 399528 */ extern int mend_title_req; /* static */
+/* sdata 399528 */ extern int mend_title_req; /* static */
 /* data 185cc8 */ extern MENTITLE_DAT mentitle_dat[/*undef*/]; /* static */
 /* data 185d08 */ extern MENTITLE_DAT mentitle_dat_dera[/*undef*/]; /* static */
 /* sdata 39952c */ extern int ddbg_event_num; /* static */
@@ -63,7 +63,7 @@
 /* sbss 399a68 */ extern EVENTREC *drawEventrec; /* static */
 /* sbss 399a6c */ extern u_int useDispFlag; /* static */
 /* sbss 399a70 */ extern u_int drDispFlag; /* static */
-// /* sbss 399a74 */ extern float men_ctrl_ratio; /* static */
+/* sbss 399a74 */ extern float men_ctrl_ratio; /* static */
 /* sbss 399a78 */ extern MEN_CTRL_ENUM men_ctrl_enum; /* static */
 /* bss 1c6fe98 */ extern SCENECTRL *check_scenectrl[20]; /* static */
 /* sbss 399a7c */ extern u_char ddbg_pause_f; /* static */
@@ -885,9 +885,151 @@ void DrawSceneFirstSet(SCENE_OBJDATA *scene_pp) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", Cl2MixTrans);
+void Cl2MixTrans(int now_T, int max_T, u_char *cl2_0_pp, u_char *cl2_1_pp) {
+    TIM2INFO        tim2info0, tim2info1;
+    u_char         *dat_pp;
+    sceGsLoadImage  l_image;
 
-INCLUDE_RODATA("asm/nonmatchings/main/drawctrl", D_00393290);
+    int             trSize0, trSize1;
+    int             trType0, trType1;
+    int             trW, trH;
+    void           *trAdrs0, *trAdrs1;
+    int             trTbp0, trTbp1;
+    int             trTbw;
+
+    if (!GetTim2Info(cl2_0_pp, &tim2info0, 1)) {
+        printf("This data isn't TIM2 file\n");
+        return;
+    }
+
+    if (!GetTim2Info(cl2_1_pp, &tim2info1, 1)) {
+        printf("This data isn't TIM2 file\n");
+        return;
+    }
+
+    if (now_T > max_T) {
+        now_T = max_T;
+    }
+
+    if (tim2info0.fileH->FileId[0] != tim2info1.fileH->FileId[0]) {
+        printf("file type is difference\n");
+        return;
+    }
+
+    if (tim2info0.fileH->FileId[0] == 'T') {
+        trSize0 = tim2info0.picturH->ImageSize;
+        trSize1 = tim2info1.picturH->ImageSize;
+
+        trType0 = tim2info0.picturH->ImageType;
+        trType1 = tim2info1.picturH->ImageType;
+
+        trW = tim2info1.picturH->ImageWidth;
+        trH = tim2info1.picturH->ImageHeight;
+
+        trAdrs0 = tim2info0.image_pp;
+        trAdrs1 = tim2info1.image_pp;
+
+        trTbp0 = ((sceGsTex0*)&tim2info0.picturH->GsTex0)->TBP0;
+        trTbp1 = ((sceGsTex0*)&tim2info1.picturH->GsTex0)->TBP0;
+
+        trTbw = ((sceGsTex0*)&tim2info0.picturH->GsTex0)->TBW;
+    } else {
+        trSize0 = tim2info0.picturH->ClutSize;
+        trSize1 = tim2info1.picturH->ClutSize;
+
+        trType0 = tim2info0.picturH->ClutType & 0x1f;
+        trType1 = tim2info1.picturH->ClutType & 0x1f;
+
+        if (tim2info1.picturH->ClutColors > 16) {
+            trW = 16;
+            trH = 16;
+        } else {
+            trW = 8;
+            trH = 2;
+        }
+    
+        trAdrs0 = tim2info0.clut_pp;
+        trAdrs1 = tim2info1.clut_pp;
+
+        trTbp0 = ((sceGsTex0*)&tim2info0.picturH->GsTex0)->CBP;
+        trTbp1 = ((sceGsTex0*)&tim2info1.picturH->GsTex0)->CBP;
+
+        trTbw = 1; /* 64px */
+    }
+
+    if (trSize0 != trSize1 || trType0 != trType1 || trTbp0 != trTbp1) {
+        printf("Clut (Image) type is difference\n");
+        return;
+    }
+
+    dat_pp = usrMalloc(trSize0);
+
+    if (trType0 == 1) {
+        int      i;
+        int      maxx, maxy;
+        RGB15TR *rgb15tr0, *rgb15tr1;
+        RGB15TR *tr_pp;
+
+        maxx = (now_T * 256) / max_T;
+        maxy = 256 - maxx;
+
+        rgb15tr0 = trAdrs0;
+        rgb15tr1 = trAdrs1;
+        tr_pp = dat_pp;
+
+        trType0 = TIM2_RGB16; /* TIM2_RGB16 */
+
+        for (i = 0; i < (trSize0 / 2); i++) {
+            tr_pp->r = ((maxx * rgb15tr0->r) + (maxy * rgb15tr1->r)) / 256;
+            tr_pp->g = ((maxx * rgb15tr0->g) + (maxy * rgb15tr1->g)) / 256;
+            tr_pp->b = ((maxx * rgb15tr0->b) + (maxy * rgb15tr1->b)) / 256;
+            tr_pp->a = rgb15tr0->a;
+
+            rgb15tr0++;
+            rgb15tr1++;
+            tr_pp++;
+        }
+    } else {
+        int     i;
+        u_char *tr_pp;
+        u_char *col0, *col1;
+        int     maxx, maxy;
+
+        maxx = (now_T * 256) / max_T;
+        maxy = 256 - maxx;
+
+        col0 = trAdrs0;
+        col1 = trAdrs1;
+
+        tr_pp = dat_pp;
+
+        for (i = 0; i < trSize0; i++) {
+            *tr_pp = ((maxx * (*col0)) + (maxy * (*col1))) / 256;
+
+            col0++, col1++;
+            tr_pp++;
+        }
+    }
+
+    PR_SCOPE
+    u_short typemode[6] = {
+        SCE_GS_PSMCT32, /* TIM2_NONE   */ /* No CLUT (ClutType only) */
+        SCE_GS_PSMCT16, /* TIM2_RGB16  */
+        SCE_GS_PSMCT24, /* TIM2_RGB24  */
+        SCE_GS_PSMCT32, /* TIM2_RGB32  */
+        SCE_GS_PSMCT32, /* TIM2_IDTEX4 */
+        SCE_GS_PSMCT32  /* TIM2_IDTEX8 */
+    };
+
+    sceGsSetDefLoadImage(&l_image, trTbp0, trTbw, typemode[trType0], 0, 0, trW, trH);
+    FlushCache(0);
+
+    sceGsExecLoadImage(&l_image, (u_long128*)dat_pp);
+    sceGsSyncPath(0, 0);
+    PR_SCOPEEND
+
+    usrFree(dat_pp);
+}
 
 INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawObjPrReq);
 
@@ -903,7 +1045,25 @@ INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawVramClear);
 
 INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawMoveDispIn);
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawAlphaBlendDisp);
+int DrawAlphaBlendDisp(void *para_pp, int frame, int first_f, int useDisp, int drDisp) {
+    sceGsFrame   *use_pp;
+    sceGifPacket  gifpk;
+
+    if (first_f == -2) {
+        return 0;
+    }
+    if (first_f == -1) {
+        return 0;
+    }
+
+    use_pp = DrawGetFrameP(useDisp);
+
+    CmnGifADPacketMake(&gifpk, DrawGetFrameP(drDisp));
+    UG_AlpDisp(para_pp, use_pp, &gifpk);
+    CmnGifADPacketMakeTrans(&gifpk);
+
+    return 0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawMozaikuDisp);
 
@@ -911,7 +1071,27 @@ INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawFadeDisp);
 
 INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawPlphaIndex8Disp);
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawTim2DIsp);
+int DrawTim2DIsp(void *para_pp, int frame, int first_f, int useDisp, int drDisp) {
+    TIM2DISP_STR* tim2disp_pp = (TIM2DISP_STR*)para_pp; /* note: not in STABS. */
+
+    if (first_f == -2) {
+        return 0;
+    }
+    if (first_f == -1) {
+        return 0;
+    }
+
+    ChangeDrawArea(DrawGetDrawEnvP(drDisp));
+
+    SprInit();
+    SprClear();
+    SprPackSet(tim2disp_pp->tim2_dat);
+    SprDispAcheck(1);
+    SprDisp(tim2disp_pp->spr_prim);
+    SprFlash();
+
+    return 0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawNoodlesDisp);
 
@@ -919,7 +1099,10 @@ INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawVramLocalCopy);
 
 INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawVramLocalCopy2);
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", drawUseDrDispCheckInit);
+static void drawUseDrDispCheckInit(void) {
+    useDispFlag = 0;
+    drDispFlag = 0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/main/drawctrl", drawDispCheckSub);
 
@@ -933,11 +1116,23 @@ INCLUDE_ASM("asm/nonmatchings/main/drawctrl", drawDispCheckSub);
 
 INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawScenectrlReq);
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", MendererCtrlInit);
+void MendererCtrlInit(void) {
+    men_ctrl_ratio = 0.0f;
+    men_ctrl_enum = MEN_CTRL_BtoG;
+    mend_title_req = 0;
+}
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", MendererCtrlTitle);
+void MendererCtrlTitle(void) {
+    men_ctrl_ratio = 2.0f;
+    men_ctrl_enum = MEN_CTRL_BtoA;
+    mend_title_req = 1;
+}
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", MendererCtrlTitleDera);
+void MendererCtrlTitleDera(void) {
+    men_ctrl_ratio = 2.0f;
+    men_ctrl_enum = MEN_CTRL_BtoA;
+    mend_title_req = 2;
+}
 
 INCLUDE_RODATA("asm/nonmatchings/main/drawctrl", D_00393300);
 
@@ -999,8 +1194,12 @@ static float mendRatioTitleGet(int frame, int dera_f) {
     }
 }
 
+static void MendererCtrlTitleDisp(int frame, int dera_f) {
+    PrSetMendererRatio(mendRatioTitleGet(frame, dera_f));
+    PrRenderMenderer();
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", MendererCtrlTitleDisp);
+    PrSetMendererRatio(2.0f);
+}
 
 void MendererReq(MEN_CTRL_ENUM menum) {
     men_ctrl_enum = menum;
@@ -1236,7 +1435,7 @@ static void DrawSceneStrInit(SCENESTR *scstr_pp) {
              * Until overlays are linked properly, we need
              * to fix the pointers at runtime.
              *
-             * note: Addresses are hardcoded for the Jul. 12
+             * note: Addresses are hardcoded for the Jul. 12th
              *       prototype overlays.
              */
             u_int prg = (u_int)scstr_pp->scenectrl_pp[i].prg_pp;

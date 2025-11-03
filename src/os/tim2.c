@@ -375,7 +375,7 @@ int Tim2TransX(void *adrs, int ofs_num) {
             GetTim2Info(adrs, info_x, max_page);
 
             if (ofs_num != 0) {
-                Tim2LoadSetX(&info, info_x + ofs_num);
+                Tim2LoadSetX(&info, &info_x[ofs_num]);
             } else {
                 Tim2LoadSet(&info);
             }

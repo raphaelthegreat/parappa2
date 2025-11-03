@@ -109,7 +109,7 @@ static void dbg_select_disp(void) {
     int selpos;
     DBG_MODE_STR *dbg_pp;
     int i;
-    int numkun; /* note: can't find an use for this (v0). */
+    int numkun; /* TODO: can't find an use for this (v0). */
 
     selpos = 0;
     DbgMsgInit();
@@ -121,17 +121,17 @@ static void dbg_select_disp(void) {
             if (dbg_pp->set_pp == NULL) {
                 break;
             }
-            
+
             if (pad[0].one & SCE_PADRright) {
                 (*dbg_pp->set_pp)++;
             } else {
                 (*dbg_pp->set_pp)--;
             }
-    
+
             if (*dbg_pp->set_pp < dbg_pp->min) {
                 *dbg_pp->set_pp = dbg_pp->max - 1;
             }
-    
+
             if (*dbg_pp->set_pp >= dbg_pp->max) {
                 *dbg_pp->set_pp = dbg_pp->min;
             }
