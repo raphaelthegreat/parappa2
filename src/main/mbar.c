@@ -33,6 +33,7 @@
 // /* data 186f08 */ static int guimap_hk[];
 /* bss 1c70030 */ extern GLOBAL_PLY *exam_global_ply[4]; /* static */
 /* sbss 399a80 */ extern GLOBAL_PLY *exam_global_ply_current;
+/* bss 1c6ffc0 */ extern sceGsLoadImage tp_tmp_72;      /* static */
 /* bss 1c70040 */ extern int exam_global_ply_current_ply[4]; /* static */
 /* bss 1c70050 */ extern int metFrameCnt[3]; /* static */
 /* bss 1c70060 */ extern int metFrameCntLight[3]; /* static */
@@ -117,7 +118,6 @@ void examCharSet(EX_CHAR_DISP *ecd_pp, sceGifPacket *gifpk_pp) {
 }
 
 static void clrColorBuffer(int id) {
-    static sceGsLoadImage tp;
     TIM2_DAT *tim2_dat_pp;
     u_char *tr_adr;
     u_int cpsm, cbp;
@@ -126,9 +126,9 @@ static void clrColorBuffer(int id) {
     tr_adr = (u_char*)&tmpColor;
     cpsm = (int)(PR_TEX0(tim2_dat_pp).CPSM << 32) >> 32;
     cbp = (int)(PR_TEX0(tim2_dat_pp).CBP << 32) >> 32;
-    sceGsSetDefLoadImage(&tp, cbp, 1, cpsm, 0, 0, 8, 2);
+    sceGsSetDefLoadImage(&tp_tmp_72, cbp, 1, cpsm, 0, 0, 8, 2);
     FlushCache(0);
-    sceGsExecLoadImage(&tp, (u_long128*)tr_adr);
+    sceGsExecLoadImage(&tp_tmp_72, (u_long128*)tr_adr);
     sceGsSyncPath(0, 0);
 }
 
@@ -437,37 +437,37 @@ static void metColorInit(void) {
     }
 }
 
-// TODO
 static void metColorSet(EXAM_TYPE exam_type, float per) {
 	u_char *moto_pp;
 	u_char *saki_pp;
 	int sakiper;
 
-    if (per == 0.0f) {
+    if (per == 0.f) {
         return Tim2Trans(cmnfGetFileAdrs(metcol_str[exam_type].df_num));
     }
-    if (per == -1.0f) {
+    if (per == -1.f) {
         return Tim2Trans(cmnfGetFileAdrs(metcol_str[exam_type].ng_num));
     }
-    if (per == 1.0f) {
+    if (per == 1.f) {
         return Tim2Trans(cmnfGetFileAdrs(metcol_str[exam_type].ok_num));
     }
     sakiper = metcol_str[exam_type].df_num;
     moto_pp = cmnfGetFileAdrs(sakiper);
-    if (per < 0.0f) {
+    if (per < 0.f) {
         per = -per;
-        if (1.0f < per) {
-            per = 1.0f;
+        if (1.f < per) {
+            per = 1.f;
         }
-        sakiper = metcol_str[exam_type].ng_num;
+        saki_pp = cmnfGetFileAdrs(metcol_str[exam_type].ng_num);
+        sakiper = per * 128;
     } else {
-        if (1.0f < per) {
-            per = 1.0f;
+        if (1.f < per) {
+            per = 1.f;
         }
-        sakiper = metcol_str[exam_type].ok_num;
+        saki_pp = cmnfGetFileAdrs(metcol_str[exam_type].ok_num);
+        sakiper = per * 128;
     }
-    saki_pp = cmnfGetFileAdrs(sakiper);
-    Cl2MixTrans(per * 128.0f, 128, saki_pp, moto_pp);
+    Cl2MixTrans(sakiper, 128, saki_pp, moto_pp);
 }
 
 void metFrameInit(void) {
@@ -559,13 +559,143 @@ float examScore2Level(long score) {
     return ret_lvl;
 }
 
+#ifndef NON_MATCHING
 INCLUDE_ASM("asm/nonmatchings/main/mbar", ExamDispOn);
+#else
+static void ExamDispOn() {
+	int met_time;
+	int i;
+	float maxfr;
+	float lev_tmp;
+	u_int perd;
+	u_char *moto_p;
+
+    if (exam_disp_cursor_timer < 0) {
+        return metFrameInit();
+    }
+    exam_disp_cursor_timer += 1;
+    if (exam_disp_cursor_timer >= 91) {
+        exam_disp_cursor_timer = -1;
+        metColorInit();
+        for (i = 0; i < 3; i++) {
+            exam_global_ply_current_ply[i] = 0;
+        }
+        met_time = 0;
+    } else if (exam_disp_cursor_timer >= 61) {
+        met_time = 90 - exam_disp_cursor_timer;
+    } else {
+        met_time = 30;
+        if (met_time >= exam_disp_cursor_timer) {
+            met_time = exam_disp_cursor_timer;
+        }
+    }
+    maxfr = met_time / 30.0f;
+    for (i = 0; i < 3; i++) {
+        lev_tmp = examScore2Level(exam_global_ply_current->exam_score[i]);
+        if (lev_tmp < 0.0f && lev_tmp < -maxfr) {
+            lev_tmp = -maxfr;
+        }
+        if (0.0f < lev_tmp && maxfr < lev_tmp) {
+            lev_tmp = maxfr;
+        }
+        if (exam_global_ply_current->exam_score[i] > 0) {
+            metColorSet(i, maxfr);
+        } else {
+            metColorSet(i, -maxfr);
+        }
+        lev_tmp -= -1.0;
+        lev_tmp = (lev_tmp / 2.0) * 280.0;
+        metFrameCnt[i] = lev_tmp;
+        if (exam_disp_cursor_timer < 30) {
+            if (exam_global_ply_current->exam_score[i] > 0) {
+                metFrameCntLight[i] = exam_disp_cursor_timer;
+            } else {
+                metFrameCntLight[i] = exam_disp_cursor_timer + 60;
+            }
+        } else {
+            metFrameCntLight[i] = 0;
+        }
+    }
+    for (i = 0; i < 3; i++) {
+        if (exam_global_ply_current_ply[i] != 0) {
+            if (exam_global_ply[i]->now_score > 0) {
+                moto_p = scr_tenmetu_col[1];
+            } else {
+                moto_p = scr_tenmetu_col[2];
+            }
+            perd = exam_disp_cursor_timer * 16;
+            if (perd & 0x100) {
+                perd ^= 0xff;
+            }
+            perd &= 0xff;
+            scr_tenmetu_col_dat[i][0] = ((moto_p[0] * perd) >> 9) + (moto_p[0] >> 1);
+            scr_tenmetu_col_dat[i][1] = ((moto_p[1] * perd) >> 9) + (moto_p[1] >> 1);
+            scr_tenmetu_col_dat[i][2] = ((moto_p[2] * perd) >> 9) + (moto_p[2] >> 1);
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/main/mbar", hex2dec_mbar_tmp);
 
+#ifndef NON_MATCHING
 INCLUDE_ASM("asm/nonmatchings/main/mbar", hex2decPlMi);
+#else 
+static u_long hex2decPlMi(long int data) {
+	u_long ret;
+	int i;
+	long int plmichar;
 
+    ret = 0;
+    if (data == 0) {
+        return ret;
+    }
+    plmichar = data < 1 ? 0 : 10;
+    if (data < 0) {
+        plmichar = 11;
+        data *= -1;
+    }
+    for (i = 0; i < 16u && data; i++) {
+        ret |= (data % 10) << (i * 4);
+        data /= 10;
+    }
+    ret |= plmichar << (i * 4);
+    return ret;
+}
+#endif
+
+#ifndef NON_MATCHING
 INCLUDE_ASM("asm/nonmatchings/main/mbar", examNumDisp);
+#else 
+void examNumDisp(sceGifPacket *ex_gif_pp, long int score, short int x, short int y, int keta, u_char *coldat_pp, int plmi) {
+	int i;
+	u_char num;
+	int first_f;
+	EX_CHAR_DISP ex_ecd;
+
+    first_f = 0;
+    examCharBasic(&ex_ecd, &tim2spr_tbl_tmp1[27]);
+    examCharKidoSet(&ex_ecd, coldat_pp[0], coldat_pp[1], coldat_pp[2]);
+    if (plmi != 0) {
+        score = hex2decPlMi(score);
+    } else {
+        score = hex2dec(score);
+    }
+    for (i = 0; i < keta; i++) {
+        num = keta - (i + 1);
+        num <<= 2;
+        num = score >> num;
+        num &= 0xf;
+        num &= 0xff;
+        if (num != 0 || first_f != 0 || i == keta - 1) {
+            first_f = 1;
+            examCharUVWHSet(&ex_ecd, num * 13, 0, 13, 24);
+            examCharPosSet(&ex_ecd, x + (i * 15), y);
+            examCharSet(&ex_ecd, ex_gif_pp);
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/main/mbar", examScoreSet);
 
