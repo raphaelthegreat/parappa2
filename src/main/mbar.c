@@ -55,7 +55,7 @@
 /* sbss 399a84 */ extern int mbar_ctrl_time; /* static */
 /* sbss 399a88 */ extern int mbar_ctrl_stage; /* static */
 /* sbss 399a8c */ extern int mbar_ctrl_stage_selT; /* static */
-// /* bss 1c701c8 */ static sceGifPacket mbar_gif;
+/* bss 1c701c8 */ extern sceGifPacket mbar_gif;
 // /* sbss 399a90 */ static PR_SCENEHANDLE guime_hdl;
 // /* sbss 399a94 */ static PR_CAMERAHANDLE guime_camera_hdl;
 
@@ -68,7 +68,7 @@ static void   vsAnimationPoll(void);
 static void   metColorInit(void);
 static void   metColorSet(EXAM_TYPE exam_type, float per);
 static void   ExamDispOn(void);
-static u_long hex2dec(u_long data);
+static u_long hex2dec_mbar_tmp(u_long data);
 static u_long hex2decPlMi(long data);
 static void   examScoreSet(sceGifPacket *ex_gif_pp);
 static void   examLevelDisp(sceGifPacket *ex_gif_pp);
@@ -664,38 +664,34 @@ static u_long hex2decPlMi(long int data) {
 }
 #endif
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("asm/nonmatchings/main/mbar", examNumDisp);
-#else 
-void examNumDisp(sceGifPacket *ex_gif_pp, long int score, short int x, short int y, int keta, u_char *coldat_pp, int plmi) {
+void examNumDisp(sceGifPacket *ex_gif_pp, long score, short x, short y, int keta, u_char *coldat_pp, int plmi) {
 	int i;
 	u_char num;
 	int first_f;
 	EX_CHAR_DISP ex_ecd;
 
-    first_f = 0;
+    first_f = FALSE;
     examCharBasic(&ex_ecd, &tim2spr_tbl_tmp1[27]);
     examCharKidoSet(&ex_ecd, coldat_pp[0], coldat_pp[1], coldat_pp[2]);
+    
     if (plmi != 0) {
         score = hex2decPlMi(score);
     } else {
-        score = hex2dec(score);
+        score = hex2dec_mbar_tmp(score);
     }
+
     for (i = 0; i < keta; i++) {
-        num = keta - (i + 1);
-        num <<= 2;
-        num = score >> num;
-        num &= 0xf;
-        num &= 0xff;
-        if (num != 0 || first_f != 0 || i == keta - 1) {
-            first_f = 1;
+        plmi = i + 1;
+        num = (score >> ((keta - plmi) << 2)) & 0xf;
+
+        if (num != 0 || first_f || i == (keta - 1)) {
+            first_f = TRUE;
             examCharUVWHSet(&ex_ecd, num * 13, 0, 13, 24);
             examCharPosSet(&ex_ecd, x + (i * 15), y);
             examCharSet(&ex_ecd, ex_gif_pp);
         }
     }
 }
-#endif
 
 INCLUDE_ASM("asm/nonmatchings/main/mbar", examScoreSet);
 
@@ -779,13 +775,68 @@ static void MbarCharSetSub(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarGifInit);
+void MbarGifInit() {
+    CmnGifADPacketMake(&mbar_gif, 0);
+    sceGifPkAddGsAD(&mbar_gif, SCE_GS_TEXFLUSH, 0);
+    sceGifPkAddGsAD(&mbar_gif, SCE_GS_TEST_1, SCE_GS_SET_TEST_1(1, 6, 0, 0, 0, 0, 1, 1));
+    sceGifPkAddGsAD(&mbar_gif, SCE_GS_TEXA, SCE_GS_SET_TEXA(0, 1, 128));
+    sceGifPkAddGsAD(&mbar_gif, SCE_GS_CLAMP_1, SCE_GS_SET_CLAMP_1(1, 1, 0, 0, 0, 0));
+    sceGifPkAddGsAD(&mbar_gif, SCE_GS_PABE, 0);    
+}
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarGifTrans);
+void MbarGifTrans(int pri) {
+    CmnGifCloseCmnPk(&mbar_gif, pri);
+}
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarCharSet);
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarCharSet2);
+void MbarCharSet(MBARR_CHR *mb_pp) {
+	MBA_CHAR_DATA *mbcd_pp;
+	float w, h;
+    int x1, y1, x2, y2;
+
+    mbcd_pp = &mba_char_data[mb_pp->mbc_enum];
+    if (mbcd_pp->tim2_dat_pp == 0) {
+        return;
+    }
+    sceGifPkAddGsAD(&mbar_gif, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(mb_pp->r, mb_pp->g, mb_pp->b, mb_pp->a, 0x3f800000));
+    sceGifPkAddGsAD(&mbar_gif, SCE_GS_TEX0_1, mbcd_pp->tim2_dat_pp->GsTex0);
+    sceGifPkAddGsAD(&mbar_gif, SCE_GS_TEX1_1, mbcd_pp->tim2_dat_pp->GsTex1);
+    sceGifPkAddGsAD(&mbar_gif, SCE_GS_PRIM, SCE_GS_SET_PRIM(6, 0, 1, 0, 0, 0, 1, 0, 0));
+    w = mbcd_pp->sclx * mb_pp->sclx * mbcd_pp->tim2_dat_pp->w;
+    h = mbcd_pp->scly * mb_pp->scly * mbcd_pp->tim2_dat_pp->h;
+    sceGifPkAddGsAD(&mbar_gif, SCE_GS_UV, SCE_GS_SET_UV(0, 0));
+    w *= 0.5f;
+    h *= 0.5f;
+    x1 = (mb_pp->xp - w) * 16.0f;
+    y1 = (mb_pp->yp - h) * 16.0f;
+    sceGifPkAddGsAD(&mbar_gif, SCE_GS_XYZ2, SCE_GS_SET_XYZ2(0x6C00 + x1, 0x7900 + y1, 1));
+    sceGifPkAddGsAD(&mbar_gif, SCE_GS_UV, SCE_GS_SET_UV(mbcd_pp->tim2_dat_pp->w << 4, mbcd_pp->tim2_dat_pp->h << 4));
+    x2 = (mb_pp->xp + w) * 16.0f;
+    y2 = (mb_pp->yp + h) * 16.0f;
+    sceGifPkAddGsAD(&mbar_gif, SCE_GS_XYZ2, SCE_GS_SET_XYZ2(0x6C00 + x2, 0x7900 + y2, 1));
+}
+
+void MbarCharSet2(MBARR_CHR2 *mb_pp) {
+	MBA_CHAR_DATA *mbcd_pp;
+    int x1, y1, x2, y2;
+    
+    mbcd_pp = &mba_char_data[mb_pp->mbc_enum];
+    if (mbcd_pp->tim2_dat_pp == NULL) {
+        return;
+    }
+    sceGifPkAddGsAD(&mbar_gif, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(mb_pp->r, mb_pp->g, mb_pp->b, mb_pp->a, 0x3f800000));
+    sceGifPkAddGsAD(&mbar_gif, SCE_GS_TEX0_1, mbcd_pp->tim2_dat_pp->GsTex0);
+    sceGifPkAddGsAD(&mbar_gif, SCE_GS_TEX1_1, mbcd_pp->tim2_dat_pp->GsTex1);
+    sceGifPkAddGsAD(&mbar_gif, SCE_GS_PRIM, SCE_GS_SET_PRIM(6, 0, 1, 0, 0, 0, 1, 0, 0));
+    sceGifPkAddGsAD(&mbar_gif, SCE_GS_UV, SCE_GS_SET_UV(0, 0));
+    x1 = mb_pp->xp + mb_pp->ofsx;
+    y1 = mb_pp->yp + mb_pp->ofsy;
+    sceGifPkAddGsAD(&mbar_gif, SCE_GS_XYZ2, SCE_GS_SET_XYZ2(GS_X_COORD(x1), GS_Y_COORD(y1), 1));
+    sceGifPkAddGsAD(&mbar_gif, SCE_GS_UV, SCE_GS_SET_UV(mbcd_pp->tim2_dat_pp->w << 4, mbcd_pp->tim2_dat_pp->h << 4));
+    x2 = mb_pp->xp2 + mb_pp->ofsx2;
+    y2 = mb_pp->yp2 + mb_pp->ofsy2;
+    sceGifPkAddGsAD(&mbar_gif, SCE_GS_XYZ2, SCE_GS_SET_XYZ2(GS_X_COORD(x2), GS_Y_COORD(y2), 1));
+}
 
 INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarWindowSet);
 

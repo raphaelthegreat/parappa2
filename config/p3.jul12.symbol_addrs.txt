@@ -871,7 +871,7 @@ guime_camera_hdl                    = 0x00399a94;
 
 exam_global_ply                     = 0x01c70030; // size:0x10
 exam_global_ply_current_ply         = 0x01c70040; // size:0x10
-tp_tmp_72                             = 0x01c6ffc0; // size:0x60
+tp_tmp_72                           = 0x01c6ffc0; // size:0x60
 metFrameCnt                         = 0x01c70050; // size:0xc
 metFrameCntLight                    = 0x01c70060; // size:0xc
 scr_tenmetu_col_dat                 = 0x01c70070; // size:0xc
