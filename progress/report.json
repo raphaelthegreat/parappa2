@@ -1,15 +1,15 @@
 {
   "measures": {
-    "fuzzy_match_percent": 44.387115,
+    "fuzzy_match_percent": 45.277607,
     "total_code": "342284",
-    "matched_code": "149840",
-    "matched_code_percent": 43.776512,
+    "matched_code": "152888",
+    "matched_code_percent": 44.667004,
     "total_data": "26064712",
     "matched_data": "26015080",
     "matched_data_percent": 99.80958,
     "total_functions": 1429,
-    "matched_functions": 934,
-    "matched_functions_percent": 65.36039,
+    "matched_functions": 941,
+    "matched_functions_percent": 65.85024,
     "total_units": 70
   },
   "units": [
@@ -3100,14 +3100,14 @@
     {
       "name": "main/drawctrl",
       "measures": {
-        "fuzzy_match_percent": 51.107327,
+        "fuzzy_match_percent": 62.90847,
         "total_code": "25828",
-        "matched_code": "13200",
-        "matched_code_percent": 51.107323,
+        "matched_code": "16248",
+        "matched_code_percent": 62.90847,
         "total_data": "752",
         "total_functions": 98,
-        "matched_functions": 78,
-        "matched_functions_percent": 79.591835,
+        "matched_functions": 85,
+        "matched_functions_percent": 86.734695,
         "total_units": 1
       },
       "sections": [
@@ -3129,7 +3129,7 @@
         {
           "name": ".text",
           "size": "25992",
-          "fuzzy_match_percent": 51.107327,
+          "fuzzy_match_percent": 62.90847,
           "metadata": {}
         }
       ],
@@ -3422,6 +3422,7 @@
         {
           "name": "DrawObjStrDispTap",
           "size": "1976",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "8016"
         },
@@ -3455,6 +3456,7 @@
         {
           "name": "DrawObjStrTapTimeNext",
           "size": "152",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "13400"
         },
@@ -3479,6 +3481,7 @@
         {
           "name": "DrawVramClear",
           "size": "340",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "15384"
         },
@@ -3529,12 +3532,14 @@
         {
           "name": "DrawVramLocalCopy",
           "size": "188",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "18776"
         },
         {
           "name": "DrawVramLocalCopy2",
           "size": "200",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "18968"
         },
@@ -3548,6 +3553,7 @@
         {
           "name": "drawDispCheckSub",
           "size": "56",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "19184"
         },
@@ -3629,6 +3635,7 @@
         {
           "name": "MendererCtrlScene",
           "size": "136",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "20520"
         },
@@ -13118,16 +13125,16 @@
     {
       "id": "main",
       "measures": {
-        "fuzzy_match_percent": 58.146828,
+        "fuzzy_match_percent": 60.60418,
         "total_code": "124036",
-        "matched_code": "71280",
-        "matched_code_percent": 57.467186,
+        "matched_code": "74328",
+        "matched_code_percent": 59.924538,
         "total_data": "48216",
         "matched_data": "38372",
         "matched_data_percent": 79.58354,
         "total_functions": 570,
-        "matched_functions": 447,
-        "matched_functions_percent": 78.42105,
+        "matched_functions": 454,
+        "matched_functions_percent": 79.649124,
         "total_units": 17
       }
     },

@@ -99,8 +99,7 @@ typedef struct { // 0x1c
     /* 0x18 */ float defocus_lng;
 } OBJACTPRG;
 
-enum
-{
+enum {
     OBJACTPRG_ORG = 0,
     OBJACTPRG_NORMAL = 1,
     OBJACTPRG_TAP = 2,
@@ -203,6 +202,58 @@ typedef struct { // 0x21c
     /* 0x02c */ OBJACTPRG_CTRL objactprg_ctrl;
     /* 0x03c */ DR_TAP_REQ dr_tap_req[40];
 } SCENE_OBJDATA;
+
+typedef enum {
+    SBI_R1 = 0,
+    SBI_R2 = 1,
+    SBI_R3 = 2,
+    SBI_R4 = 3,
+    SBI_TBL0 = 4,
+    SBI_TBL1 = 5,
+    SBI_TBL2 = 6,
+    SBI_TBL3 = 7,
+    SBI_TBL4 = 8,
+    SBI_TBL5 = 9,
+    SBI_TBL6 = 10,
+    SBI_TBL7 = 11,
+    SBI_CLR0 = 12,
+    SBI_CLR1 = 13,
+    SBI_CLR2 = 14,
+    SBI_CLR3 = 15,
+    SBI_CLR4 = 16,
+    SBI_CLR5 = 17,
+    SBI_CLR6 = 18,
+    SBI_CLR7 = 19,
+    SBI_CLR8 = 20,
+    SBI_MAX = 21,
+    SBI_ANDBIT = 31
+} SCEN_BRA_INDEX;
+
+typedef enum {
+    SBE_ALL = 0,
+    SBE_R1 = 1,
+    SBE_R2 = 2,
+    SBE_R3 = 4,
+    SBE_R4 = 8,
+    SBE_TBL0 = 16,
+    SBE_TBL1 = 32,
+    SBE_TBL2 = 64,
+    SBE_TBL3 = 128,
+    SBE_TBL4 = 256,
+    SBE_TBL5 = 512,
+    SBE_TBL6 = 1024,
+    SBE_TBL7 = 2048,
+    SBE_CLR0 = 4096,
+    SBE_CLR1 = 8192,
+    SBE_CLR2 = 16384,
+    SBE_CLR3 = 32768,
+    SBE_CLR4 = 65536,
+    SBE_CLR5 = 131072,
+    SBE_CLR6 = 262144,
+    SBE_CLR7 = 524288,
+    SBE_CLR8 = 1048576,
+    SBE_ANDBIT = -2147483648
+} SCEN_BRA_ENUM;
 
 typedef struct { // 0x20
     /* 0x00 */ u_int start_flame;

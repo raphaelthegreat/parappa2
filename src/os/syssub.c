@@ -612,7 +612,7 @@ void usrMallcInit(void) {
 
 void* usrMalloc(u_int size) {
     void *ret;
-    int i;
+    int   i;
 
     ret = malloc(size);
     if (ret == 0) {
@@ -637,10 +637,9 @@ void usrFree(void *adrs) {
     int i;
 
     for (i = 0; i < PR_ARRAYSIZE(usr_malloc_str); i++) {
-        if (usr_malloc_str[i].adrs != NULL &&
-            usr_malloc_str[i].adrs == adrs) {
+        if (usr_malloc_str[i].adrs != NULL && usr_malloc_str[i].adrs == adrs) {
             free(adrs);
-            usr_malloc_str[i].adrs = 0;
+            usr_malloc_str[i].adrs = NULL;
             usr_malloc_str[i].size = 0;
             return;
         }

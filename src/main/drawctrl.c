@@ -16,6 +16,8 @@
 
 #include <prlib/prlib.h>
 
+#include <eestruct.h>
+#include <libgraph.h>
 #include <libpad.h>
 
 #include <limits.h>
@@ -42,8 +44,8 @@
 /* data 186248 */ extern DRAW_DBG_STR draw_dbg_str[5/*undef*/]; /* static */
 /* bss 1c6e030 */ extern DR_TAP_REQ dr_tap_req[16]; /* static */
 /* sbss 399a4c */ extern int dr_tap_req_num; /* static */
-// /* bss 1c6e0f0 */ extern int octst_time[8]; /* static */
-// /* bss 1c6e110 */ extern int octst_timeLoad[8]; /* static */
+/* bss 1c6e0f0 */ extern int octst_time[8]; /* static */
+/* bss 1c6e110 */ extern int octst_timeLoad[8]; /* static */
 /* bss 1c6e130 */ extern SCENECTRL scenectrl_outside[8]; /* static */
 /* sbss 399a50 */ extern int scenectrl_outside_cnt; /* static */
 /* sbss 399a54 */ extern int scenectrl_outside_read_cnt; /* static */
@@ -736,7 +738,7 @@ static void DrawObjStrReq(SCENE_OBJDATA *scn_pp, int num, u_int time) {
         return;
     }
 
-    scn_pp->objstr_pp[num].PRflag    = TRUE;
+    scn_pp->objstr_pp[num].PRflag    = OBJSTR_REQ;
     scn_pp->objstr_pp[num].PRtime    = time;
     scn_pp->objstr_pp[num].PRtimeOld = -1;
 }
@@ -746,7 +748,7 @@ static void DrawObjStrTapReq(SCENE_OBJDATA *scn_pp, int num, u_int time, u_char 
         return;
     }
 
-    scn_pp->tapstr_pp[num].PRflag    = TRUE;
+    scn_pp->tapstr_pp[num].PRflag    = OBJSTR_REQ;
     scn_pp->tapstr_pp[num].PRtime    = 0;
     scn_pp->tapstr_pp[num].PRpress   = prs_adr;
     scn_pp->tapstr_pp[num].PRtimeOld = -1;
@@ -759,7 +761,7 @@ void DrawObjStrTapQuit(SCENE_OBJDATA *scn_pp, int num, u_int time) {
         return;
     }
 
-    scn_pp->tapstr_pp[num].PRflag    = FALSE;
+    scn_pp->tapstr_pp[num].PRflag    = 0;
     scn_pp->tapstr_pp[num].PRtime    = 0;
     scn_pp->tapstr_pp[num].PRpress   = NULL;
     scn_pp->tapstr_pp[num].PRtimeOld = -1;
@@ -784,7 +786,7 @@ static void DrawObjStrKill(SCENE_OBJDATA *scn_pp, int num) {
         return;
     }
 
-    scn_pp->objstr_pp[num].PRflag    = FALSE;
+    scn_pp->objstr_pp[num].PRflag    = 0;
     scn_pp->objstr_pp[num].PRtime    = 0;
     scn_pp->objstr_pp[num].PRpress   = NULL;
     scn_pp->objstr_pp[num].PRtimeOld = -1;
@@ -836,7 +838,334 @@ void posAniOtherKill(OBJACTPRG *objactprg_pp, int objactprg_num, int ani_num, in
 
 INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawObjStrDisp);
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawObjStrDispTap);
+static int DrawObjStrDispTap(SCENE_OBJDATA *scn_pp, int num) {
+    OBJSTR    *objstr_pp;
+    OBJCTRL   *objctrl_pp, *objctrl_end_pp;
+    OBJACTPRG *objactprg_pp, *objactprg_org_pp;
+    OBJACTPRG *objactprg_tmp_pp, *objactprg_tmp_org_pp;
+    int        i, first_f, tmp_time, endflag, ret, check_pos;
+
+    first_f = FALSE;
+    endflag = FALSE;
+    ret = FALSE;
+
+    objstr_pp = &scn_pp->tapstr_pp[num];
+    objactprg_pp = scn_pp->objactprg_ctrl.objactprg[OBJACTPRG_TAP];
+    objactprg_org_pp = scn_pp->objactprg_ctrl.objactprg[OBJACTPRG_ORG];
+
+    if (objstr_pp->PRflag == 0) {
+        return FALSE;
+    }
+
+    if (objstr_pp->PRflag & OBJSTR_REQ) {
+        if (objstr_pp->current_pp == NULL) {
+            objstr_pp->current_pp = objstr_pp->objctrl_pp;
+            objstr_pp->PRdata = 0;
+            objstr_pp->loop_time = 0;
+            objstr_pp->loop_pp = objstr_pp->objctrl_pp;
+        }
+
+        for (i = 0; i < objstr_pp->size; i++) {
+            DrawObjCtrlInit(&objstr_pp->objctrl_pp[i]);
+        }
+
+        objstr_pp->PRdata++;
+
+        objstr_pp->PRflag &= ~OBJSTR_REQ;
+        objstr_pp->PRflag |= OBJSTR_ON;
+
+        first_f = TRUE;
+
+        objctrl_pp = objstr_pp->objctrl_pp;
+        objctrl_end_pp = objctrl_pp + objstr_pp->size;
+
+        check_pos = 1;
+        while (1) {
+            if (check_pos == objstr_pp->PRdata) {
+                break;
+            }
+            if (objctrl_pp >= objctrl_end_pp) {
+                objctrl_pp = objstr_pp->objctrl_pp;
+                break;
+            }
+
+            switch (objctrl_pp->objctrl_type) {
+            case OCTRL_LOOP_P:
+                objstr_pp->loop_pp = objctrl_pp;
+                break;
+            case OCTRL_NEXT:
+                check_pos++;
+                break;
+            case OCTRL_LOOP:
+                check_pos++;
+                objctrl_pp = objstr_pp->loop_pp;
+                break;
+            }
+
+            objctrl_pp++;
+        }
+
+        objstr_pp->current_pp = objctrl_pp;
+    } else {
+        if (objstr_pp->PRpress != NULL) {
+            if (*objstr_pp->PRpress > 100) {
+                objstr_pp->PRflag |= OBJSTR_PRESSON;
+                objstr_pp->PRtime++;
+            }
+            if (*objstr_pp->PRpress > 180) {
+                objstr_pp->PRtime++;
+            }
+        }
+
+        objstr_pp->PRtime++;
+    }
+
+    objctrl_pp = objstr_pp->current_pp;
+    objctrl_end_pp = objstr_pp->objctrl_pp + objstr_pp->size;
+
+    tmp_time = objstr_pp->PRtime;
+
+    while (objctrl_pp < objctrl_end_pp) {
+        switch (objctrl_pp->objctrl_type) {
+        case OCTRL_ANI:
+        case OCTRL_MDL:
+        case OCTRL_CAM:
+        case OCTRL_TM2:
+            if (tmp_time < objctrl_pp->frame) {
+                break;
+            }
+
+            objactprg_tmp_pp = &objactprg_pp[objctrl_pp->dat[0]];
+            objactprg_tmp_org_pp = &objactprg_org_pp[objctrl_pp->dat[0]];
+            
+            objactprg_tmp_pp->main_num = objctrl_pp->dat[0];
+            objactprg_tmp_pp->sub_num = objctrl_pp->dat[1];
+
+            if (objctrl_pp->status & 0x1) {
+                objactprg_tmp_pp->job_type = OCTRL_NON;
+                break;
+            }
+
+            objactprg_tmp_pp->now_time = tmp_time - objctrl_pp->frame;
+
+            if (objctrl_pp->status & 0x80) {
+                octst_time[objctrl_pp->dat[4]] = objactprg_tmp_pp->now_time;
+            }
+            if (objctrl_pp->status & 0x100) {
+                if (first_f) {
+                    octst_timeLoad[objctrl_pp->dat[4]] = octst_time[objctrl_pp->dat[4]];
+                }
+                objactprg_tmp_pp->now_time = octst_timeLoad[objctrl_pp->dat[4]];
+            }
+
+            objactprg_tmp_pp->job_type = objctrl_pp->objctrl_type;
+            objactprg_tmp_pp->status = objctrl_pp->status;
+
+            objactprg_tmp_pp->start_time = 0;
+            objactprg_tmp_pp->end_time = 0;
+
+            objactprg_tmp_pp->first_flag = first_f;
+
+            objactprg_tmp_pp->focal_lng = scn_pp->objdat_pp[objctrl_pp->dat[0]].subdat[0];
+            objactprg_tmp_pp->defocus_lng = scn_pp->objdat_pp[objctrl_pp->dat[0]].subdat[1];
+            
+            
+            if (objctrl_pp->objctrl_type == OCTRL_ANI) {
+                objactprg_tmp_pp->focal_lng = objctrl_pp->subDat;
+                objactprg_tmp_pp->end_time = scn_pp->objdat_pp[objctrl_pp->dat[1]].maxfr;
+            } else if (objctrl_pp->objctrl_type == OCTRL_CAM) {
+                objactprg_tmp_pp->end_time = scn_pp->objdat_pp[objctrl_pp->dat[0]].maxfr;
+            } else {
+                break;
+            }
+
+            if (objctrl_pp->status & 0x40) {
+                if (objactprg_tmp_pp->job_type == objactprg_tmp_org_pp->job_type) {
+                    objactprg_tmp_pp->now_time = objactprg_tmp_org_pp->now_time + 1;
+                    objctrl_pp->PRdata = 1;
+                }
+                if (objactprg_tmp_org_pp->job_type == OCTRL_NON && objctrl_pp->PRdata != 0) {
+                    objctrl_pp->PRdata = 2;
+                    objactprg_tmp_pp->job_type = OCTRL_NON;
+                    break;
+                }
+            }
+            
+            if (objctrl_pp->status & 0x4) {
+                objactprg_tmp_pp->start_time = objctrl_pp->dat[2];
+            }
+            if (objctrl_pp->status & 0x8) {
+                objactprg_tmp_pp->end_time = objctrl_pp->dat[3];
+            }
+
+            if (objctrl_pp->status & 0x2) {
+                int haba = objactprg_tmp_pp->end_time - objactprg_tmp_pp->start_time;
+                objactprg_tmp_pp->now_time %= haba;
+            } else {
+                int haba = objactprg_tmp_pp->end_time - objactprg_tmp_pp->start_time;
+                if (objactprg_tmp_pp->now_time > haba) {
+                    objactprg_tmp_pp->job_type = OCTRL_NON;
+                }
+            }
+
+            if (objctrl_pp->objctrl_type == OCTRL_CAM && objactprg_tmp_pp->job_type != OCTRL_NON) {
+                camOtherKill(objactprg_pp, scn_pp->objactprg_ctrl.num, objctrl_pp->dat[0]);
+            }
+
+            if (objctrl_pp->objctrl_type == OCTRL_ANI) {
+                if (objctrl_pp->dat[4] == 0) {
+                    objstr_pp->PRpress = NULL;
+                }
+
+                if (objctrl_pp->dat[4] == 2) {
+                    if (objstr_pp->PRpress != NULL) {
+                        if (*objstr_pp->PRpress == 0) {
+                            objstr_pp->PRpress = NULL;
+                        }
+                    }
+
+                    if (!(objstr_pp->PRflag & OBJSTR_PRESSON)) {
+                        objstr_pp->PRpress = NULL;
+                    }
+
+                    if (objstr_pp->PRpress == NULL) {
+                        int haba = (objctrl_pp->frame + objactprg_tmp_pp->end_time - objactprg_tmp_pp->start_time);
+                        if (tmp_time < haba) {
+                            objstr_pp->PRtime = haba;
+                            tmp_time = objstr_pp->PRtime;
+                        }
+
+                        objactprg_tmp_pp->job_type = OCTRL_NON;
+                    }
+                }
+            }
+            break;
+        case OCTRL_ANIPOS:
+            objactprg_tmp_pp = &objactprg_pp[objctrl_pp->dat[1]];
+            objactprg_tmp_pp->main_num = objctrl_pp->dat[1];
+            objactprg_tmp_pp->sub_num = objctrl_pp->dat[0];
+
+            if (objctrl_pp->status & 0x1) {
+                objactprg_tmp_pp->job_type = OCTRL_NON;
+                break;
+            }
+
+            objactprg_tmp_pp->now_time = tmp_time - objctrl_pp->frame;
+
+            if (objctrl_pp->status & 0x80) {
+                octst_time[objctrl_pp->dat[4]] = objactprg_tmp_pp->now_time;
+            }
+            if (objctrl_pp->status & 0x100) {
+                if (first_f) {
+                    octst_timeLoad[objctrl_pp->dat[4]] = octst_time[objctrl_pp->dat[4]];
+                }
+                objactprg_tmp_pp->now_time = octst_timeLoad[objctrl_pp->dat[4]];
+            }
+
+            objactprg_tmp_pp->job_type = objctrl_pp->objctrl_type;
+            objactprg_tmp_pp->status = objctrl_pp->status;
+
+            objactprg_tmp_pp->start_time = 0;
+            objactprg_tmp_pp->end_time = 0;
+
+            objactprg_tmp_pp->end_time = scn_pp->objdat_pp[objctrl_pp->dat[1]].maxfr;
+
+            if (objctrl_pp->status & 0x4) {
+                objactprg_tmp_pp->start_time = objctrl_pp->dat[2];
+            }
+            if (objctrl_pp->status & 0x8) {
+                objactprg_tmp_pp->end_time = objctrl_pp->dat[3];
+            }
+            if (objctrl_pp->status & 0x2) {
+                int haba = objactprg_tmp_pp->end_time - objactprg_tmp_pp->start_time;
+                objactprg_tmp_pp->now_time %= haba;
+            } else {
+                int haba = objactprg_tmp_pp->end_time - objactprg_tmp_pp->start_time;
+                if (objactprg_tmp_pp->now_time > haba) {
+                    objactprg_tmp_pp->job_type = OCTRL_NON;
+                }
+            }
+
+            if (objactprg_tmp_pp->job_type != OCTRL_NON) {
+                posAniOtherKill(objactprg_pp, scn_pp->objactprg_ctrl.num, objctrl_pp->dat[1], objctrl_pp->dat[0]);
+            }
+            break;
+        case OCTRL_CL2: {
+            int tmpX;
+            objactprg_tmp_pp = &objactprg_pp[objctrl_pp->dat[0]];
+            objactprg_tmp_pp->main_num = objctrl_pp->dat[0];
+            objactprg_tmp_pp->sub_num = objctrl_pp->dat[1];
+
+            if (objctrl_pp->status & 0x1) {
+                objactprg_tmp_pp->job_type = OCTRL_NON;
+                break;
+            }
+
+            objactprg_tmp_pp->now_time = tmp_time - objctrl_pp->frame;
+
+
+            objactprg_tmp_pp->job_type = objctrl_pp->objctrl_type;
+            objactprg_tmp_pp->status = objctrl_pp->status;
+            
+            objactprg_tmp_pp->start_time = 0;
+            tmpX = objctrl_pp->dat[2];
+            objactprg_tmp_pp->end_time = tmpX;
+            if (objactprg_tmp_pp->now_time > tmpX) {
+                objactprg_tmp_pp->job_type = OCTRL_NON;
+            }
+            break;
+        }
+        case OCTRL_NEXT:
+        case OCTRL_LOOP:
+            endflag = TRUE;
+            break;
+        case OCTRL_END:
+        case OCTRL_EXIT:
+            if (objctrl_pp->frame <= tmp_time) {
+                objstr_pp->PRflag = 0;
+                endflag = TRUE;
+                ret = TRUE;
+            }
+            break;
+        case OCTRL_BIBU:
+            if (objctrl_pp->frame <= tmp_time) {
+                scn_pp->objactprg_ctrl.objactprg[OBJACTPRG_NORMAL][objctrl_pp->dat[0]].focal_lng = objctrl_pp->subDat;
+            }
+            break;
+        case OCTRL_BTHROW:
+            if (first_f) {
+                BallThrowReq(
+                    scn_pp->objdat_pp[objctrl_pp->dat[0]].handle,
+                    objctrl_pp->status,
+                    scn_pp->objdat_pp[objctrl_pp->dat[4]].handle,
+                    scn_pp->objdat_pp[objctrl_pp->dat[1]].handle
+                );
+            }
+            break;
+        case OCTRL_MOZAIKU:
+            if (first_f) {
+                MozaikuPollSceneReq(objctrl_pp->dat[0]);
+            }
+            break;
+        case OCTRL_TCTRL:
+        case OCTRL_SUB:
+        case OCTRL_LOOP_P:
+        case OCTRL_BHIT:
+        case OCTRL_ANIPOSXX:
+            break;
+        }
+
+        if (endflag) {
+            break;
+        }
+
+        objctrl_pp++;
+    }
+
+    objstr_pp->PRtimeOld = tmp_time;
+    return ret;
+}
+
 
 void DrawSceneReset(SCENE_OBJDATA *scene_pp) {
     int i;
@@ -964,7 +1293,7 @@ void Cl2MixTrans(int now_T, int max_T, u_char *cl2_0_pp, u_char *cl2_1_pp) {
 
     dat_pp = usrMalloc(trSize0);
 
-    if (trType0 == 1) {
+    if (trType0 == TIM2_RGB16) {
         int      i;
         int      maxx, maxy;
         RGB15TR *rgb15tr0, *rgb15tr1;
@@ -975,9 +1304,9 @@ void Cl2MixTrans(int now_T, int max_T, u_char *cl2_0_pp, u_char *cl2_1_pp) {
 
         rgb15tr0 = trAdrs0;
         rgb15tr1 = trAdrs1;
-        tr_pp = dat_pp;
+        tr_pp = (RGB15TR*)dat_pp;
 
-        trType0 = TIM2_RGB16; /* TIM2_RGB16 */
+        trType0 = TIM2_RGB16;
 
         for (i = 0; i < (trSize0 / 2); i++) {
             tr_pp->r = ((maxx * rgb15tr0->r) + (maxy * rgb15tr1->r)) / 256;
@@ -1033,7 +1362,34 @@ void Cl2MixTrans(int now_T, int max_T, u_char *cl2_0_pp, u_char *cl2_1_pp) {
 
 INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawObjPrReq);
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawObjStrTapTimeNext);
+void DrawObjStrTapTimeNext(SCENE_OBJDATA *sod_pp) {
+    int        i, max_num;
+    OBJACTPRG *objactprg_pp;
+    u_int      time_tmp;
+
+    max_num      = sod_pp->objactprg_ctrl.num;
+    objactprg_pp = sod_pp->objactprg_ctrl.objactprg[OBJACTPRG_TAP];
+
+    for (i = 0; i < max_num; i++, objactprg_pp++) {
+        objactprg_pp->first_flag = 0;
+
+        if (objactprg_pp->job_type != OCTRL_NON) {
+            objactprg_pp->now_time++;
+
+            if (objactprg_pp->job_type == OCTRL_ANI || objactprg_pp->job_type == OCTRL_CAM) {
+                time_tmp = (objactprg_pp->end_time - objactprg_pp->start_time) + 1;
+
+                if (objactprg_pp->status & 0x2) {
+                    objactprg_pp->now_time %= time_tmp;
+                }
+
+                if (objactprg_pp->now_time >= time_tmp) {
+                    objactprg_pp->job_type = OCTRL_NON;
+                }
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawObjTapCtrl);
 
@@ -1041,7 +1397,37 @@ INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawSceneObjData);
 
 INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawDoubleDispIn);
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawVramClear);
+int DrawVramClear(void *para_pp, int frame, int first_f, int useDisp, int drDisp) {
+    VCLR_PARA    *vclr_para_pp = (VCLR_PARA*)para_pp; /* note: not in STABS. */
+    sceGifPacket  gifpk;
+
+    if (first_f == -2) {
+        return 0;
+    }
+    if (first_f == -1) {
+        return 0;
+    }
+
+    UsrPrSetScene();
+
+    CmnGifADPacketMake2(&gifpk, DrawGetFrameP(drDisp));
+
+    sceGifPkAddGsAD(&gifpk, SCE_GS_TEST_2, SCE_GS_SET_TEST(1, 0, 0, 1, 0, 0, 1, 1));
+    sceGifPkAddGsAD(&gifpk, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(vclr_para_pp->r, vclr_para_pp->g, vclr_para_pp->b, vclr_para_pp->a, 0));
+    sceGifPkAddGsAD(&gifpk, SCE_GS_SCISSOR_2, SCE_GS_SET_SCISSOR(0, 640, 0, 224));
+    sceGifPkAddGsAD(&gifpk, SCE_GS_PRMODECONT, SCE_GS_SET_PRMODECONT(1));
+    sceGifPkAddGsAD(&gifpk, SCE_GS_XYOFFSET_2, SCE_GS_SET_XYOFFSET(27648, 30976));
+
+    sceGifPkAddGsAD(&gifpk, SCE_GS_PRIM, SCE_GS_SET_PRIM(6, 0, 0, 0, 0, 0, 0, 1, 0));
+    sceGifPkAddGsAD(&gifpk, SCE_GS_XYZ2, SCE_GS_SET_XYZ2(GS_X_COORD(0), GS_Y_COORD(0), 1));
+    sceGifPkAddGsAD(&gifpk, SCE_GS_XYZ2, SCE_GS_SET_XYZ2(GS_X_COORD(640), GS_Y_COORD(224), 1));
+
+    CmnGifADPacketMakeTrans(&gifpk);
+
+    ChangeDrawArea2(DrawGetDrawEnvP(DNUM_DRAW));
+
+    return 0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawMoveDispIn);
 
@@ -1085,7 +1471,7 @@ int DrawTim2DIsp(void *para_pp, int frame, int first_f, int useDisp, int drDisp)
 
     SprInit();
     SprClear();
-    SprPackSet(tim2disp_pp->tim2_dat);
+    SprPackSet((SPR_DAT*)tim2disp_pp->tim2_dat);
     SprDispAcheck(1);
     SprDisp(tim2disp_pp->spr_prim);
     SprFlash();
@@ -1095,16 +1481,73 @@ int DrawTim2DIsp(void *para_pp, int frame, int first_f, int useDisp, int drDisp)
 
 INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawNoodlesDisp);
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawVramLocalCopy);
+extern const char D_00393300[]; /* "local vram copy\n" */
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawVramLocalCopy2);
+int DrawVramLocalCopy(void *para_pp, int frame, int first_f, int useDisp, int drDisp) {
+    sceGsMoveImage mi;
+    short          sbp, dbp;
+
+    if (first_f != 0) {
+        return 0;
+    }
+
+    printf(D_00393300);
+
+    sbp = DrawGetTbpPos(useDisp);
+    dbp = DrawGetTbpPos(drDisp);
+
+    GGsSetLocalMoveImage(&mi, dbp, 10, SCE_GS_PSMCT32, 0, 0, sbp, 10, SCE_GS_PSMCT32, 0, 0, 640, 224, 0);
+    FlushCache(0);
+
+    GGsExecLocalMoveImage(&mi);
+    sceGsSyncPath(0, 0);
+
+    return 0;
+}
+
+int DrawVramLocalCopy2(void *para_pp, int frame, int first_f, int useDisp, int drDisp) {
+    sceGsMoveImage mi;
+    short          sbp, dbp;
+
+    if (first_f == -1) {
+        return 0;
+    }
+    if (first_f == -2) {
+        return 0;
+    }
+
+    printf(D_00393300);
+
+    sbp = DrawGetTbpPos(useDisp);
+    dbp = DrawGetTbpPos(drDisp);
+
+    GGsSetLocalMoveImage(&mi, dbp, 10, SCE_GS_PSMCT32, 0, 0, sbp, 10, SCE_GS_PSMCT32, 0, 0, 640, 224, 0);
+    FlushCache(0);
+
+    GGsExecLocalMoveImage(&mi);
+    sceGsSyncPath(0, 0);
+
+    return 0;
+}
 
 static void drawUseDrDispCheckInit(void) {
     useDispFlag = 0;
     drDispFlag = 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", drawDispCheckSub);
+static int drawDispCheckSub(u_int drD, u_int *dat_pp) {
+    int ret = drD & 0xff;
+
+    if ((drD >> 0x8) & 0xff) {
+        int v0 = *dat_pp & 0xff;
+        if (v0 & drD) {
+            ret = (drD >> 0x8) & 0xff;
+        }
+    }
+
+    *dat_pp |= ret;
+    return ret;
+}
 
 /* static */ int drawUseDispCheck(int useD) {
     return drawDispCheckSub(useD, &useDispFlag);
@@ -1209,7 +1652,25 @@ MEN_CTRL_ENUM GetMendererEnum(void) {
     return men_ctrl_enum;
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", MendererCtrlScene);
+int MendererCtrlScene(void *para_pp, int frame, int first_f, int useDisp, int drDisp) {
+    int scene_req_flag = *(int*)para_pp; /* note: not in STABS. */
+
+    if (!scene_req_flag) {
+        UsrPrSetScene();
+    }
+
+    ChangeDrawArea(DrawGetDrawEnvP(drDisp));
+
+    if (mend_title_req == 1) {
+        MendererCtrlTitleDisp(drawCurrentTime, FALSE);
+    } else if (mend_title_req == 2) {
+        MendererCtrlTitleDisp(drawCurrentTime, TRUE);
+    } else {
+        MendererCtrl();
+    }
+
+    return 0;
+}
 
 /*
  * -- Stage condition flag definition --
@@ -1236,20 +1697,20 @@ int sceneConditionCheck(u_int cond_flag) {
     int andor;
     int i;
 
-    andor = cond_flag & 0x80000000;
+    andor = cond_flag & SBE_ANDBIT;
     cond_flag &= 0x7fffffff;
-    
+
     if (cond_flag == 0) {
         return 1;
     }
-    
-    for (i = 0; i < 21; i++) {
+
+    for (i = 0; i < SBI_MAX; i++) {
         if (((int)cond_flag >> i) & 1) {
             switch (i) {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
+            case SBI_R1:
+            case SBI_R2:
+            case SBI_R3:
+            case SBI_R4:
                 if (i != global_data.roundL) {
                     if (andor != 0) {
                         return 0;
@@ -1260,14 +1721,14 @@ int sceneConditionCheck(u_int cond_flag) {
                     }
                 }
                 break;
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-            case 8:
-            case 9:
-            case 10:
-            case 11:
+            case SBI_TBL0:
+            case SBI_TBL1:
+            case SBI_TBL2:
+            case SBI_TBL3:
+            case SBI_TBL4:
+            case SBI_TBL5:
+            case SBI_TBL6:
+            case SBI_TBL7:
                 if (GetCurrentTblNumber() != (i - 4)) {
                     if (andor != 0) {
                         return 0;
@@ -1278,15 +1739,15 @@ int sceneConditionCheck(u_int cond_flag) {
                     }
                 }
                 break;
-            case 12:
-            case 13:
-            case 14:
-            case 15:
-            case 16:
-            case 17:
-            case 18:
-            case 19:
-            case 20:
+            case SBI_CLR0:
+            case SBI_CLR1:
+            case SBI_CLR2:
+            case SBI_CLR3:
+            case SBI_CLR4:
+            case SBI_CLR5:
+            case SBI_CLR6:
+            case SBI_CLR7:
+            case SBI_CLR8:
                 if (clearStageCheck() != (i - 12)) {
                     if (andor != 0) {
                         return 0;
