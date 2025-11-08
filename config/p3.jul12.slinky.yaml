@@ -324,7 +324,7 @@ segments:
       - { path: asm/data/prlib/render.data.s.o }
       - { path: asm/data/prlib/renderee.data.s.o }
       - { path: src/prlib/transition.cpp.o }
-      - { path: asm/data/prlib/microprogram.data.s.o }
+      - { path: src/prlib/microprogram.cpp.o }
       - { path: asm/data/prlib/spram.data.s.o }
       - { path: src/prlib/mfifo.cpp.o }
       - { path: src/prlib/spadata.cpp.o }
@@ -895,7 +895,7 @@ segments:
       - { path: asm/data/prlib/render.sbss.s.o }
       - { path: src/prlib/renderee.cpp.o }
       - { path: src/prlib/transition.cpp.o }
-      - { path: asm/data/prlib/microprogram.sbss.s.o }
+      - { path: src/prlib/microprogram.cpp.o }
       - { path: src/prlib/spram.cpp.o }
       - { path: src/prlib/mfifo.cpp.o }
       - { path: asm/data/prlib/spadata.sbss.s.o }
@@ -1007,7 +1007,7 @@ segments:
       - { path: src/prlib/render.cpp.o }
       - { path: asm/data/prlib/renderee.bss.s.o }
       - { path: src/prlib/transition.cpp.o }
-      - { path: asm/data/prlib/microprogram.bss.s.o }
+      - { path: src/prlib/microprogram.cpp.o }
       - { path: asm/data/prlib/spram.bss.s.o }
       - { path: src/prlib/mfifo.cpp.o }
       - { path: asm/data/prlib/spadata.bss.s.o }

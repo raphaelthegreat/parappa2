@@ -6,12 +6,13 @@
 #include <eetypes.h>
 
 enum PrMICRO_PROGRAM_MODULE {
-    eVumpNormal,
-    eVumpBothface,
-    eVumpContour,
-    eVumpRefmap,
-    eVumpScreen,
-    eVumpAntiline,
+    PR_MICRO_PROGRAM_NORMAL,
+    PR_MICRO_PROGRAM_BOTHFACE,
+    PR_MICRO_PROGRAM_CONTOUR,
+    PR_MICRO_PROGRAM_REFMAP,
+    PR_MICRO_PROGRAM_SCREEN,
+    PR_MICRO_PROGRAM_ANTILINE,
+    PR_MICRO_PROGRAM_NUM,
 };
 
 void PrLoadMicroPrograms();

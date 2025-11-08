@@ -1,15 +1,15 @@
 {
   "measures": {
-    "fuzzy_match_percent": 45.277607,
+    "fuzzy_match_percent": 45.305653,
     "total_code": "342284",
-    "matched_code": "152888",
-    "matched_code_percent": 44.667004,
-    "total_data": "26064712",
-    "matched_data": "26015080",
+    "matched_code": "152984",
+    "matched_code_percent": 44.69505,
+    "total_data": "26064848",
+    "matched_data": "26015216",
     "matched_data_percent": 99.80958,
     "total_functions": 1429,
-    "matched_functions": 941,
-    "matched_functions_percent": 65.85024,
+    "matched_functions": 945,
+    "matched_functions_percent": 66.13016,
     "total_units": 70
   },
   "units": [
@@ -10694,32 +10694,41 @@
     {
       "name": "prlib/microprogram",
       "measures": {
-        "fuzzy_match_percent": 74.19355,
+        "fuzzy_match_percent": 100.0,
         "total_code": "372",
-        "matched_code": "276",
-        "matched_code_percent": 74.19355,
+        "matched_code": "372",
+        "matched_code_percent": 100.0,
+        "total_data": "136",
+        "matched_data": "136",
         "matched_data_percent": 100.0,
         "total_functions": 9,
-        "matched_functions": 5,
-        "matched_functions_percent": 55.555557,
-        "complete_data_percent": 100.0,
+        "matched_functions": 9,
+        "matched_functions_percent": 100.0,
         "total_units": 1
       },
       "sections": [
         {
           "name": ".bss",
+          "size": "32",
           "fuzzy_match_percent": 100.0,
           "metadata": {}
         },
         {
           "name": ".data",
+          "size": "96",
+          "fuzzy_match_percent": 100.0,
+          "metadata": {}
+        },
+        {
+          "name": ".sbss",
+          "size": "8",
           "fuzzy_match_percent": 100.0,
           "metadata": {}
         },
         {
           "name": ".text",
           "size": "376",
-          "fuzzy_match_percent": 74.19355,
+          "fuzzy_match_percent": 100.0,
           "metadata": {}
         }
       ],
@@ -10754,6 +10763,7 @@
         {
           "name": "PrGetInputVertexParameterNum__F22PrMICRO_PROGRAM_MODULE",
           "size": "24",
+          "fuzzy_match_percent": 100.0,
           "metadata": {
             "demangled_name": "PrGetInputVertexParameterNum(PrMICRO_PROGRAM_MODULE)"
           },
@@ -10762,6 +10772,7 @@
         {
           "name": "PrGetInputVertexParameterSet__F22PrMICRO_PROGRAM_MODULE",
           "size": "24",
+          "fuzzy_match_percent": 100.0,
           "metadata": {
             "demangled_name": "PrGetInputVertexParameterSet(PrMICRO_PROGRAM_MODULE)"
           },
@@ -10770,6 +10781,7 @@
         {
           "name": "PrGetOutputVertexParameterNum__F22PrMICRO_PROGRAM_MODULE",
           "size": "24",
+          "fuzzy_match_percent": 100.0,
           "metadata": {
             "demangled_name": "PrGetOutputVertexParameterNum(PrMICRO_PROGRAM_MODULE)"
           },
@@ -10778,6 +10790,7 @@
         {
           "name": "PrGetOutputVertexParameterSet__F22PrMICRO_PROGRAM_MODULE",
           "size": "24",
+          "fuzzy_match_percent": 100.0,
           "metadata": {
             "demangled_name": "PrGetOutputVertexParameterSet(PrMICRO_PROGRAM_MODULE)"
           },
@@ -13173,16 +13186,16 @@
     {
       "id": "prlib",
       "measures": {
-        "fuzzy_match_percent": 18.736935,
+        "fuzzy_match_percent": 18.853615,
         "total_code": "82276",
-        "matched_code": "15416",
-        "matched_code_percent": 18.736935,
-        "total_data": "3548",
-        "matched_data": "2324",
-        "matched_data_percent": 65.50169,
+        "matched_code": "15512",
+        "matched_code_percent": 18.853615,
+        "total_data": "3684",
+        "matched_data": "2460",
+        "matched_data_percent": 66.775246,
         "total_functions": 360,
-        "matched_functions": 119,
-        "matched_functions_percent": 33.055557,
+        "matched_functions": 123,
+        "matched_functions_percent": 34.166668,
         "total_units": 33
       }
     }

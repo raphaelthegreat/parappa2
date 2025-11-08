@@ -220,7 +220,7 @@ segments:
         - [0x28C480, data, prlib/renderstuff]
         - [0x28C500, data, prlib/render]
         - [0x28C580, data, prlib/renderee]
-        - [0x28C6B0, data, prlib/microprogram]
+        - [0x28C6B0, .data, prlib/microprogram]
         - [0x28C710, data, prlib/spram]
         - [0x28C720, data, prlib/scene]
         - [0x28C730, data, prlib/menderer]
@@ -411,7 +411,7 @@ segments:
         - { type: sbss,  vram: 0x00399b8c, name: prlib/model          }
         - { type: sbss,  vram: 0x00399b90, name: prlib/prlib          }
         - { type: sbss,  vram: 0x00399b94, name: prlib/render         }
-        - { type: sbss,  vram: 0x00399b98, name: prlib/microprogram   }
+        - { type: .sbss, vram: 0x00399b98, name: prlib/microprogram   }
         - { type: sbss,  vram: 0x00399ba0, name: prlib/spadata        }
         - { type: sbss,  vram: 0x00399ba8, name: prlib/menderer       }
         - { type: sbss,  vram: 0x00399bb4, name: prlib/mendererawful  }
@@ -458,7 +458,7 @@ segments:
         - { type: .bss,  vram: 0x01c82a70, name: prlib/gifreg         }
         - { type: bss,   vram: 0x01c83190, name: prlib/prlib          }
         - { type: bss,   vram: 0x01c831b0, name: prlib/renderee       }
-        - { type: bss,   vram: 0x01c831c0, name: prlib/microprogram   }
+        - { type: .bss,  vram: 0x01c831c0, name: prlib/microprogram   }
         - { type: bss,   vram: 0x01c831e0, name: prlib/spram          }
         - { type: bss,   vram: 0x01c83260, name: prlib/spadata        }
         - { type: bss,   vram: 0x01c83390, name: prlib/billboard      }

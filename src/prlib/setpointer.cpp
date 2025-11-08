@@ -58,7 +58,7 @@ void SpmNode::ChangePointer(SpmFileHeader* arg0, SpmNode* arg1) {
         this->unk1A4 = arg0->CalculatePointer<PrVuNodeHeaderDmaPacket>(this->unk1A4);
         PrVuNodeHeaderDmaPacket* s0 = this->unk1A4;
         if (s0 != NULL) {
-            s0->unk194 = SCE_VIF1_SET_MSCAL(PrGetMicroProgramAddress(eVumpContour), 0);
+            s0->unk194 = SCE_VIF1_SET_MSCAL(PrGetMicroProgramAddress(PR_MICRO_PROGRAM_CONTOUR), 0);
         }
     }
 
