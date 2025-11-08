@@ -91,6 +91,12 @@ def parse_hex(hex_data):
 def disassemble_null(data, name):
     return f"Unimplemented register {name}"
 
+def disassemble_xyoffset(data, name):
+    OFX = (data >> 0 ) & 0xffff
+    OFY = (data >> 32) & 0xffff
+
+    return format_macro(name, OFX, OFY)
+
 def disassemble_prim(data, name):
     PRIM = (data >> 0 ) & 0x7
     IIP  = (data >> 3 ) & 0x1
@@ -177,6 +183,14 @@ def disassemble_texa(data, name):
 
     return format_macro(name, TA0, AEM, TA1)
 
+def disassemble_scissor(data, name):
+    SCAX0 = (data >> 0 ) & 0x7ff
+    SCAX1 = (data >> 16) & 0x7ff
+    SCAY0 = (data >> 32) & 0x7ff
+    SCAY1 = (data >> 48) & 0x7ff
+
+    return format_macro(name, SCAX0, SCAX1, SCAY0, SCAY1)
+
 def disassemble_alpha(data, name):
     A   = (data >> 0 ) & 0x3
     B   = (data >> 2 ) & 0x3
@@ -221,8 +235,8 @@ DISASSEMBLY_FUNCTIONS = {
     'FOG':        lambda data: disassemble_null(data, 'FOG'),
     'XYZF3':      lambda data: disassemble_null(data, 'XYZF3'),
     'XYZ3':       lambda data: disassemble_xyz(data, 'XYZ3'),
-    'XYOFFSET_1': lambda data: disassemble_null(data, 'XYOFFSET_1'),
-    'XYOFFSET_2': lambda data: disassemble_null(data, 'XYOFFSET_2'),
+    'XYOFFSET_1': lambda data: disassemble_xyoffset(data, 'XYOFFSET_1'),
+    'XYOFFSET_2': lambda data: disassemble_xyoffset(data, 'XYOFFSET_2'),
     'PRMODECONT': lambda data: disassemble_null(data, 'PRMODECONT'),
 
     # Drawing attributes
@@ -246,8 +260,8 @@ DISASSEMBLY_FUNCTIONS = {
     'TEXFLUSH':   lambda data: disassemble_null(data, 'TEXFLUSH'),
 
     # Pixel operations
-    'SCISSOR_1':  lambda data: disassemble_null(data, 'SCISSOR_1'),
-    'SCISSOR_2':  lambda data: disassemble_null(data, 'SCISSOR_2'),
+    'SCISSOR_1':  lambda data: disassemble_scissor(data, 'SCISSOR_1'),
+    'SCISSOR_2':  lambda data: disassemble_scissor(data, 'SCISSOR_2'),
     'ALPHA_1':    lambda data: disassemble_alpha(data, 'ALPHA_1'),
     'ALPHA_2':    lambda data: disassemble_alpha(data, 'ALPHA_2'),
     'DIMX':       lambda data: disassemble_null(data, 'DIMX'),
@@ -279,13 +293,23 @@ DISASSEMBLY_FUNCTIONS = {
     'NOP':        lambda data: disassemble_null(data, 'NOP'),
 
     # Pseudonyms
-    'XYOFFSET':   lambda data: disassemble_null(data, 'XYOFFSET'),
+    'XYOFFSET':   lambda data: disassemble_xyoffset(data, 'XYOFFSET'),
 
     'TEX0':       lambda data: disassemble_tex0(data, 'TEX0'),
     'TEX1':       lambda data: disassemble_tex1(data, 'TEX1'),
     'TEX2':       lambda data: disassemble_null(data, 'TEX2'),
 
+    'MIPTBP1':    lambda data: disassemble_null(data, 'MIPTBP1'),
+    'MIPTBP2':    lambda data: disassemble_null(data, 'MIPTBP2'),
+
+    'CLAMP':      lambda data: disassemble_clamp(data, 'CLAMP'),
+    'SCISSOR':    lambda data: disassemble_scissor(data, 'SCISSOR'),
+    'ALPHA':      lambda data: disassemble_alpha(data, 'ALPHA'),
     'TEST':       lambda data: disassemble_test(data, 'TEST'),
+    'FBA':        lambda data: disassemble_fba(data, 'FBA'),
+
+    'FRAME':      lambda data: disassemble_null(data, 'FRAME'),
+    'ZBUF':       lambda data: disassemble_zbuf(data, 'ZBUF'),
 }
 
 def disassemble_command(register_name, hex_data):
