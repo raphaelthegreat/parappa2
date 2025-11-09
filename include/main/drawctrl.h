@@ -164,6 +164,12 @@ typedef struct { // 0x24
     /* 0x20 */ OBJCTRL *loop_pp;
 } OBJSTR;
 
+typedef enum {
+    OTE_LOOP_P = 65520,
+    OTE_NEXT = 65521,
+    OTE_LOOP = 65522
+} OBJTAP_LOOP_ENUM;
+
 typedef struct { // 0x4
     /* 0x0 */ u_short obj_num;
     /* 0x2 */ u_short channel;

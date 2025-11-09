@@ -754,7 +754,85 @@ static void DrawObjStrTapReq(SCENE_OBJDATA *scn_pp, int num, u_int time, u_char 
     scn_pp->tapstr_pp[num].PRtimeOld = -1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/drawctrl", DrawObjTapStrTapReq);
+static void DrawObjTapStrTapReq(SCENE_OBJDATA *scn_pp, int req_num, u_int time, u_char *prs_adr) {
+    int     max;
+    OBJTAP *objtap_pp, *objtap_tmp_pp, *objtap_end_pp_ck;
+    int     loop_time_cnt, loop_ari_flag;
+    int     i;
+
+    loop_time_cnt = 0;
+    loop_ari_flag = FALSE;
+
+    max = scn_pp->objtapstr_pp[req_num].objtap_size;
+    if (max == 0) {
+        return;
+    }
+
+    time = ++scn_pp->objtapstr_pp[req_num].ovl_cnt_num;
+
+    objtap_pp = scn_pp->objtapstr_pp[req_num].objtap_pp;
+    objtap_end_pp_ck = objtap_pp + max;
+    objtap_tmp_pp = objtap_pp;
+
+    for (i = 0; i < max; i++) {
+        if (objtap_pp[i].channel == OTE_LOOP_P || objtap_pp[i].channel == OTE_LOOP || objtap_pp[i].channel == OTE_NEXT) {
+            loop_ari_flag = TRUE;
+        }
+    }
+
+    if (loop_ari_flag) {
+        while (1) {
+            if (time == loop_time_cnt) {
+                objtap_pp = objtap_tmp_pp;
+                break;
+            }
+            if (objtap_tmp_pp >= objtap_end_pp_ck) {
+                break;
+            }
+
+            switch (objtap_tmp_pp->channel) {
+            case OTE_LOOP_P:
+                objtap_pp = objtap_tmp_pp;
+                break;
+            case OTE_NEXT:
+                loop_time_cnt++;
+                break;
+            case OTE_LOOP:
+                loop_time_cnt++;
+                objtap_tmp_pp = objtap_pp;
+                break;
+            }
+
+            objtap_tmp_pp++;
+        }
+    }
+
+    for (; objtap_pp < objtap_end_pp_ck; objtap_pp++) {
+        if (objtap_pp->channel == OTE_LOOP) {
+            break;
+        }
+        if (objtap_pp->channel == OTE_NEXT) {
+            break;
+        }
+        if (objtap_pp->channel == OTE_LOOP_P) {
+            break;
+        }
+
+        if (scn_pp->dr_tap_req[objtap_pp->channel].req_no >= 0) {
+            if (scn_pp->dr_tap_req[objtap_pp->channel].req_no != objtap_pp->obj_num) {
+                DrawObjStrTapQuit(scn_pp, scn_pp->dr_tap_req[objtap_pp->channel].tap_id, 0);
+                scn_pp->dr_tap_req[objtap_pp->channel].req_no = -1;
+            }
+        }
+
+        DrawObjStrTapReq(scn_pp, objtap_pp->obj_num, 0, prs_adr);
+
+        scn_pp->dr_tap_req[objtap_pp->channel].tap_id = objtap_pp->obj_num;
+        scn_pp->dr_tap_req[objtap_pp->channel].req_no = objtap_pp->obj_num;
+        scn_pp->dr_tap_req[objtap_pp->channel].player_index = objtap_pp->channel;
+        scn_pp->dr_tap_req[objtap_pp->channel].pad_prs_pp = prs_adr;
+    }
+}
 
 void DrawObjStrTapQuit(SCENE_OBJDATA *scn_pp, int num, u_int time) {
     if (num < 0 || scn_pp->tapstr_size <= num) {
@@ -774,7 +852,7 @@ void DrawObjTapStrTapQuit(SCENE_OBJDATA *scn_pp, int req_num) {
     OBJTAP *objtap_pp = scn_pp->objtapstr_pp[req_num].objtap_pp;
 
     for (i = 0; i < max; i++, objtap_pp++) {
-        if ((u_short)(objtap_pp->channel + 16) > 2) {
+        if (objtap_pp->channel != OTE_LOOP_P && objtap_pp->channel != OTE_NEXT && objtap_pp->channel != OTE_LOOP) {
             DrawObjStrTapQuit(scn_pp, scn_pp->dr_tap_req[objtap_pp->channel].req_no, 0);
             scn_pp->dr_tap_req[objtap_pp->channel].req_no = -1;
         }
@@ -1472,7 +1550,7 @@ int DrawTim2DIsp(void *para_pp, int frame, int first_f, int useDisp, int drDisp)
     SprInit();
     SprClear();
     SprPackSet((SPR_DAT*)tim2disp_pp->tim2_dat);
-    SprDispAcheck(1);
+    SprDispAcheck(TRUE);
     SprDisp(tim2disp_pp->spr_prim);
     SprFlash();
 
