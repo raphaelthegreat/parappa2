@@ -23,7 +23,7 @@ INCLUDE_ASM("asm/nonmatchings/prlib/render", InitializeVu1__13PrSceneObject);
 #else /* Uses tail call? */
 void PrSceneObject::InitializeVu1() {
     PrVu1InitPacket *packet = (PrVu1InitPacket*)PR_UNCACHED(&initVu1DmaPacket);
-    packet->zbuf     = prRenderStuff.unk20;
+    packet->zbuf     = prRenderStuff.mZbuf;
     packet->frame    = this->unk50;
     packet->xyoffset = this->unk58;
     packet->scissor  = this->unk70->scissor1;

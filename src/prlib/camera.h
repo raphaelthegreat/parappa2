@@ -1,32 +1,14 @@
 #ifndef PRLIB_CAMERA_H
 #define PRLIB_CAMERA_H
 
-#include <eetypes.h>
-
 #include "prpriv.h"
 #include "spadata.h"
 
+#include <eetypes.h>
+
 #include <nalib/navector.h>
 
-struct SpcFileHeader {
-    u_int magic;
-    u_short version;
-    u_short flags;
-
-    char unk8[0x6c];
-
-    int* unk74;
-    char unk78[0x10];
-    SpaTrack<NaVECTOR<float, 4> >* unk88;
-    SpaTrack<NaVECTOR<float, 4> >* unk8C;
-    SpaTrack<float>* unk90;
-    SpaTrack<float>* unk94;
-
-    u_int depth_level;
-
-    SpaTrack<float>* focal_len_track;
-    SpaTrack<float>* defocus_len_track;
-
+class SpcFileHeader {
 public:
     void Initialize();
     PrPERSPECTIVE_CAMERA* GetCamera(float time) const;
@@ -40,6 +22,25 @@ public:
         }
         return reinterpret_cast<T*>(reinterpret_cast<int>(this) + reinterpret_cast<int>(offset));
     }
+
+public:
+    u_int mMagic;
+    u_short mVersion;
+    u_short mFlags;
+
+    char unk8[0x6c];
+
+    int* unk74;
+    char unk78[0x10];
+    SpaTrack<NaVECTOR<float, 4> >* unk88;
+    SpaTrack<NaVECTOR<float, 4> >* unk8C;
+    SpaTrack<float>* unk90;
+    SpaTrack<float>* unk94;
+
+    u_int mDepthLevel;
+
+    SpaTrack<float>* mFocalLenTrack;
+    SpaTrack<float>* mDefocusLenTrack;
 };
 
 #endif /* PRLIB_CAMERA_H */

@@ -6,7 +6,7 @@
 class SpmNode;
 class SpaNodeAnimation;
 
-struct SpaFileHeader {
+class SpaFileHeader {
 public:
     PR_PADDING(unk0, 0x14);
     float unk14;
@@ -14,7 +14,11 @@ public:
     SpaNodeAnimation** unk50;
 
 public:
-    bool IsNodeVisible(SpmNode* arg0, float arg1) const;    
+    void Initialize();
+
+    bool IsNodeVisible(SpmNode* arg0, float arg1) const;
+
+    void ChangePointer();
 };
 
 #endif /* PRLIB_ANIMATION_H */

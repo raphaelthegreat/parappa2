@@ -98,13 +98,13 @@ void PrPreprocessSceneModel(PrSceneObject* scene) {
 
 PR_EXTERN
 PrModelObject* PrInitializeModel(SpmFileHeader* spm, PrSceneObject* scene) {
-    if (spm->magic != SPM_MAGIC) {
+    if (spm->mMagic != SPM_MAGIC) {
     #if 0 /* (poly): Only present on McDonald's Demo build */
         printf("PRLIB(FATAL): not a SPM file (illegal magic number)\n");
     #endif
         exit(0);
     }
-    if (spm->version != SPM_VERSION) {
+    if (spm->mVersion != SPM_VERSION) {
     #if 0 /* (poly): Only present on McDonald's Demo build */
         printf("PRLIB(FATAL): not supported SPM file version %d:%d\n", spm->version, SPM_VERSION);
     #endif
@@ -313,15 +313,15 @@ PrRENDERING_STATISTICS* PrGetRenderingStatistics() {
 
 PR_EXTERN
 void PrSetModelVisibillity(PrModelObject* model, u_int nodeIdx, bool visible) {
-    if (nodeIdx >= model->mSpmImage->node_num) {
+    if (nodeIdx >= model->mSpmImage->mNodeNum) {
         return;
     }
 
-    SpmNode* node = model->mSpmImage->nodes[nodeIdx];
+    SpmNode* node = model->mSpmImage->mNodes[nodeIdx];
     if (visible) {
-        node->flags &= ~0x20000;
+        node->mFlags &= ~0x20000;
     } else {
-        node->flags |= 0x20000;
+        node->mFlags |= 0x20000;
     }
 }
 

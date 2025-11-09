@@ -7,7 +7,8 @@
 
 #include <libdma.h>
 
-struct PrSPRAM_DATA {
+class PrSPRAM_DATA {
+public:
     PR_PADDING(unk0, 0xe0);
     NaMATRIX<float, 4, 4> unkE0;
     PR_PADDING(unk120, 0x180);

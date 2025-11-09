@@ -1,15 +1,15 @@
 {
   "measures": {
-    "fuzzy_match_percent": 45.305653,
+    "fuzzy_match_percent": 45.50198,
     "total_code": "342284",
-    "matched_code": "152984",
-    "matched_code_percent": 44.69505,
+    "matched_code": "153656",
+    "matched_code_percent": 44.891376,
     "total_data": "26064848",
     "matched_data": "26015216",
     "matched_data_percent": 99.80958,
     "total_functions": 1429,
-    "matched_functions": 945,
-    "matched_functions_percent": 66.13016,
+    "matched_functions": 948,
+    "matched_functions_percent": 66.3401,
     "total_units": 70
   },
   "units": [
@@ -3100,14 +3100,14 @@
     {
       "name": "main/drawctrl",
       "measures": {
-        "fuzzy_match_percent": 62.90847,
+        "fuzzy_match_percent": 65.1541,
         "total_code": "25828",
-        "matched_code": "16248",
-        "matched_code_percent": 62.90847,
+        "matched_code": "16828",
+        "matched_code_percent": 65.15409,
         "total_data": "752",
         "total_functions": 98,
-        "matched_functions": 85,
-        "matched_functions_percent": 86.734695,
+        "matched_functions": 86,
+        "matched_functions_percent": 87.755104,
         "total_units": 1
       },
       "sections": [
@@ -3129,7 +3129,7 @@
         {
           "name": ".text",
           "size": "25992",
-          "fuzzy_match_percent": 62.90847,
+          "fuzzy_match_percent": 65.1541,
           "metadata": {}
         }
       ],
@@ -3368,6 +3368,7 @@
         {
           "name": "DrawObjTapStrTapReq",
           "size": "580",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "4920"
         },
@@ -10628,9 +10629,14 @@
     {
       "name": "prlib/transition",
       "measures": {
+        "fuzzy_match_percent": 9.745763,
         "total_code": "944",
+        "matched_code": "92",
+        "matched_code_percent": 9.745763,
         "matched_data_percent": 100.0,
         "total_functions": 4,
+        "matched_functions": 2,
+        "matched_functions_percent": 50.0,
         "complete_data_percent": 100.0,
         "total_units": 1
       },
@@ -10648,6 +10654,7 @@
         {
           "name": ".text",
           "size": "952",
+          "fuzzy_match_percent": 9.745763,
           "metadata": {}
         }
       ],
@@ -10655,6 +10662,7 @@
         {
           "name": "SavePosture__13PrModelObject",
           "size": "68",
+          "fuzzy_match_percent": 100.0,
           "metadata": {
             "demangled_name": "PrModelObject::SavePosture"
           },
@@ -10663,6 +10671,7 @@
         {
           "name": "ResetPosture__13PrModelObject",
           "size": "24",
+          "fuzzy_match_percent": 100.0,
           "metadata": {
             "demangled_name": "PrModelObject::ResetPosture"
           },
@@ -13138,16 +13147,16 @@
     {
       "id": "main",
       "measures": {
-        "fuzzy_match_percent": 60.60418,
+        "fuzzy_match_percent": 61.071785,
         "total_code": "124036",
-        "matched_code": "74328",
-        "matched_code_percent": 59.924538,
+        "matched_code": "74908",
+        "matched_code_percent": 60.392143,
         "total_data": "48216",
         "matched_data": "38372",
         "matched_data_percent": 79.58354,
         "total_functions": 570,
-        "matched_functions": 454,
-        "matched_functions_percent": 79.649124,
+        "matched_functions": 455,
+        "matched_functions_percent": 79.82456,
         "total_units": 17
       }
     },
@@ -13186,16 +13195,16 @@
     {
       "id": "prlib",
       "measures": {
-        "fuzzy_match_percent": 18.853615,
+        "fuzzy_match_percent": 18.965433,
         "total_code": "82276",
-        "matched_code": "15512",
-        "matched_code_percent": 18.853615,
+        "matched_code": "15604",
+        "matched_code_percent": 18.965433,
         "total_data": "3684",
         "matched_data": "2460",
         "matched_data_percent": 66.775246,
         "total_functions": 360,
-        "matched_functions": 123,
-        "matched_functions_percent": 34.166668,
+        "matched_functions": 125,
+        "matched_functions_percent": 34.72222,
         "total_units": 33
       }
     }

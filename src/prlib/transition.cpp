@@ -1,8 +1,19 @@
-#include "common.h"
+#include "model.h"
 
-INCLUDE_ASM("asm/nonmatchings/prlib/transition", SavePosture__13PrModelObject);
+void PrModelObject::SavePosture() {
+    if (!(mSpmImage->mFlags & 0x40)) {
+        return;
+    }
 
-INCLUDE_ASM("asm/nonmatchings/prlib/transition", ResetPosture__13PrModelObject);
+    if (mRenderedOnce) {
+        mActiveTransition = 1 - mActiveTransition;
+        mFlags |= 4;
+    }
+}
+
+void PrModelObject::ResetPosture() {
+    mFlags &= ~4;
+}
 
 INCLUDE_ASM("asm/nonmatchings/prlib/transition", BlendTransitionMatrix__7SpmNodeP13PrModelObjectRt8NaMATRIX3Zfi4i4);
 

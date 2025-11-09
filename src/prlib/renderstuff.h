@@ -3,12 +3,17 @@
 
 #include "common.h"
 
-#include "dmaqueue.h"
-#include "scene.h"
 #include "prpriv.h"
+#include "dmaqueue.h"
 
 #include <eetypes.h>
 #include <eestruct.h>
+#include <libdma.h>
+
+class PrSceneObject;
+
+struct PrVuNodeHeaderDmaPacket;
+struct PrVuDataChunkPacketHeader;
 
 struct PrTransmitEntry {
     float unk0;
@@ -37,6 +42,16 @@ public:
     void SortTransmitDmaArray();
 
     void MergeRender();
+
+    void InitializeEECore(PrSceneObject* scene);
+
+    void RenderVertexEECoreBothface();
+    void RenderVertexEECoreNormal();
+    void RenderVertexEECoreRefmap();
+    void RenderVertexEECoreContour();
+
+    void RenderNodeEECore(PrVuNodeHeaderDmaPacket* arg0);
+    void RenderChunkEECore(PrVuDataChunkPacketHeader* arg0, float arg1);
 
 public:
     void AppendDmaTag(const sceDmaTag* tag) {

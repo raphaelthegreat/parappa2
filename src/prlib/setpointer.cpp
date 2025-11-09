@@ -8,31 +8,31 @@
 #include "model.h"
 
 void SpmFileHeader::ChangePointer() {
-    if (this->flags & 0x1) {
+    if (this->mFlags & 0x1) {
         return;
     }
 
-    this->unk64 = this->CalculatePointer<int>(this->unk64);
-    this->nodes = this->CalculatePointer<SpmNode*>(this->nodes);
+    this->unk64 = CalculatePointer<int>(this->unk64);
+    mNodes = CalculatePointer<SpmNode*>(this->mNodes);
 
-    for (int i = 0; i < this->node_num; i++) {
-        this->nodes[i] = this->CalculatePointer<SpmNode>(this->nodes[i]);
+    for (int i = 0; i < mNodeNum; i++) {
+        mNodes[i] = CalculatePointer<SpmNode>(this->mNodes[i]);
     }
 
     /* Change node pointers starting from the first. */
-    (*this->nodes)->ChangePointer(this, NULL);
-    this->flags |= 0x1;
+    (*mNodes)->ChangePointer(this, NULL);
+    this->mFlags |= 0x1;
 }
 
-void SpmNode::ChangePointer(SpmFileHeader* arg0, SpmNode* arg1) {
-    this->unk158 = arg0;
+void SpmNode::ChangePointer(SpmFileHeader* model, SpmNode* arg1) {
+    this->unk158 = model;
     this->unk164 = arg1;
 
-    this->unk15C = arg0->CalculatePointer<SpmNode>(this->unk15C);
-    this->unk160 = arg0->CalculatePointer<SpmNode>(this->unk160);
+    this->unk15C = model->CalculatePointer<SpmNode>(this->unk15C);
+    this->unk160 = model->CalculatePointer<SpmNode>(this->unk160);
 
-    this->unk16C[0] = arg0->CalculatePointer<PrVuNodeHeaderDmaPacket>(this->unk16C[0]);
-    this->unk16C[1] = arg0->CalculatePointer<PrVuNodeHeaderDmaPacket>(this->unk16C[1]);
+    this->unk16C[0] = model->CalculatePointer<PrVuNodeHeaderDmaPacket>(this->unk16C[0]);
+    this->unk16C[1] = model->CalculatePointer<PrVuNodeHeaderDmaPacket>(this->unk16C[1]);
 
     this->unk17C = this->unk16C[0];
     if (this->unk16C[0] == NULL) {
@@ -45,17 +45,17 @@ void SpmNode::ChangePointer(SpmFileHeader* arg0, SpmNode* arg1) {
         }
     }
 
-    if (this->flags & 0xff0) {
-        this->unk198 = arg0->CalculatePointer<int>(this->unk198);
-        if (this->flags & 0x10) {
-            this->unk1B4 = arg0->CalculatePointer<int>(this->unk1B4);
-            this->unk1B8 = arg0->CalculatePointer<int>(this->unk1B8);
-        } else if (this->flags & 0x20) {
-            this->unk1B4 = arg0->CalculatePointer<int>(this->unk1B4);
+    if (mFlags & 0xff0) {
+        this->unk198 = model->CalculatePointer<int>(this->unk198);
+        if (mFlags & 0x10) {
+            this->unk1B4 = model->CalculatePointer<int>(this->unk1B4);
+            this->unk1B8 = model->CalculatePointer<int>(this->unk1B8);
+        } else if (mFlags & 0x20) {
+            this->unk1B4 = model->CalculatePointer<int>(this->unk1B4);
         }
 
-        this->unk1A0 = arg0->CalculatePointer<int>(this->unk1A0);
-        this->unk1A4 = arg0->CalculatePointer<PrVuNodeHeaderDmaPacket>(this->unk1A4);
+        this->unk1A0 = model->CalculatePointer<int>(this->unk1A0);
+        this->unk1A4 = model->CalculatePointer<PrVuNodeHeaderDmaPacket>(this->unk1A4);
         PrVuNodeHeaderDmaPacket* s0 = this->unk1A4;
         if (s0 != NULL) {
             s0->unk194 = SCE_VIF1_SET_MSCAL(PrGetMicroProgramAddress(PR_MICRO_PROGRAM_CONTOUR), 0);
@@ -64,7 +64,7 @@ void SpmNode::ChangePointer(SpmFileHeader* arg0, SpmNode* arg1) {
 
     SpmNode* s0 = this->unk15C;
     while (s0 != 0) {
-        s0->ChangePointer(arg0, this);
+        s0->ChangePointer(model, this);
         s0 = s0->unk160;
     }
 }
@@ -74,43 +74,43 @@ INCLUDE_ASM("asm/nonmatchings/prlib/setpointer", ChangePointer__13SpaFileHeader)
 INCLUDE_ASM("asm/nonmatchings/prlib/setpointer", ChangePointer__16SpaNodeAnimationP13SpaFileHeader);
 
 void SpcFileHeader::ChangePointer() {
-    if (this->flags & 0x1) {
+    if (this->mFlags & 0x1) {
         return;
     }
 
-    this->unk74 = this->CalculatePointer<int>(this->unk74);
+    this->unk74 = CalculatePointer<int>(this->unk74);
     
-    this->unk88 = this->CalculatePointer<SpaTrack<NaVECTOR<float, 4> > >(this->unk88);
+    this->unk88 = CalculatePointer<SpaTrack<NaVECTOR<float, 4> > >(this->unk88);
     if (this->unk88 != NULL) {
         this->unk88->ChangePointer();
     }
 
-    this->unk8C = this->CalculatePointer<SpaTrack<NaVECTOR<float, 4> > >(this->unk8C);
+    this->unk8C = CalculatePointer<SpaTrack<NaVECTOR<float, 4> > >(this->unk8C);
     if (this->unk8C != NULL) {
         this->unk8C->ChangePointer();
     }
 
-    this->unk90 = this->CalculatePointer<SpaTrack<float> >(this->unk90);
+    this->unk90 = CalculatePointer<SpaTrack<float> >(this->unk90);
     if (this->unk90 != NULL) {
         this->unk90->ChangePointer();
     }
 
-    this->unk94 = this->CalculatePointer<SpaTrack<float> >(this->unk94);
+    this->unk94 = CalculatePointer<SpaTrack<float> >(this->unk94);
     if (this->unk94 != NULL) {
         this->unk94->ChangePointer();
     }
 
-    if (this->flags & 0x8) {
-        this->focal_len_track = this->CalculatePointer<SpaTrack<float> >(this->focal_len_track);
-        if (this->focal_len_track != NULL) {
-            this->focal_len_track->ChangePointer();
+    if (mFlags & 0x8) {
+        mFocalLenTrack = CalculatePointer<SpaTrack<float> >(mFocalLenTrack);
+        if (mFocalLenTrack != NULL) {
+            mFocalLenTrack->ChangePointer();
         }
 
-        this->defocus_len_track = this->CalculatePointer<SpaTrack<float> >(this->defocus_len_track);
-        if (this->defocus_len_track != NULL) {
-            this->defocus_len_track->ChangePointer();
+        mDefocusLenTrack = CalculatePointer<SpaTrack<float> >(mDefocusLenTrack);
+        if (mDefocusLenTrack != NULL) {
+            mDefocusLenTrack->ChangePointer();
         }
     }
 
-    this->flags |= 1;
+    mFlags |= 1;
 }

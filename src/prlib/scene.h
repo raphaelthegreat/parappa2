@@ -3,15 +3,15 @@
 
 #include "common.h"
 
-#include "camera.h"
-#include "objectset.h"
 #include "prpriv.h"
+#include "objectset.h"
 
 #include <eetypes.h>
 #include <eestruct.h>
 #include <libgraph.h>
 
 class PrModelObject;
+class SpcFileHeader;
 
 class PrSceneObject {
 public:

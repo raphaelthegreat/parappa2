@@ -7,6 +7,8 @@
 
 #include <nalib/namatrix.h>
 
+class SpaFileHeader;
+
 class SpaTrackBase {
 public:
     u_int SearchSegment(float arg0) const;
@@ -63,8 +65,11 @@ private:
     
 class SpaNodeAnimation {
 public:
+    NaMATRIX<float, 4, 4>* GetMatrix(float) const;
     bool IsVisible(float arg0) const;
     int Optimize();
+
+    void ChangePointer(SpaFileHeader* animation);
 
 public:
     PR_PADDING(unk0, 0x4);

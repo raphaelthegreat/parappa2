@@ -2,14 +2,14 @@
 
 void PrModelObject::SaveContour() {
     SpmFileHeader* spm = mSpmImage;
-    if (spm->unk70 == 0 || this->unk84 == 0) {
+    if (spm->unk70 == 0 || !mRenderedOnce) {
         return;
     }
 
-    u_int node_num = spm->node_num;
-    for (int i = 0; i < node_num; i++) {
-        SpmNode* node = spm->nodes[i];
-        if (node->flags & 0x40) {
+    u_int nodeNum = spm->mNodeNum;
+    for (int i = 0; i < nodeNum; i++) {
+        SpmNode* node = spm->mNodes[i];
+        if (node->mFlags & 0x40) {
             SpmComplexNode* complex = reinterpret_cast<SpmComplexNode*>(node);
             complex->SaveContour(this);
         }

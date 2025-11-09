@@ -1,5 +1,9 @@
 #include "renderstuff.h"
 
+#if defined(PRD_SYORI)
+#include "dbug/syori.h"
+#endif
+
 #include "gifreg.h"
 #include "mfifo.h"
 #include "microprogram.h"
@@ -129,6 +133,16 @@ void PrRenderStuff::WaitRender() {
     mStatistics.render_time7 = *T3_COUNT;
 
     mScene = NULL;
+
+#if defined(PRD_SYORI)
+    /*
+     * By pushing statistics here we assume
+     * that any call to PrRender() will also
+     * immediately call PrWaitRender()
+     * (which is indeed the case here).
+     */
+    SyoriPushStats(&mStatistics);
+#endif
 }
 
 void PrRenderStuff::AllocateTransmitDmaArray(u_int size) {

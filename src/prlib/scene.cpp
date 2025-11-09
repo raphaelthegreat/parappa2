@@ -1,5 +1,6 @@
 #include "scene.h"
 
+#include "camera.h"
 #include "model.h"
 
 #include <float.h>
@@ -25,32 +26,32 @@ INCLUDE_ASM("asm/nonmatchings/prlib/scene", SetAppropriateDefaultCamera__13PrSce
 
 float PrSceneObject::GetFocalLength() const {
     SpcFileHeader* camera = mCamera;
-    if (camera == NULL || !(camera->flags & 0x8) ) {
+    if (camera == NULL || !(camera->mFlags & 0x8) ) {
         return mDefaultFocalLen;
     } else {
-        float focal_length = *camera->focal_len_track->GetValue(mCameraTime);
-        if (focal_length <= 0.0f) {
-            focal_length = FLT_EPSILON;
+        float focalLength = *camera->mFocalLenTrack->GetValue(mCameraTime);
+        if (focalLength <= 0.0f) {
+            focalLength = FLT_EPSILON;
         }
-        return focal_length;
+        return focalLength;
     }
 }
 
 float PrSceneObject::GetDefocusLength() const {
     SpcFileHeader* camera = mCamera;
-    if (camera == NULL || !(camera->flags & 0x8)) {
+    if (camera == NULL || !(camera->mFlags & 0x8)) {
         return mDefaultDefocusLen;
     } else {
-        return *camera->defocus_len_track->GetValue(mCameraTime);
+        return *camera->mDefocusLenTrack->GetValue(mCameraTime);
     }
 }
 
 u_int PrSceneObject::GetDepthLevel() const {
     SpcFileHeader* camera = mCamera;
-    if (camera == NULL || !(camera->flags & 0x8)) {
+    if (camera == NULL || !(camera->mFlags & 0x8)) {
         return mDefaultDepthLevel;
     } else {
-        return camera->depth_level;
+        return camera->mDepthLevel;
     }
 }
 
@@ -65,10 +66,10 @@ void PrSceneObject::PreprocessModel() {
     while (model != NULL) {
         SpmFileHeader* spm = model->mSpmImage;
         PrModelObject* next = model->mList.mNext;
-        if (spm->flags & eSpmIsScreenModel) {
+        if (spm->mFlags & eSpmIsScreenModel) {
             model->mList.mNext = screenList;
             screenList = model;
-        } else if (spm->flags & 0x200) {
+        } else if (spm->mFlags & 0x200) {
             PrModelObject* a1 = sp;
             PrModelObject** a3 = &sp;
             u_int t0_1 = spm->unk78;
@@ -78,7 +79,7 @@ void PrSceneObject::PreprocessModel() {
             }
             model->mList.mNext = a1;
             *a3 = model;
-        } else if (spm->flags & 0x400) {
+        } else if (spm->mFlags & 0x400) {
             model->mList.mNext = t1;
             t1 = model;
         } else {
