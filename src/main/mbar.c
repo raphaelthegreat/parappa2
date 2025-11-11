@@ -23,8 +23,8 @@
 /* sdata 399574 */ extern int vs_mouse_disp_flag; /* static */
 /* data 186b88 */ extern METCOL_STR metcol_str[3]; /* static */
 /* data 186bb0 */ extern MBA_CHAR_DATA mba_char_data[]; /* static */
-// /* sdata 399578 */ static int mbar_pos_y_ofs;
-// /* data 186d78 */ static u_char colp[][3];
+/* sdata 399578 */ extern int mbar_pos_y_ofs;
+/* data 186d78 */ extern u_char colp[][3];
 // /* data 186d90 */ static void (*marSetPrgTbl[])(/* parameters unknown */);
 // /* data 186da0 */ static GUIMAP guimap[];
 // /* data 186ee0 */ static int guimap_single[];
@@ -788,7 +788,6 @@ void MbarGifTrans(int pri) {
     CmnGifCloseCmnPk(&mbar_gif, pri);
 }
 
-
 void MbarCharSet(MBARR_CHR *mb_pp) {
 	MBA_CHAR_DATA *mbcd_pp;
 	float w, h;
@@ -838,15 +837,95 @@ void MbarCharSet2(MBARR_CHR2 *mb_pp) {
     sceGifPkAddGsAD(&mbar_gif, SCE_GS_XYZ2, SCE_GS_SET_XYZ2(GS_X_COORD(x2), GS_Y_COORD(y2), 1));
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarWindowSet);
+void MbarWindowSet(MBWINDOW_ENUM wenum) {
+    switch (wenum) {
+    case MBWINDOW_NORMAL:
+        sceGifPkAddGsAD(&mbar_gif, SCE_GS_SCISSOR_1, SCE_GS_SET_SCISSOR(0, 639, 0, 223));
+        break;
+    case MBWINDOW_UP:
+        sceGifPkAddGsAD(&mbar_gif, SCE_GS_SCISSOR_1, SCE_GS_SET_SCISSOR(0, 525, 0, 111));
+        break;
+    case MBWINDOW_DOWN:
+        sceGifPkAddGsAD(&mbar_gif, SCE_GS_SCISSOR_1, SCE_GS_SET_SCISSOR(0, 525, 112, 223));
+        break;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarGetDispPosX);
+static int MbarGetDispPosX(int tick) {
+	int pos;
 
+    if (tick < 0) {
+        return 13;
+    }
+    if (tick < 480) {
+        pos = (tick * 25 / 24);
+    } else {
+        pos = ((tick - 384) * 25 / 24);
+    }
+    return pos + 13;
+}
+
+#ifndef NON_MATCHING
 INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarGetDispPosY);
+#else
+static int MbarGetDispPosY(/* v0 2 */ int tick) {
+	/* v1 3 */ int pos;
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarGetTimeArea);
+    v0 = a0;
+    v1 = 0x1df;
+    if (v0 < 0) {
+        v0 = mbar_pos_y_ofs + 0x17;
+        return v0;
+    }
+    a0 = 0x19;
+    v1 = v1 < v0;
+    v1 = v1 * a0;
+    v0 = mbar_pos_y_ofs + 0x17;
+    v0 = v1 + v0;
+    return v0;
+}
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarGetTimeArea2);
+static int MbarGetTimeArea(MBAR_REQ_STR *mr_pp) {
+	int ret;
+
+    ret = 0;
+    if (mr_pp->mbar_req_enum == MBAR_NONE) {
+        return ret;
+    }
+    if (mbar_ctrl_time < (mr_pp->current_time + mr_pp->tapset_pp->taptimeStart)) {
+        return ret;
+    }
+    if (mbar_ctrl_time >= (mr_pp->current_time + mr_pp->tapset_pp->taptimeEnd)) {
+        return ret;
+    }
+    if (mr_pp->mbar_req_enum & 0x33) {
+        ret = mbar_ctrl_time - mr_pp->current_time - mr_pp->tapset_pp->taptimeStart;
+    }
+    if (mr_pp->mbar_req_enum & 0xc) {
+        ret = mr_pp->tapset_pp->taptimeEnd - mr_pp->tapset_pp->taptimeStart;
+    }
+    return ret;
+}
+
+static int MbarGetTimeArea2(MBAR_REQ_STR *mr_pp) {
+	int ret;
+
+    ret = 0;
+    if (mr_pp->mbar_req_enum == 0) {
+        return ret;
+    }
+    if (mbar_ctrl_time >= (mr_pp->current_time + mr_pp->tapset_pp->taptimeEnd)) {
+        return ret;
+    }
+    if (mr_pp->mbar_req_enum & 0x33) {
+        ret = mbar_ctrl_time - mr_pp->current_time - mr_pp->tapset_pp->taptimeStart;
+    }
+    if (mr_pp->mbar_req_enum & 0xc) {
+        ret = mr_pp->tapset_pp->taptimeEnd - mr_pp->tapset_pp->taptimeStart;
+    }
+    return ret;
+}
 
 int MbarGetStartTime(MBAR_REQ_STR *mr_pp) {
     return ((mr_pp->current_time + mr_pp->tapset_pp->taptimeStart - 24) / 96) * 96;
@@ -856,9 +935,37 @@ int MbarGetEndTime(MBAR_REQ_STR *mr_pp) {
     return (mr_pp->current_time + mr_pp->tapset_pp->taptimeEnd);
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarGetStartTap);
+static int MbarGetStartTap(MBAR_REQ_STR *mr_pp) {
+	int ret;
 
+    ret = mr_pp->current_time + mr_pp->tapset_pp->taptimeStart;
+    ret = (ret / 0x18 - 1) * 0x18;
+    return -1 < ret ? ret : 0;
+}
+
+#ifndef NON_MATCHING
 INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarSclRotMake);
+#else
+/* Needs .rodata match */
+void MbarSclRotMake(MBARR_CHR *mbarr_pp, int mbtime) {
+	float tmp_rate;
+
+    mbarr_pp->sclx = 1.0f;
+    mbarr_pp->scly = 1.0f;
+    if (mbtime >= 96u) {
+        return;
+    }
+    if (mbtime < 24) {
+        tmp_rate = (24 - mbtime) / 24.0f + 1.0f;
+        mbarr_pp->sclx = tmp_rate;
+        mbarr_pp->scly = tmp_rate;
+    }
+    if (mbtime < 96) {
+        tmp_rate = cosf(mbtime * 0.12345f / 96.0f);
+        mbarr_pp->sclx *= tmp_rate;
+    }
+}
+#endif
 
 void MbarGuideLightMake(MBARR_CHR *mbarr_pp, int mbtime) {
     u_char col = 128;
@@ -870,9 +977,145 @@ void MbarGuideLightMake(MBARR_CHR *mbarr_pp, int mbtime) {
     mbarr_pp->r = mbarr_pp->g = mbarr_pp->b = col;
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarFlashMake);
+int MbarFlashMake(MBARR_CHR *mbarr_pp, MBARR_CHR *mbarr_moto_pp, int mbtime, int fltype) {
+	float fsize;
+	u_char *colpp;
+    u_char scale;
 
+    if (mbtime < 0) {
+        return 0;
+    }
+    if (mbtime >= 24) {
+        return 0;
+    }
+
+    mbarr_pp->xp = mbarr_moto_pp->xp;
+    mbarr_pp->yp = mbarr_moto_pp->yp + 100;
+    
+    fsize = 24 - mbtime;
+    fsize += fsize;
+    fsize /= 24.0f;
+    fsize += 1.0f;
+    mbarr_pp->scly = fsize;
+    mbarr_pp->sclx = fsize;
+    
+    colpp = colp[fltype];
+    scale = (mbtime * 128) / 24;
+    mbarr_pp->r = (colpp[0] * scale) / 128;
+    mbarr_pp->g = (colpp[1] * scale) / 128;
+    mbarr_pp->b = (colpp[2] * scale) / 128;
+
+    return 1;    
+}
+
+#ifndef NON_MATCHING
 INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarBackSet);
+#else
+/* Needs .rodata match */
+void MbarBackSet(MBAR_REQ_STR *mr_pp) {
+	int i, stt, endt, sttap, curtime;
+	MBARR_CHR mbarr;
+	MBARR_CHR2 mbarr_chr2;
+	int sttime, endtime;
+
+    mbarr = (MBARR_CHR) {
+        .mbc_enum = MBC_BALL,
+        .xp = 13,
+        .yp = 23,
+        .sclx = 1.0f,
+        .scly = 1.0f,
+        .r = 128,
+        .g = 128,
+        .b = 128,
+        .a = 128,
+    };
+
+    MbarWindowSet(MBWINDOW_UP);
+    if (MbarGetTimeArea2(mr_pp) == 0) {
+        return;
+    }
+    curtime = mbar_ctrl_time;
+    stt = MbarGetStartTime(mr_pp);
+    endt = MbarGetEndTime(mr_pp);
+    sttap = MbarGetStartTap(mr_pp);
+    if (mr_pp->mbar_req_enum & 0x200) {
+        mbarr_chr2.mbc_enum = 0x24;
+    } else {
+        mbarr_chr2.mbc_enum = 0x25;
+    }
+    endtime = endt - stt - 1;
+    if (curtime < stt) {
+        sttime = 0;
+    } else {
+        sttime = curtime - stt;
+    }
+
+    mbarr_chr2.b = 0x80;
+    mbarr_chr2.g = 0x80;
+    mbarr_chr2.r = 0x80;
+    mbarr_chr2.a = 0x20;
+    mbarr_chr2.ofsx2 = 0;
+    mbarr_chr2.ofsx = 0;
+    mbarr_chr2.ofsy = -0xe;
+    mbarr_chr2.ofsy2 = 0xe;
+    
+    if (sttime < endtime) {
+        mbarr_chr2.xp = MbarGetDispPosX(sttime);
+        mbarr_chr2.yp = MbarGetDispPosY(sttime);
+        mbarr_chr2.xp2 = MbarGetDispPosX(endtime);
+        mbarr_chr2.yp2 = MbarGetDispPosY(endtime);
+        if (mr_pp->mbar_req_enum & 0x40) {
+            mbarr_chr2.yp2 += 0x32;
+            mbarr_chr2.yp += 0x32;
+        } else if (mr_pp->mbar_req_enum & 0x800) {
+            mbarr_chr2.yp2 += 0x19;
+            mbarr_chr2.yp += 0x19;
+        }
+        if (mbarr_chr2.yp != mbarr_chr2.yp2) {
+            mbarr_chr2.xp2 = MbarGetDispPosX(0x1df);
+            mbarr_chr2.yp2 = MbarGetDispPosY(0x1df);
+            if (mr_pp->mbar_req_enum & 0x40) {
+                mbarr_chr2.yp2 += 0x32;
+            } else if (mr_pp->mbar_req_enum & 0x800) {
+                mbarr_chr2.yp2 += 0x19;
+            }
+            MbarCharSet2(&mbarr_chr2);
+            mbarr_chr2.xp = MbarGetDispPosX(0x1e0);
+            mbarr_chr2.yp = MbarGetDispPosY(0x1e0);
+            mbarr_chr2.xp2 = MbarGetDispPosX(endtime);
+            mbarr_chr2.yp2 = MbarGetDispPosY(endtime);
+            if (mr_pp->mbar_req_enum & 0x40) {
+                mbarr_chr2.yp2 += 0x32;
+                mbarr_chr2.yp += 0x32;
+            } else if (mr_pp->mbar_req_enum & 0x800) {
+                mbarr_chr2.yp2 += 0x19;
+                mbarr_chr2.yp += 0x19;
+            }
+        }
+        MbarCharSet2(&mbarr_chr2);
+    }
+    for (endtime = stt + 0x18; endtime < endt; endtime += 0x18) {
+        if ((endtime - 0x18) >= sttap) {
+            sttime = endtime - stt;
+            mbarr.xp = MbarGetDispPosX(sttime);
+            mbarr.yp = MbarGetDispPosY(sttime);
+            mbarr.mbc_enum = 0x16;
+            if (((endtime / 0x18) & 0x3) == 0) {
+                mbarr.mbc_enum = 0x17;
+            }
+            if (mr_pp->mbar_req_enum & 0x40) {
+                mbarr.yp += 0x32;
+            } else if (mr_pp->mbar_req_enum & 0x800) {
+                mbarr.yp += 0x19;
+            }
+            if (mr_pp->mbar_req_enum & 0x80) {
+                MbarGuideLightMake(&mbarr, curtime - endtime);
+            }
+            MbarCharSet(&mbarr);
+        }
+    }
+}
+#endif
 
 INCLUDE_RODATA("asm/nonmatchings/main/mbar", D_00393488);
 
