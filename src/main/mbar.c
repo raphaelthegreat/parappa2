@@ -1123,7 +1123,56 @@ INCLUDE_RODATA("asm/nonmatchings/main/mbar", D_003934A0);
 
 INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarOthSet);
 
+#ifndef NON_MATCHING
 INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarCurSet);
+#else
+/* Needs .rodata match */
+static void MbarCurSet(MBAR_REQ_STR *mr_pp) {
+	MBARR_CHR mbarr;
+	int curtime, gbalTapTime, sttime;
+
+    mbarr = (MBARR_CHR) {
+        .mbc_enum = 0,
+        .xp = 0,
+        .yp = 0,
+        .sclx = 1.0f,
+        .scly = 1.0f,
+        .r = 128,
+        .g = 128,
+        .b = 128,
+        .a = 128,
+    }; 
+    
+    gbalTapTime = mr_pp->current_time;
+    gbalTapTime += mr_pp->tapset_pp->taptimeStart;
+    sttime = MbarGetStartTime(mr_pp);
+    
+    curtime = mbar_ctrl_time;
+    curtime -= mr_pp->current_time;
+    curtime -= mr_pp->tapset_pp->taptimeStart;
+
+    gbalTapTime += curtime;
+    gbalTapTime -= sttime;
+
+    mbarr.mbc_enum = mr_pp->gui_cursor_enum + MBC_NONECUR;
+    mbarr.xp = MbarGetDispPosX(gbalTapTime);
+    mbarr.yp = MbarGetDispPosY(gbalTapTime);
+    if (mr_pp->mbar_req_enum & 0x40) {
+        mbarr.yp += 0x32;
+    } else if (mr_pp->mbar_req_enum & 0x800) {
+        mbarr.yp += 0x19;
+    }
+    MbarWindowSet(MBWINDOW_UP);
+    MbarCharSet(&mbarr);
+    mbarr.yp += 0x64;
+    mbarr.a = 1;
+    mbarr.b = 1;
+    mbarr.g = 1;
+    mbarr.r = 1;
+    MbarWindowSet(MBWINDOW_DOWN);
+    MbarCharSet(&mbarr);
+}
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarTapSubt);
 
