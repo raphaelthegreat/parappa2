@@ -85,7 +85,7 @@ static int    MbarGetStartTap(MBAR_REQ_STR *mr_pp);
 static void   MbarOthSet(MBAR_REQ_STR *mr_pp);
 static void   MbarCurSet(MBAR_REQ_STR *mr_pp);
 static int    MbarTapSubt(MBAR_REQ_STR *mr_pp);
-static void   MbarPosOffsetSet(MBAR_REQ_STR *mr_pp);
+/*static*/ void   MbarPosOffsetSet(MBAR_REQ_STR *mr_pp);
 static void   mbar_othon_frame_set(MBAR_REQ_STR *mr_pp);
 static void   guidisp_init_pr(void);
 static void   guidisp_draw_quit(int drapP);
@@ -1190,9 +1190,46 @@ static int MbarTapSubt(MBAR_REQ_STR *mr_pp) {
     return 1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarPosOffsetSet);
+/*static*/ void MbarPosOffsetSet(MBAR_REQ_STR *mr_pp) {
+    mbar_pos_y_ofs = 0;
+    if (MbarGetTimeArea2(mr_pp) == 0) {
+        return;
+    }
+    if ((MbarGetEndTime(mr_pp) - MbarGetStartTime(mr_pp)) < 0x1e1) {
+        mbar_pos_y_ofs = 12;
+    }
+}
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", mbar_othon_frame_set);
+void mbar_othon_frame_set(MBAR_REQ_STR* mr_pp) {
+    int curtime;
+    int mp_st;
+    int mp_end;
+    int mp_fix;
+
+    curtime = mbar_ctrl_time - mr_pp->current_time - mr_pp->tapset_pp->taptimeStart;
+    curtime += 0x30;
+    if (curtime < 0) {
+        return;
+    }
+
+    if (curtime >= 0x49) {
+        return;
+    }
+
+    if (mr_pp->mbar_req_enum & 0x40) {
+        mp_st = 0x32;
+        mp_end = 0x5A;
+        mp_fix = 0x5A;
+    } else {
+        mp_st = 0x5A;
+        mp_end = 0x82;
+        mp_fix = 0x32;
+    }
+    if (curtime < 0x18) {
+        mp_fix = (((mp_end - mp_st) * curtime) / 24) + mp_st;
+    }
+    othon_frame = mp_fix;
+}
 
 INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarDisp);
 
