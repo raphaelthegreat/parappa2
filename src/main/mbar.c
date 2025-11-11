@@ -1434,7 +1434,39 @@ TIM2_DAT* lessonCl2InfoGet(SCRRJ_LESSON_ROUND_ENUM type) {
 }
 #endif
 
+#ifndef NON_MATCHING
 INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarDemoCharDisp);
+#else
+/* Needs .rodata match */
+void MbarDemoCharDisp() {
+	TIM2_DAT *tim2_dat_pp;
+	SPR_PRIM spr_prim;
+
+    spr_prim = (SPR_PRIM) {
+        .x = 2298,
+        .y = 2128,
+        .scalex = 256,
+        .scaley = 128,
+        .u = 0,
+        .v = 0,
+        .w = 0,
+        .h = 0,
+    };
+
+    SprInit();
+    ChangeDrawArea(DrawGetDrawEnvP(2));
+    tim2_dat_pp = &tim2spr_tbl_tmp1[53];
+    spr_prim.w = tim2_dat_pp->w;
+    spr_prim.h = tim2_dat_pp->h;
+    SprClear();
+    SprDispAlphaSet();
+    SprPackSet(tim2_dat_pp);
+    SprDispZABnclr();
+    SprSetColor(128, 128, 128, 128);
+    SprDispAlp(&spr_prim);
+    SprFlash();
+}
+#endif
 
 INCLUDE_RODATA("asm/nonmatchings/main/mbar", D_003934E8);
 
