@@ -3,8 +3,10 @@
 #include "main/cmnfile.h"
 #include "os/syssub.h"
 #include "os/tim2.h"
+#include "os/cmngifpk.h"
 
 #include <stdio.h>
+#include <string.h>
 
 /* data 186288 */ extern TIM2_DAT tim2spr_tbl_tmp1[]; /* static, tim2spr_tbl */
 /* data 186a68 */ extern u_int tmpColor[];
@@ -26,7 +28,7 @@
 /* sdata 399578 */ extern int mbar_pos_y_ofs;
 /* data 186d78 */ extern u_char colp[][3];
 /* data 17c2b8 */ extern GAME_STATUS game_status;
-// /* data 186d90 */ static void (*marSetPrgTbl[])(/* parameters unknown */);
+/* data 186d90 */ static void (*marSetPrgTbl[])(MBAR_REQ_STR*);
 // /* data 186da0 */ static GUIMAP guimap[];
 // /* data 186ee0 */ static int guimap_single[];
 // /* data 186ef0 */ static int guimap_vs[];
@@ -59,6 +61,8 @@
 /* bss 1c701c8 */ extern sceGifPacket mbar_gif;
 // /* sbss 399a90 */ static PR_SCENEHANDLE guime_hdl;
 // /* sbss 399a94 */ static PR_CAMERAHANDLE guime_camera_hdl;
+
+extern GLOBAL_DATA global_data;
 
 static void   clrColorBuffer(int id);
 static void   NikoReset(void);
@@ -1231,13 +1235,166 @@ void mbar_othon_frame_set(MBAR_REQ_STR* mr_pp) {
     othon_frame = mp_fix;
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarDisp);
+void MbarDisp(void) {
+	int i, j;
 
+    MbarGifInit();
+    for (i = 0; i < 4u; i++) {
+        for (j = 0; j < 5u; j++) {
+            if (mbar_req_str[j].mbar_req_enum == MBAR_NONE) {
+                continue;
+            }
+            if (mbar_req_str[j].tapset_pp == NULL) {
+                continue;
+            }
+            if (mbar_req_str[j].tapset_pp->coolup == -1) {
+                continue;
+            }
+            (*marSetPrgTbl[i])(&mbar_req_str[j]);
+        }
+    }
+    MbarGifTrans(7);
+    if (game_status.subtitle == SUBTITLE_ON) {
+        for (i = 0; i < 5u; i++) {
+            if (mbar_req_str[i].mbar_req_enum == MBAR_NONE) {
+                continue;
+            }
+            if (mbar_req_str[i].tapset_pp == NULL) {
+                continue;
+            }
+            if (MbarTapSubt(&mbar_req_str[i]) != 0) {
+                break;
+            }
+        }
+    }
+}
+
+#ifndef NON_MATCHING
 INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarDispScene);
+#else
+int MbarDispScene(void *para_pp, int frame, int first_f, int useDisp, int drDisp) {
+	int i, j;
+	float men_tmp;
+	VCLR_PARA vclr_para;
 
+    men_tmp = PrGetMendererRatio();
+    PrSetMendererRatio(0.0f);
+    memset(&vclr_para, 0, 4);
+    DrawVramClear(&vclr_para, 0, 0, 0, 0x10);
+    ChangeDrawArea(DrawGetDrawEnvP(drDisp));
+    MbarGifInit();
+
+    for (i = 0; i < 5u; i++) {
+        if (mbar_req_str[i].mbar_req_enum == MBAR_NONE) {
+            continue;
+        }
+        if (mbar_req_str[i].tapset_pp == NULL) {
+            continue;
+        }
+        if (mbar_req_str[i].tapset_pp->coolup == -1) {
+            continue;
+        }
+        for (j = 0; j < 4u; j++) {
+            (marSetPrgTbl[j])(&mbar_req_str[i]);
+        }
+    }
+
+    MbarWindowSet(MBWINDOW_NORMAL);
+    for (i = 0; i < 5u; i++) {
+        if (mbar_req_str[i].mbar_req_enum == MBAR_NONE) {
+            continue;
+        }
+        if (mbar_req_str[i].tapset_pp == NULL) {
+            continue;
+        }
+        if (mbar_req_str[i].tapset_pp->coolup == -1) {
+            continue;
+        }
+        mbar_othon_frame_set(&mbar_req_str[i]);
+    }
+
+    ExamDispOn();
+    examScoreSet(&mbar_gif);
+    examLevelDisp(&mbar_gif);
+    vsAnimationPoll();
+    MbarHookPoll();
+    CmnGifADPacketMakeTrans(&mbar_gif);
+    PrSetMendererRatio(men_tmp);
+
+    if (game_status.subtitle == SUBTITLE_ON) {
+        for (i = 0; i < 5u; i++) {
+            if (mbar_req_str[i].mbar_req_enum == MBAR_NONE) {
+                continue;
+            }
+            if (mbar_req_str[i].tapset_pp == NULL) {
+                continue;
+            }
+            if (MbarTapSubt(&mbar_req_str[i]) != 0) {
+                break;
+            }
+        }
+    }
+
+    return 0;
+}
+#endif
+
+#ifndef NON_MATCHING
 INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarDispSceneDraw);
+#else
+int MbarDispSceneDraw(void *para_pp, int frame, int first_f, int useDisp, int drDisp) {
+	int i, j;
+	float men_tmp;
+	VCLR_PARA vclr_para;
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarDispSceneVsDraw);
+    if (first_f == -2) {
+        return 0;
+    }
+    if (first_f == -1) {
+        return 0;
+    }
+    men_tmp = PrGetMendererRatio();
+    PrSetMendererRatio(0.0f);
+    memset(&vclr_para, 0, 4);
+    DrawVramClear(&vclr_para, 0, 0, 0, 0x10);
+    ChangeDrawArea(DrawGetDrawEnvP(drDisp));
+    MbarGifInit();
+
+    for (i = 0; i < 5u; i++) {
+        if (mbar_req_str[i].mbar_req_enum == 0) {
+            continue;
+        }
+        if (mbar_req_str[i].tapset_pp == 0) {
+            continue;
+        }
+        if (mbar_req_str[i].tapset_pp->coolup == -1) {
+            continue;
+        }
+        if (global_data.play_step == 4 && i != 3) {
+            continue;
+        }
+        for (j = 0; j < 4u; j++) {
+            (marSetPrgTbl[j])(&mbar_req_str[i]);
+        }
+    }
+
+    MbarWindowSet(MBWINDOW_NORMAL);
+    CmnGifADPacketMakeTrans(&mbar_gif);
+    PrSetMendererRatio(men_tmp);
+    return 0;
+}
+#endif
+
+int MbarDispSceneVsDraw(void *para_pp, int frame, int first_f, int useDisp, int drDisp) {
+    if (first_f == -2) {
+        return 0;
+    }
+    if (first_f == -1) {
+        return 0;
+    }
+    vs_mouse_disp_flag = 1;
+    return 0;
+}
 
 void MbarDispSceneVsDrawInit(void) {
     vs_mouse_disp_flag = 0;
