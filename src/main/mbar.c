@@ -25,6 +25,7 @@
 /* data 186bb0 */ extern MBA_CHAR_DATA mba_char_data[]; /* static */
 /* sdata 399578 */ extern int mbar_pos_y_ofs;
 /* data 186d78 */ extern u_char colp[][3];
+/* data 17c2b8 */ extern GAME_STATUS game_status;
 // /* data 186d90 */ static void (*marSetPrgTbl[])(/* parameters unknown */);
 // /* data 186da0 */ static GUIMAP guimap[];
 // /* data 186ee0 */ static int guimap_single[];
@@ -1174,7 +1175,20 @@ static void MbarCurSet(MBAR_REQ_STR *mr_pp) {
 }
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarTapSubt);
+static int MbarTapSubt(MBAR_REQ_STR *mr_pp) {
+    int lng, nowp;
+
+    if (MbarGetTimeArea(mr_pp) == 0) {
+        return 0;
+    }
+    if (game_status.subtitle != SUBTITLE_ON) {
+        return 1;
+    }
+    lng = mr_pp->tapset_pp->taptimeEnd - mr_pp->tapset_pp->taptimeStart;
+    nowp = mbar_ctrl_time - mr_pp->current_time - mr_pp->tapset_pp->taptimeStart;
+    SubtTapPrintWake(mr_pp->tapset_pp->tapsubt[mr_pp->lang], mr_pp->lang, lng, nowp);
+    return 1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarPosOffsetSet);
 
