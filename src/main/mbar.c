@@ -698,11 +698,76 @@ void examNumDisp(sceGifPacket *ex_gif_pp, long score, short x, short y, int keta
     }
 }
 
+#ifndef NON_MATCHING
 INCLUDE_ASM("asm/nonmatchings/main/mbar", examScoreSet);
+#else
+/* Needs .rodata match */
+static void examScoreSet(sceGifPacket *ex_gif_pp) {
+	int i;
+	int pos_dat[2][2] = {
+        {530, 4},
+        {530, 36},
+    };
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", examLevelDisp);
+    for (i = 0; i < 2; i++) {
+        if (exam_global_ply[i] == NULL) {
+            continue;
+        }
+        if (exam_global_ply_current_ply[i]) {
+            examNumDisp(ex_gif_pp, exam_global_ply[i]->now_score, pos_dat[i][0], pos_dat[i][1], 5, scr_tenmetu_col_dat[i], 1);
+        } else {
+            examNumDisp(ex_gif_pp, exam_global_ply[i]->score, pos_dat[i][0], pos_dat[i][1], 5, scr_tenmetu_col_dat[i], 0);
+        }
+    }
+}
+#endif
 
-INCLUDE_ASM("asm/nonmatchings/main/mbar", ExamDispSet);
+static void examLevelDisp(sceGifPacket *ex_gif_pp) {
+	GLOBAL_PLY *exg_p;
+	int old_fr, targ_fr;
+	EX_CHAR_DISP ex_ecd;
+	int plevel, i;
+
+    for (i = 0; i < 4; i++) {
+        exg_p = exam_global_ply[i];
+        if (exg_p == NULL) {
+            continue;
+        }
+        old_fr = conditionFramCnt[i];
+        targ_fr = exg_p->rank_level * 20;
+        if (old_fr < targ_fr) {
+            old_fr += 2;
+            if (targ_fr < old_fr) {
+                old_fr = targ_fr;
+            }
+        } else {
+            old_fr -= 2;
+            if (old_fr < targ_fr) {
+                old_fr = targ_fr;
+            }
+        }
+        if (old_fr >= 241) {
+            old_fr = 240;
+        }
+        conditionFramCnt[i] = old_fr;
+    }
+    plevel = conditionFramCnt[0] * 96 / 240;
+    examCharBasic(&ex_ecd, &tim2spr_tbl_tmp1[28]);
+    examCharUVWHSet(&ex_ecd, plevel, 0, 24, 88);
+    examCharPosSet(&ex_ecd, 616, 136);
+    examCharSet(&ex_ecd, ex_gif_pp);
+}
+
+void ExamDispSet() {
+	sceGifPacket ex_gif;
+
+    ExamDispOn();
+    CmnGifOpenCmnPk(&ex_gif);
+    examScoreSet(&ex_gif);
+    examLevelDisp(&ex_gif);
+    vsAnimationPoll();
+    CmnGifCloseCmnPk(&ex_gif, 6);
+}
 
 void ExamDispSubt(void) {
     /* Empty */
