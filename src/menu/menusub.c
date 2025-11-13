@@ -234,7 +234,7 @@ static void  MpCityHallFPHSSoundMask(int flg);
 /* static */ void  MpCityHallCharPosSet(int pos);
 /* static */ int   MpPopMenu_Flow(int flg, u_int tpad);
 /* static */ int   MpMapMenu_Flow(int flg, MAPPOS *mpw, u_int tpad);
-/* static */ int   _MapGetMovableDir(MAPPOS *mpw);
+static int   _MapGetMovableDir(MAPPOS *mpw);
 /* static */ int   McErrorMess(int err);
 static void  McInitFlow(void);
 /* static */ int   McStartCheckFlow(int flg);
@@ -2099,7 +2099,44 @@ INCLUDE_ASM("asm/nonmatchings/menu/menusub", MpPopMenu_Flow);
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", MpMapMenu_Flow);
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", _MapGetMovableDir);
+static int _MapGetMovableDir(MAPPOS *mpw) {
+    int       posNo, ret, DirMask;
+    MNMAPPOS *mpos;
+    int       flg, i;
+
+    DirMask = 1;
+    mpos = &mpw->mnmap[mpw->curPos];
+
+    ret = 0;
+
+    for (i = 0; i < PR_ARRAYSIZE(mpos->mapdir); i++, DirMask <<= 1) {
+        flg = TRUE;
+        posNo = mpos->mapdir[i].mapNo;
+
+        if (posNo == -1) {
+            flg = FALSE;
+        } else {
+            posNo &= ~0x8000;
+            if (mpw->lmtPos != 0) {
+                if (posNo >= mpw->lmtPos) {
+                    flg = FALSE;
+                } else {
+                    if (mpos->mapdir[i].mapNo & 0x8000) {
+                        if (mpw->curPos == (mpw->lmtPos - 1) || posNo == (mpw->lmtPos - 1)) {
+                            flg = FALSE;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (flg) {
+            ret |= DirMask;
+        }
+    }
+
+    return ret;
+}
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", McErrorMess);
 

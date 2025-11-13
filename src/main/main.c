@@ -25,6 +25,7 @@
 
 #include <libpad.h>
 
+#include <math.h>
 #include <stdio.h>
 
 /* .sdata */
@@ -905,8 +906,54 @@ void titleDisp(int firstf) {
 
 INCLUDE_RODATA("asm/nonmatchings/main/main", D_00393AD0);
 
+#ifndef NON_MATCHING
 INCLUDE_ASM("asm/nonmatchings/main/main", urawazaKeyCheck);
-int urawazaKeyCheck(void);
+#else /* .sdata migration required */
+int urawazaKeyCheck(void) {
+    PADD *pad_pp;
+    int change_tbl[17] = {
+        1, 3, 5, 7,
+        0, 10, 12, 14,
+        16, 15, 13, 11,
+        9, 8, 6, 4, 2,
+    };
+    int   ud_d, ret;
+    float pos;
+
+    pad_pp = &pad[0];
+
+    /* R3 button */
+    if (!(pad_pp->shot & SCE_PADj)) {
+        ret = -1;
+    } else {
+        if (pad_pp->ana[PAD_ANA_RY] <  (128 - 64) || pad_pp->ana[PAD_ANA_RX] >= (64 + 128) ||
+            pad_pp->ana[PAD_ANA_RY] >= (64 + 128) || pad_pp->ana[PAD_ANA_RX] <  (128 - 64)) {
+            int a0 = pad_pp->ana[PAD_ANA_RX] - 128;
+            int s0 = pad_pp->ana[PAD_ANA_RY] - 128;
+            pos = atan2(-a0, s0);
+            pos = (pos + 3.1415927f);
+            pos = (pos * 17.0f) / 6.2831855f;
+            ud_d = pos;
+        } else {
+            ud_d = randMakeMax(17);
+        }
+
+        if (ud_d < 0) {
+            ud_d = 0;
+        }
+        if (ud_d >= 17) {
+            ud_d = 0;
+        }
+
+        ud_d = change_tbl[ud_d];
+        printf("level fix:%d\n", ud_d);
+    
+        ret = ud_d;
+    }
+
+    return ret;
+}
+#endif
 
 extern char D_003996D0[]; /* sdata - "ura:%d" */
 

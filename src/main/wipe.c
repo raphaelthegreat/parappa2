@@ -8,6 +8,7 @@
 
 #include "main/cmnfile.h"
 #include "main/drawctrl.h"
+#include "main/effect.h"
 #include "main/scrctrl.h"
 #include "main/sprite.h"
 #include "main/subt.h"
@@ -440,11 +441,50 @@ void WipeLoadInDisp(void *x) {
     }
 }
 
-extern FADE_MAKE_STR D_003995B0;
-extern void UG_FadeDisp2(/* s0 16 */ FADE_MAKE_STR *fade_pp, /* s3 19 */ sceGifPacket *fadePkSpr, /* s1 17 */ sceGsFrame *texFr_pp, /* f20 58 */ float scale);
-
 /* TODO: split .sdata */
+#if 1
 INCLUDE_ASM("asm/nonmatchings/main/wipe", WipeLoadInDispNR);
+#else
+void WipeLoadInDispNR(void) {
+    int           timer;
+    sceGifPacket  gifpk;
+    FADE_MAKE_STR fade_make_str = {
+        .r = 128, .g = 128, .b = 128, .alp = 128
+    };
+    VCLR_PARA     vclr_para = {};
+    float         scl;
+
+    timer = 0;
+
+    while (timer != 30) {
+        DrawVramClear(&vclr_para, 0, 0, 0, DNUM_ZBUFF);
+        DrawVramClear(&vclr_para, 0, 0, 0, DNUM_END);
+
+        ldmove_rate = 0;
+        ldrecode_rate = 0;
+        if (!loading_wipe_switch) {
+            ldmove_rate = 480;
+        }
+
+        lddisp_init_pr();
+        lddisp_draw_on(LDMAP_TURN);
+        lddisp_draw_on(LDMAP_LABEL);
+        lddisp_draw_quit(DNUM_END);
+
+        LocalBufCopy(-2);
+
+        fade_make_str.alp = (timer * 128) / 30;
+        scl = ((30 - timer) / 30.0f) + ((30 - timer) / 30.0f) + 1.0;
+
+        CmnGifADPacketMake(&gifpk, DrawGetFrameP(2));
+        UG_FadeDisp2(&fade_make_str, &gifpk, DrawGetFrameP(DNUM_END), scl);
+        CmnGifADPacketMakeTrans(&gifpk);
+
+        MtcWait(1);
+        timer++;
+    }
+}
+#endif
 
 /* TODO: split .sdata */
 #if 1
@@ -452,16 +492,17 @@ INCLUDE_ASM("asm/nonmatchings/main/wipe", WipeLoadOutDispNR);
 void WipeLoadOutDispNR(void);
 #else
 void WipeLoadOutDispNR(void) {
-    /* s2 18 */ int timer = 0;
-    /* -0xb0(sp) */ sceGifPacket gifpk;
-    /* -0xa0(sp) */ FADE_MAKE_STR fade_make_str = D_003995B0;
-    /* -0x90(sp) */ VCLR_PARA vclr_para = {};
+    int           timer;
+    sceGifPacket  gifpk;
+    FADE_MAKE_STR fade_make_str = {
+        .r = 128, .g = 128, .b = 128, .alp = 128
+    };
+    VCLR_PARA     vclr_para = {};
+    float         scl;
 
-    /* f20 58 */ float scl;
+    timer = 0;
 
-    int tmp = 3840;
-
-    do {
+    while (timer != 30) {
         DrawVramClear(&vclr_para, 0, 0, 0, DNUM_ZBUFF);
         DrawVramClear(&vclr_para, 0, 0, 0, DNUM_VRAM2);
 
@@ -477,19 +518,16 @@ void WipeLoadOutDispNR(void) {
         lddisp_draw_on(LDMAP_LABEL);
         lddisp_draw_quit(DNUM_VRAM2);
 
-        fade_make_str.alp = (tmp / 30);
-        tmp -= 128;
-        
-        timer++;
+        fade_make_str.alp = (3840 + (timer * -128)) / 30;
+        scl = (timer / 30.0f) + (timer / 30.0f) + 1.0;
 
-        scl = (timer / 30.0f) + (timer / 30) + 1.0;
-
-        CmnGifADPacketMake(&gifpk, DrawGetFrameP(DNUM_DRAW));
+        CmnGifADPacketMake(&gifpk, DrawGetFrameP(2));
         UG_FadeDisp2(&fade_make_str, &gifpk, DrawGetFrameP(DNUM_VRAM2), scl);
         CmnGifADPacketMakeTrans(&gifpk);
 
         MtcWait(1);
-    } while (timer != 30);
+        timer++;
+    }
 }
 #endif
 
@@ -551,11 +589,13 @@ void WipeInReq(void) {
     MtcExec(WipeLoadInDisp, MTC_TASK_WIPECTRL);
 }
 
-INCLUDE_RODATA("asm/nonmatchings/main/wipe", D_00393680);
-extern SPR_PRIM D_00393680;
-
 void WipeLoadInDispSame(void *x) {
-    SPR_PRIM spr_prim = D_00393680;
+    SPR_PRIM spr_prim = {
+        .x = 2048, .y = 2048,
+        .scalex = 256, .scaley = 256,
+        .u = 0, .v = 0,
+        .w = 640, .h = 224,
+    };
     SPR_DAT  spr_dat  = {};
 
     spr_dat.GsTex0 = SCE_GS_SET_TEX0(TBP_VRAM_DRAW2, 10, 0, 10, 8, 0, 0, 0, 0, 0, 0, 0);
@@ -617,15 +657,12 @@ void WipeYesNoDispTask(void *x) {
     void *spm_hdl;
     float men_tmp;
 
-    SPR_PRIM spr_prim = D_00393680;
-    #if 0
-    {
-        .x = 2048,     .y = 2048, 
-        .scalex = 256, .scaley = 256, 
-        .u = 0,        .v = 0,
-        .w = 640,      .h = 224,
+    SPR_PRIM spr_prim = {
+        .x = 2048, .y = 2048,
+        .scalex = 256, .scaley = 256,
+        .u = 0, .v = 0,
+        .w = 640, .h = 224,
     };
-    #endif
 
     SPR_DAT spr_dat = {};
 
@@ -748,7 +785,12 @@ static void WipeParaInDisp(void *x) {
     sceGifPacket gifP;
     VCLR_PARA    vclr_para = {};
     
-    SPR_PRIM     spr_prim  = D_00393680;
+    SPR_PRIM     spr_prim  = {
+        .x = 2048, .y = 2048,
+        .scalex = 256, .scaley = 256,
+        .u = 0, .v = 0,
+        .w = 640, .h = 224,
+    };
     SPR_DAT      spr_dat   = {};
     int          timer;
 
@@ -770,7 +812,7 @@ static void WipeParaInDisp(void *x) {
         DrawVramClear(&vclr_para_disp, 0, 0, 0, DNUM_DRAW);
 
         sceGsDrawEnv1_tmp = *DrawGetDrawEnvP(DNUM_VRAM2);
-        sceGsDrawEnv1_tmp.frame1.FBMSK = 0xFFFFFF;
+        sceGsDrawEnv1_tmp.frame1.FBMSK = 0x00ffffff; /* Mask alpha */
 
         CmnGifADPacketMake(&gifP, &sceGsDrawEnv1_tmp.frame1);
         sceGifPkAddGsAD(&gifP, SCE_GS_FRAME_1, *(u_long*)&sceGsDrawEnv1_tmp.frame1);
@@ -811,7 +853,12 @@ static void WipeParaInDisp(void *x) {
 static void WipeParaInDispMove(void *x) {
     VCLR_PARA vclr_para = {};
 
-    SPR_PRIM  spr_prim  = D_00393680;
+    SPR_PRIM  spr_prim  = {
+        .x = 2048, .y = 2048,
+        .scalex = 256, .scaley = 256,
+        .u = 0, .v = 0,
+        .w = 640, .h = 224,
+    };
     SPR_DAT   spr_dat   = {};
     int       timer;
 
@@ -833,7 +880,7 @@ static void WipeParaInDispMove(void *x) {
         DrawVramClear(&vclr_para_disp, 0, 0, 0, DNUM_VRAM2);
 
         sceGsDrawEnv1_tmp = *DrawGetDrawEnvP(DNUM_VRAM2);
-        sceGsDrawEnv1_tmp.frame1.FBMSK = 0xFFFFFF;
+        sceGsDrawEnv1_tmp.frame1.FBMSK = 0x00ffffff; /* Mask alpha */
 
         WipeInitPrDataPara(&sceGsDrawEnv1_tmp.frame1);
         WipeDispPrDataPara(timer, &sceGsDrawEnv1_tmp);
@@ -863,7 +910,12 @@ static void WipeParaInDispMove(void *x) {
 static void WipeParaOutDisp(void *x) {
     VCLR_PARA vclr_para = {};
 
-    SPR_PRIM  spr_prim  = D_00393680;
+    SPR_PRIM  spr_prim  = {
+        .x = 2048, .y = 2048,
+        .scalex = 256, .scaley = 256,
+        .u = 0, .v = 0,
+        .w = 640, .h = 224,
+    };
     SPR_DAT   spr_dat   = {};
     int       timer     = 0;
 
@@ -881,7 +933,7 @@ static void WipeParaOutDisp(void *x) {
         DrawVramClear(&vclr_para_disp, 0, 0, 0, DNUM_VRAM2);
 
         sceGsDrawEnv1_tmp = *DrawGetDrawEnvP(DNUM_VRAM2);
-        sceGsDrawEnv1_tmp.frame1.FBMSK = 0xFFFFFF;
+        sceGsDrawEnv1_tmp.frame1.FBMSK = 0x00ffffff; /* Mask alpha */
 
         WipeInitPrDataPara(&sceGsDrawEnv1_tmp.frame1);
         WipeDispPrDataPara(60 - timer, &sceGsDrawEnv1_tmp);
@@ -986,8 +1038,13 @@ static void WipeBoxyInDisp(void *x) {
     float men_tmp;
     int   animate_frame = 0;
 
-    SPR_PRIM  spr_prim  = D_00393680;
-    SPR_DAT   spr_dat   = {};
+    SPR_PRIM spr_prim = {
+        .x = 2048, .y = 2048,
+        .scalex = 256, .scaley = 256,
+        .u = 0, .v = 0,
+        .w = 640, .h = 224,
+    };
+    SPR_DAT  spr_dat  = {};
 
     spr_dat.GsTex0 = SCE_GS_SET_TEX0(TBP_VRAM_DRAW2, 10, 0, 10, 8, 0, 0, 0, 0, 0, 0, 0);
 
