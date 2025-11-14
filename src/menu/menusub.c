@@ -41,7 +41,7 @@
 // /* sdata 39974c */ static u_char *UserName_InitialStr2;
 // /* data 18b7a0 */ static u_char UserName_AsciiSetB[41];
 // /* data 18b7d0 */ static u_char UserName_AsciiSetS[41];
-// /* data 18b800 */ USERNAME_CSET UserName_CharSet[0];
+/* data 18b800 */ extern USERNAME_CSET UserName_CharSet[];
 // /* data 18b810 */ static u_char *TeachersName_Tbl[0];
 // /* sdata 39975c */ static u_char *UserName_RankingNoSave;
 // /* data 18b830 */ static char *_MONTH_STR[0];
@@ -126,7 +126,7 @@
 /* data 18ca70 */ extern USERLISTTYPE_TABLE ULTypeT_CITY_REPLAY; /* static */
 // /* data 18ca80 */ static USERLISTTYPE_TABLE ULTypeT_SAVE_LOG;
 // /* data 18ca90 */ static USERLISTTYPE_TABLE ULTypeT_SAVE_REPLAY;
-// /* data 18caa0 */ static int POPBtn2Sel[0];
+/* data 18caa0 */ extern int POPBtn2Sel[]; /* static */
 // /* data 18cab8 */ static int POPSel2Btn[0];
 // /* data 18cad0 */ static int Pop_CmpMesNo[0];
 // /* data 18cae8 */ static int POPSel2BtnDir[0];
@@ -134,7 +134,7 @@
 // /* data 18cb08 */ static BGM_TABLE JukeBgmTbl[0];
 // /* data 18cb58 */ static int JukeMenu_CmpMesNo[0];
 // /* data 18cb80 */ static MNOPT_SELINF OptionSelTbl[0];
-// /* data 18cbc0 */ static USERLIST_TYPE UserListTbl[0];
+/* data 18cbc0 */ extern USERLIST_TYPE UserListTbl[]; /* static */
 /* sdata 399820 */ extern int _TexFunc; /* static */
 /* sdata 399824 */ extern HOSI_OBJ *HOSIObj; /* static */
 /* bss 1c77ac0 */ extern TSREPPAD menuPadState[2][4]; /* static */
@@ -165,7 +165,7 @@
 /* bss 1c7f780 */ extern sceGifPacket FPacket; /* static */
 /* sdata 399828 */ extern MAP_TIME MapTime;
 /* sbss 399b44 */ extern int UCheckLoadError; /* static */
-// /* sbss 399b48 */ static int UCheckSaveError;
+/* sbss 399b48 */ extern int UCheckSaveError; /* static */
 /* sbss 399b4c */ extern int subStatus; /* static */
 /* sbss 399b50 */ extern int ret; /* static */
 /* sbss 399b54 */ extern int errorNo; /* static */
@@ -198,7 +198,7 @@ static void  tsBGMONEPause(int flg);
 /* static */ void  TsBGMPlay(int no, int time);
 static void  TsBGMStop(int time);
 /* static */ void  TsBGMMute(int time);
-/* static */ int   TsBGMLoadCheck(void);
+static int   TsBGMLoadCheck(void);
 /* static */ void  TsBGMPause(int flg);
 /* static */ void  TsBGMPoll(void);
 /* static */ void* TsCmnPkOpen(sceGifPacket *pgifpk);
@@ -212,7 +212,7 @@ static int   TSLIMIT(int no, int min, int max);
 /* static */ int   TsMENU_GetMapNo(int *psize);
 static void  TsMENU_GetMapTimeState(int flg);
 /* static */ void  TsSetScene_Map(MN_SCENE *pScene, int mapNo, int tflg, int bFocus);
-/* static */ void  TsSet_ParappaCapColor(void);
+static void  TsSet_ParappaCapColor(void);
 /* static */ void  TsClearSet(P3GAMESTATE *pstate);
 /* static */ void  TsCheckEnding(P3GAMESTATE *pstate);
 /* static */ void  TsSetRankingName(P3MC_STAGERANK *pRankTop, u_char *name);
@@ -278,19 +278,19 @@ static void  TsCmnCell_CusorMASK(CELLOBJ *obj);
 /* static */ void  TsOption_Draw(SPR_PKT pk, SPR_PRM *spr);
 static int   TsUserList_GetCurFileNo(int *isBroken);
 static int   TsUserList_IsGetFileSave(void);
-/* static */ int   TsUserList_SortUser(void);
-/* static */ void  TsUserList_SetCurUserData(USER_DATA *psrc);
-/* static */ void  TsUserList_SetCurDispUserData(USER_DATA *psrc);
+static int   TsUserList_SortUser(void);
+static void  TsUserList_SetCurUserData(USER_DATA *psrc);
+static void  TsUserList_SetCurDispUserData(USER_DATA *psrc);
 /* static */ void  TsUserList_SetCurFileNoCusor(int fileNo, u_int *fDate);
-/* static */ void  TsUserList_SetType(USERLISTTYPE_TABLE *ptbl, int mode, int curTag);
-/* static */ int   TsUserList_TagChangeAble(USERLIST_MENU *pfw, int *pno);
+static void  TsUserList_SetType(USERLISTTYPE_TABLE *ptbl, int mode, int curTag);
+static int   TsUserList_TagChangeAble(USERLIST_MENU *pfw, int *pno);
 /* static */ int   TsUserList_SetCurTag(USERLIST_MENU *pfw, int no);
 /* static */ int   TsUserList_Flow(int flg, u_int tpad, u_int tpad2);
 /* static */ void  TsUserList_Draw(SPR_PKT pk, SPR_PRM *spr);
 /* static */ void  NameSpaceCut(u_char *dst, u_char *src);
 /* static */ void  TsUser_PanelDraw(SPR_PKT pk, SPR_PRM *spr, USER_DATA *user, int px, int py, int pflg, int isLog);
 /* static */ void  TsNAMEINBox_SetName(NAMEINW *pfw, u_char *name);
-/* static */ void  TsNAMEINBox_GetName(NAMEINW *pfw, u_char *name);
+static void  TsNAMEINBox_GetName(NAMEINW *pfw, u_char *name);
 /* static */ int   TsNAMEINBox_Flow(int flg, NAMEINW *pfw, u_int tpad);
 /* static */ void  TsNAMEINBox_Draw(SPR_PKT pk, SPR_PRM *spr, int px, int py, int isLog, NAMEINW *pfw, int side);
 static void  TsSCFADE_Flow(int flg, int prm);
@@ -496,11 +496,25 @@ static void TsBGMStop(int time) {
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsBGMMute);
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsBGMLoadCheck);
+static int TsBGMLoadCheck(void) {
+    return MenuVoiceBankSet(-1);
+}
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsBGMPause);
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsBGMChangePos);
+void TsBGMChangePos(int no) {
+    BGMSTATE *pbgm = &TsBGMState;
+
+    if (no >= 11) {
+        return;
+    }
+
+    pbgm->vol    = 256;
+    pbgm->state  = 1;
+    pbgm->ttim0  = 0;
+    pbgm->ttim   = 0;
+    pbgm->chgReq = no + 1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsBGMPoll);
 
@@ -508,7 +522,23 @@ INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCmnPkOpen);
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsCmnPkClose);
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", _P3DATA_SIZE);
+int _P3DATA_SIZE(int mode) {
+    u_int size;
+
+    switch (mode) {
+    case 1:
+        size = 0x188;
+        break;
+    case 2:
+        size = 0x4528;
+        break;
+    default:
+        size = 0;
+        break;
+    }
+
+    return size;
+}
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsGetTm2Tex);
 
@@ -749,7 +779,27 @@ static void TsMENU_GetMapTimeState(int flg) {
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsSetScene_Map);
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsSet_ParappaCapColor);
+static void TsSet_ParappaCapColor(void) {
+    P3LOG_VAL      *pLog = pP3GameState->pLog;
+    TAP_ROUND_ENUM  n;
+
+    switch (pLog->nRound) {
+    case 0:
+        n = TRND_R1;
+        break;
+    case 1:
+        n = TRND_R2;
+        break;
+    case 2:
+        n = TRND_R3;
+        break;
+    default:
+        n = TRND_R4;
+        break;
+    }
+
+    MenuRoundTim2Trans(n);
+}
 
 INCLUDE_RODATA("asm/nonmatchings/menu/menusub", D_00395F10);
 INCLUDE_RODATA("asm/nonmatchings/menu/menusub", D_00395F20);
@@ -1837,7 +1887,7 @@ static int MpCityHall_Flow(int flg, u_int tpad, u_int tpad2) {
         /* fallthrough */
     case 0x2022:
         if (MapCHall_tmp_272.curPos == 0) {
-            if (UCheckLoadError) {
+            if (UCheckLoadError != 0) {
                 ntag = 1;
                 curTag_tmp_275 = 1;
             } else {
@@ -2563,7 +2613,9 @@ void TsPopCusFlow(POPCTIM *pfw) {
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPopCusPut);
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsPUPCheckMove);
+int TsPUPCheckMove(int nbtn, int bank, POPCTIM *pfw) {
+    return (pfw->bDim[POPBtn2Sel[(bank != 0) ? (nbtn + 3) : (nbtn + 0)]] == FALSE);
+}
 
 INCLUDE_RODATA("asm/nonmatchings/menu/menusub", D_00396068);
 
@@ -2654,17 +2706,84 @@ static int TsUserList_IsGetFileSave(void) {
     return pfw->isSave;
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUserList_SortUser);
+static int TsUserList_SortUser(void) {
+    USERLIST_MENU *pfw;
+    int            i, maxn;
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUserList_SetCurUserData);
+    pfw = &UserListMenu;
+    pfw->pusrdspWk = UserDispWork;
+    memset(pfw->pusrdspWk, 0, sizeof(*pfw->pusrdspWk));
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUserList_SetCurDispUserData);
+    if (pfw->pusrlst == NULL) {
+        return 0;
+    }
+
+    maxn = P3MC_SortUser(pfw->pusrlst, pfw->dataMode, pfw->isSave);
+    for (i = 0; i < maxn; i++) {
+        *(pfw->pusrdspWk->pUserDisp + i) = *pfw->pusrlst->pUserTbl[i];
+    }
+
+    return maxn;
+}
+
+static void TsUserList_SetCurUserData(USER_DATA *psrc) {
+    USERLIST_MENU *pfw = &UserListMenu;
+    USER_DATA     *puser;
+
+    if (pfw->pusrlst == NULL) {
+        return;
+    }
+
+    puser = pfw->pusrlst->pUserTbl[pfw->curuser + pfw->curPageTop];
+    if (puser->flg == 0) {
+        P3MC_AddUser(pfw->pusrlst, pfw->dataMode, psrc);
+    } else {
+        *puser = *psrc;
+    }
+}
+
+static void TsUserList_SetCurDispUserData(USER_DATA *psrc) {
+    USERLIST_MENU *pfw = &UserListMenu;
+
+    *(pfw->pusrdspWk->pUserDisp + (pfw->curuser + pfw->curPageTop)) = *psrc;
+}
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUserList_SetCurFileNoCusor);
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUserList_SetType);
+static void TsUserList_SetType(USERLISTTYPE_TABLE *ptbl, int mode, int curTag) {
+    USERLIST_MENU *pfw = &UserListMenu;
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUserList_TagChangeAble);
+    TsUserList_Flow(1, 0, 0);
+
+    pfw->ptypttbl = ptbl;
+    pfw->gameMode = mode;
+
+    TsUserList_Flow(3, curTag, 0);
+}
+
+static int TsUserList_TagChangeAble(USERLIST_MENU *pfw, int *pno) {
+    int flg, no;
+
+    no = *pno;
+    if (no < 0) {
+        no = 0;
+    }
+    if (no >= pfw->ptypttbl->nType) {
+        no = (pfw->ptypttbl->nType - 1);
+    }
+
+    if (UserListTbl[pfw->ptypttbl->typeNo[no]].isSave) {
+        flg = UCheckSaveError;
+    } else {
+        flg = UCheckLoadError;
+    }
+
+    if (flg != 0) {
+        *pno = no;
+    }
+
+    return flg;
+}
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUserList_SetCurTag);
 
@@ -2680,7 +2799,16 @@ INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsUser_PanelDraw);
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsNAMEINBox_SetName);
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsNAMEINBox_GetName);
+static void TsNAMEINBox_GetName(NAMEINW *pfw, u_char *name) {
+    u_short *pcode = pfw->curnchr;
+    int      i;
+
+    for (i = 0; i < PR_ARRAYSIZE(pfw->curnchr); i++, pcode++) {
+        *name++ = UserName_CharSet[(*pcode / 4096)].ptbl[*pcode & 0xfff];
+    }
+
+    *name = '\0';
+}
 
 INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsNAMEINBox_Flow);
 

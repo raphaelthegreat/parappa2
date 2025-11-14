@@ -60,6 +60,11 @@ typedef struct { // 0x18
     /* 0x14 */ u_int h;
 } TSTEX_INF;
 
+typedef struct { // 0x8
+    /* 0x0 */ u_char *ptbl;
+    /* 0x4 */ int len;
+} USERNAME_CSET;
+
 typedef struct { // 0xc
     /* 0x0 */ u_short chan;
     /* 0x2 */ u_short tapNo;
@@ -320,6 +325,14 @@ typedef struct { // 0xc
     /* 0x0 */ int nType;
     /* 0x4 */ int typeNo[2];
 } USERLISTTYPE_TABLE;
+
+typedef struct { // 0x18
+    /* 0x00 */ MN_SCENE *pScene;
+    /* 0x04 */ int isSave;
+    /* 0x08 */ int dataMode;
+    /* 0x0c */ int dispColor;
+    /* 0x10 */ int cmpMesTbl[2];
+} USERLIST_TYPE;
 
 typedef struct { // 0x44
     /* 0x00 */ int state;

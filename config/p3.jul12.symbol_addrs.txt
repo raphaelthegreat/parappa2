@@ -1512,13 +1512,17 @@ pCStageRank                         = 0x00399b38;
 UserLst                             = 0x00399b3c;
 UserDispWork                        = 0x00399b40;
 UCheckLoadError                     = 0x00399b44;
+UCheckSaveError                     = 0x00399b48;
 subStatus                           = 0x00399b4c;
 ret                                 = 0x00399b50;
 errorNo                             = 0x00399b54;
 waitTime                            = 0x00399b58;
 
+UserName_CharSet                    = 0x0018b800; // size:0x10
 ULTypeT_CITY_STGCLR                 = 0x0018ca60; // size:0xc
 ULTypeT_CITY_REPLAY                 = 0x0018ca70; // size:0xc
+POPBtn2Sel                          = 0x0018caa0; // size:0x18
+UserListTbl                         = 0x0018cbc0; // size:0x78
 
 MapCity_tmp_254                     = 0x01c77a50; // size:0x34
 MapCHall_tmp_272                    = 0x01c77a88; // size:0x34
