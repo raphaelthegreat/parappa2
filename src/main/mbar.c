@@ -1474,7 +1474,7 @@ static void guidisp_init_pr() {
 	/* s1 17 */ int i;
 
     PrSetFrameRate(60.0f);
-    guime_hdl = PrInitializeScene(&DBufDc.draw11, usrMemoryData + 0x2BC1E7, 0xFFFFFFFF);
+    guime_hdl = PrInitializeScene(&DBufDc.draw11, "gui", 0xFFFFFFFF);
     guime_camera_hdl = PrInitializeCamera(cmnfGetFileAdrs(72));
     PrSelectCamera(guime_camera_hdl, guime_hdl);
     PrAnimateSceneCamera(guime_hdl, 0.0f);
@@ -1489,7 +1489,7 @@ static void guidisp_init_pr() {
         if (guim_pp->spamapP >= 0) {
             guim_pp->spaHdlP = PrInitializeAnimation(cmnfGetFileAdrs(guim_pp->spamapP));
             PrLinkPositionAnimation(guim_pp->spmHdl, guim_pp->spaHdlP);
-            PrAnimateModelPosition(guim_pp->spmHdl, *guim_pp->frame_pp);
+            PrAnimateModelPosition(guim_pp->spmHdl, *guim_pp->frame_ppP);
         }
     }
     PrPreprocessSceneModel(guime_hdl);
