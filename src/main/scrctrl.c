@@ -427,8 +427,26 @@ void vsTapdatSetMemorySave(void) {
     mccReqVSOTHSAVEset(&vsothsave_tmp);
 }
 
-/* https://decomp.me/scratch/ZjsvF */
-INCLUDE_ASM("asm/nonmatchings/main/scrctrl", vsTapdatSetMemoryLoad);
+void vsTapdatSetMemoryLoad(void) {
+    VSOTHSAVE vsothsave_tmp;
+    int       i;
+
+    WorkClear(&vsothsave_tmp, sizeof(vsothsave_tmp));
+
+    if (mccReqVSOTHSAVEget(&vsothsave_tmp)) {
+        vs_tapdat_tmp_cnt = 0;
+
+        for (i = 0; i < 32; i++) {
+            if (vsothsave_tmp[i] != 0) {
+                vs_tapdat_tmp[vs_tapdat_tmp_cnt].time = i * 24;
+                vs_tapdat_tmp[vs_tapdat_tmp_cnt].tapct[0].actor = -1;
+                vs_tapdat_tmp[vs_tapdat_tmp_cnt].tapct[0].sound = -1;
+                vs_tapdat_tmp[vs_tapdat_tmp_cnt].KeyIndex = vsothsave_tmp[i];
+                vs_tapdat_tmp_cnt++;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/main/scrctrl", vsTapdatSet);
 
@@ -490,7 +508,7 @@ static SCR_TAP_MEMORY* followTapLoad(int pos, int time) {
     if (follow_scr_tap_memory_cnt_load != pos) {
         return NULL;
     }
-    
+
     follow_scr_tap_memory_cnt_load = pos + 1;
     return &follow_scr_tap_memory[pos];
 }
@@ -534,7 +552,7 @@ int ScrDrawTimeGetFrame(int line) {
     if (line & 0x8000) {
         return (scrRefLineTime * 3600.0f + GetLineTempo(line) * 96.0f * 0.5f) / (GetLineTempo(line) * 96.0f);
     }
-    
+
     return score_str.stdat_dat_pp->scr_pp->scr_ctrl_pp[line].lineTimeFrame;
 }
 
@@ -570,7 +588,7 @@ SCRREC* ScrCtrlCurrentSearch(SCORE_INDV_STR *sindv_pp, int index, int frame) {
 
         scrrec_pp++;
     }
-    
+
     return scrrec_pp;
 }
 
@@ -587,7 +605,7 @@ void ScrCtrlIndvInit(STDAT_DAT *sdat_pp) {
     for (i = 0; i < PR_ARRAYSIZE(score_indv_str); i++, sindv_pp++) {
         dare = -1;
         gply_pp = global_data.global_ply;
-        
+
         for (j = 0; j < PR_ARRAYSIZE(global_data.global_ply); j++) {
             if (gply_pp[j].player_code == PR_BIT(i)) {
                 dare = j;
@@ -604,10 +622,10 @@ void ScrCtrlIndvInit(STDAT_DAT *sdat_pp) {
             sindv_pp->plycode = PR_BIT(i);
             sindv_pp->global_ply = &gply_pp[dare];
             sindv_pp->top_scr_ctrlpp = sdat_pp->scr_pp->scr_ctrl_pp;
-            
+
             sindv_pp->current_scrrec_pp = ScrCtrlCurrentSearch(sindv_pp, global_data.draw_tbl_top, 0);
             sindv_pp->useLine = global_data.draw_tbl_top;
-            
+
             sindv_pp->global_ply->exam_tbl_up = 0;
             sindv_pp->global_ply->exam_tbl_dw = 0;
 
@@ -658,7 +676,7 @@ int ScrCtrlIndvNextTime(SCORE_INDV_STR *sindv_pp, int Ncnt) {
                 return cur_pp->data;
             }
         }
-        
+
         cur_pp++;
     }
 }
@@ -1251,12 +1269,12 @@ void tapReqGroupPoll(void) {
         if (tgs_pp->tapct_pp == NULL) {
             continue;
         }
-        
+
         for (j = 0; j < 4; j++) {
             if (tgs_pp->tapct_pp[j].frame == -1) {
                 continue;
             }
-            
+
             if (tgs_pp->tapct_pp[j].frame == tgs_pp->timer) {
                 if (tgs_pp->tapct_pp[j].actor != -1) {
                     DrawTapReqTbl(tgs_pp->tapct_pp[j].actor, i, tgs_pp->tappress_pp);

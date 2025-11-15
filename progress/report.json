@@ -1,15 +1,15 @@
 {
   "measures": {
-    "fuzzy_match_percent": 46.679657,
+    "fuzzy_match_percent": 47.096855,
     "total_code": "342284",
-    "matched_code": "156588",
-    "matched_code_percent": 45.747974,
+    "matched_code": "158016",
+    "matched_code_percent": 46.165173,
     "total_data": "26064868",
     "matched_data": "26015216",
     "matched_data_percent": 99.8095,
     "total_functions": 1429,
-    "matched_functions": 963,
-    "matched_functions_percent": 67.38978,
+    "matched_functions": 973,
+    "matched_functions_percent": 68.08958,
     "total_units": 70
   },
   "units": [
@@ -1792,14 +1792,14 @@
     {
       "name": "main/scrctrl",
       "measures": {
-        "fuzzy_match_percent": 42.71357,
+        "fuzzy_match_percent": 45.081158,
         "total_code": "32776",
-        "matched_code": "13456",
-        "matched_code_percent": 41.054432,
+        "matched_code": "14232",
+        "matched_code_percent": 43.422016,
         "total_data": "1468",
         "total_functions": 128,
-        "matched_functions": 89,
-        "matched_functions_percent": 69.53125,
+        "matched_functions": 97,
+        "matched_functions_percent": 75.78125,
         "total_units": 1
       },
       "sections": [
@@ -1826,7 +1826,7 @@
         {
           "name": ".text",
           "size": "33024",
-          "fuzzy_match_percent": 42.71357,
+          "fuzzy_match_percent": 45.081158,
           "metadata": {}
         }
       ],
@@ -1946,6 +1946,7 @@
         {
           "name": "vsTapdatSetMemoryLoad",
           "size": "148",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "2256"
         },
@@ -2076,6 +2077,7 @@
         {
           "name": "tapLevelChangeSub",
           "size": "136",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "5008"
         },
@@ -2241,6 +2243,7 @@
         {
           "name": "treateTimeChange",
           "size": "140",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "11384"
         },
@@ -2287,6 +2290,7 @@
         {
           "name": "exh_mbar_key_out",
           "size": "80",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "12928"
         },
@@ -2346,6 +2350,7 @@
         {
           "name": "exh_renda_out",
           "size": "64",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "14408"
         },
@@ -2364,12 +2369,14 @@
         {
           "name": "exh_mane",
           "size": "76",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "15000"
         },
         {
           "name": "exh_all_add",
           "size": "68",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "15080"
         },
@@ -2598,6 +2605,7 @@
         {
           "name": "bonusGameInit",
           "size": "64",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "29952"
         },
@@ -5226,16 +5234,16 @@
     {
       "name": "main/mcctrl",
       "measures": {
-        "fuzzy_match_percent": 74.72868,
+        "fuzzy_match_percent": 100.0,
         "total_code": "2580",
-        "matched_code": "1928",
-        "matched_code_percent": 74.72868,
+        "matched_code": "2580",
+        "matched_code_percent": 100.0,
         "total_data": "212",
         "matched_data": "12",
         "matched_data_percent": 5.6603775,
         "total_functions": 18,
-        "matched_functions": 16,
-        "matched_functions_percent": 88.88889,
+        "matched_functions": 18,
+        "matched_functions_percent": 100.0,
         "total_units": 1
       },
       "sections": [
@@ -5263,7 +5271,7 @@
         {
           "name": ".text",
           "size": "2616",
-          "fuzzy_match_percent": 74.72868,
+          "fuzzy_match_percent": 100.0,
           "metadata": {}
         }
       ],
@@ -5369,12 +5377,14 @@
         {
           "name": "mccReqTapForward",
           "size": "340",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "1504"
         },
         {
           "name": "mccReqTapForwardOwn",
           "size": "312",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "1848"
         },
@@ -13169,16 +13179,16 @@
     {
       "id": "main",
       "measures": {
-        "fuzzy_match_percent": 61.071785,
+        "fuzzy_match_percent": 62.223064,
         "total_code": "124036",
-        "matched_code": "74908",
-        "matched_code_percent": 60.392143,
+        "matched_code": "76336",
+        "matched_code_percent": 61.543423,
         "total_data": "48216",
         "matched_data": "38372",
         "matched_data_percent": 79.58354,
         "total_functions": 570,
-        "matched_functions": 455,
-        "matched_functions_percent": 79.82456,
+        "matched_functions": 465,
+        "matched_functions_percent": 81.57895,
         "total_units": 17
       }
     },
