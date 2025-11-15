@@ -79,7 +79,7 @@ static void on_th_make(EXAM_CHECK *ec_pp, CK_TH_ENUM ckth);
 /* static */ int  exh_normal_add(EXAM_CHECK *ec_pp);
 /* static */ int  exh_normal_sub(EXAM_CHECK *ec_pp);
 static int  exh_nombar_sub(EXAM_CHECK *ec_pp);
-static int  exh_mbar_key_out(EXAM_CHECK *ec_pp);
+/* static */ int  exh_mbar_key_out(EXAM_CHECK *ec_pp);
 /* static */ int  exh_mbar_time_out(EXAM_CHECK *ec_pp);
 /* static */ int  exh_mbar_num_out(EXAM_CHECK *ec_pp);
 static int  exh_yaku(EXAM_CHECK *ec_pp, int hane_flag);
@@ -88,10 +88,10 @@ static int  exh_yaku(EXAM_CHECK *ec_pp, int hane_flag);
 static int  exh_allkey_out(EXAM_CHECK *ec_pp);
 static int  exh_allkey_out_nh(EXAM_CHECK *ec_pp);
 /* static */ int  exh_command(EXAM_CHECK *ec_pp);
-static int  exh_renda_out(EXAM_CHECK *ec_pp);
+/* static */ int  exh_renda_out(EXAM_CHECK *ec_pp);
 static int  manemane_check_sub(EXAM_CHECK *ec_pp);
 static int  manemane_check(EXAM_CHECK *ec_pp);
-static int  exh_mane(EXAM_CHECK *ec_pp);
+/* static */ int  exh_mane(EXAM_CHECK *ec_pp);
 /* static */ int  exh_all_add(EXAM_CHECK *ec_pp);
 static TAPSET* IndvGetTapSetAdrs(SCORE_INDV_STR *sindv_pp);
 static int  nextExamTime(void);
@@ -1406,7 +1406,24 @@ static int exh_nombar_sub(/* s2 18 */ EXAM_CHECK *ec_pp)
 }
 #endif
 
-INCLUDE_ASM("asm/nonmatchings/main/scrctrl", exh_mbar_key_out);
+/* static */ int exh_mbar_key_out(EXAM_CHECK *ec_pp) {
+    int ret;
+
+    if (global_data.play_typeL == PLAY_TYPE_ONE) {
+        return 0;
+    }
+
+    ret = -ec_pp->oth_num;
+    if (ec_pp->ted_num != 0) {
+        if (ec_pp->oth_num == 0) {
+            ret = 0;
+        } else if (ec_pp->oth[0].key == ec_pp->ted[0].key) {
+            ret = 0;
+        }
+    }
+
+    return ret;
+}
 
 /* static */ int exh_mbar_time_out(EXAM_CHECK *ec_pp) {
     int ret;
@@ -1446,13 +1463,40 @@ INCLUDE_ASM("asm/nonmatchings/main/scrctrl", exh_allkey_out_nh);
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/scrctrl", exh_renda_out);
+/* static */ int exh_renda_out(EXAM_CHECK *ec_pp) {
+    int renda_ck;
+
+    renda_ck = ec_pp->tapset_pp->taptimeEnd - ec_pp->tapset_pp->taptimeStart;
+    renda_ck = ((renda_ck + 23) / 24);
+    renda_ck += 3;
+
+    if (ec_pp->ted_num >= renda_ck) {
+        return -1;
+    }
+
+    return 0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/main/scrctrl", manemane_check_sub);
 
 INCLUDE_ASM("asm/nonmatchings/main/scrctrl", manemane_check);
 
-INCLUDE_ASM("asm/nonmatchings/main/scrctrl", exh_mane);
+/* static */ int exh_mane(EXAM_CHECK *ec_pp) {
+    int normal_point;
+    int late_point;
+
+    normal_point = manemane_check_sub(ec_pp);
+
+    on_th_make(ec_pp, CK_TH_LATE);
+
+    late_point = manemane_check_sub(ec_pp);
+
+    if (late_point < normal_point) {
+        late_point = normal_point;
+    }
+
+    return late_point;
+}
 
 /* static */ int exh_all_add(EXAM_CHECK *ec_pp) {
     int i;
