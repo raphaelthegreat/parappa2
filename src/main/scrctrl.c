@@ -92,7 +92,7 @@ static int  exh_renda_out(EXAM_CHECK *ec_pp);
 static int  manemane_check_sub(EXAM_CHECK *ec_pp);
 static int  manemane_check(EXAM_CHECK *ec_pp);
 static int  exh_mane(EXAM_CHECK *ec_pp);
-static int  exh_all_add(EXAM_CHECK *ec_pp);
+/* static */ int  exh_all_add(EXAM_CHECK *ec_pp);
 static TAPSET* IndvGetTapSetAdrs(SCORE_INDV_STR *sindv_pp);
 static int  nextExamTime(void);
 static SCORE_INDV_STR* GetSindvPcodeLine(PLAYER_CODE pcode);
@@ -685,32 +685,31 @@ int getLvlTblRand(TAPLVL_DAT *taplvl_dat_pp) {
     return ret;
 }
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("asm/nonmatchings/main/scrctrl", tapLevelChangeSub);
-#else
 int tapLevelChangeSub(void) {
-    /* a3 7 */ int add_move;
-    /* a0 4 */ TAPLVL_STR *taplvl_str_pp;
-    /* a0 4 */ int lvl_num;
+    int         add_move;
+    TAPLVL_STR *taplvl_str_pp;
+    int         lvl_num;
 
-    if (global_data.tapLevelCtrl != LM_AUTO ||
-        score_str.stdat_dat_pp->taplvl_str_pp == NULL) {
+    if (global_data.tapLevelCtrl != LM_AUTO) {
+        return global_data.tapLevel;
+    }
+    if (score_str.stdat_dat_pp->taplvl_str_pp == NULL) {
         return global_data.tapLevel;
     }
 
-    taplvl_str_pp = score_str.stdat_dat_pp->taplvl_str_pp;
-    
     lvl_num = global_data.roundL;
-
-    if ( global_data.play_table_modeL == PLAY_TABLE_EASY )
-        lvl_num = global_data.roundL + TRND_MAX;
-
     add_move = global_data.tap_ctrl_level;
-    global_data.tapLevel = getLvlTblRand(&taplvl_str_pp[lvl_num].taplvl_dat[add_move]);
 
+    if (global_data.play_table_modeL == PLAY_TABLE_EASY) {
+        lvl_num = lvl_num + TRND_MAX;
+    }
+
+    taplvl_str_pp = &score_str.stdat_dat_pp->taplvl_str_pp[lvl_num];
+    add_move = getLvlTblRand(&taplvl_str_pp->taplvl_dat[add_move]);
+
+    global_data.tapLevel = add_move;
     return global_data.tapLevel;
 }
-#endif
 
 void tapLevelChange(SCORE_INDV_STR *sindv_pp) {
     int add_move;
@@ -1295,31 +1294,25 @@ static int otehon_all_make(EXAM_CHECK *ec_pp) {
     return ret;
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/scrctrl", treateTimeChange);
-#if 0
-static int treateTimeChange(/* s0 16 */ int time)
-{
-    /* s1 17 */ int thnum_ofs;
-    /* a0 4 */ int thnum_now;
-    int ret;
+static int treateTimeChange(int time) {
+    int thnum_ofs = thnum_get(24, CK_TH_NORMAL);
+    int thnum_now = thnum_get((time + 96) / 4, CK_TH_NORMAL);
 
-    thnum_ofs = thnum_get(24, CK_TH_NORMAL);
-    thnum_now = thnum_get((time + 96) / 4, CK_TH_NORMAL);
-
-    if (thnum_now & 1)
+    if ((thnum_now % 2) != 0) {
         return -1;
+    }
+    if (thnum_now < thnum_ofs) {
+        return -1;
+    }
 
-    if (thnum_now >= thnum_ofs)
-        return ((thnum_now - thnum_ofs) / 2) * 24;
-    
-    return -1;
+    thnum_now -= thnum_ofs;
+    thnum_now /= 2;
+    return thnum_now * 24;
 }
-#endif
 
 static int thnum_get(int p96_num, CK_TH_ENUM ckth) {
     u_int thnum_data;
-    int   ck_bit;
-    int   ck_dat;
+    int   ck_bit, ck_dat;
     int   ret_cnt;
     int   i;
 
@@ -1328,8 +1321,8 @@ static int thnum_get(int p96_num, CK_TH_ENUM ckth) {
     thnum_data = thnum_tbl[ckth];
 
     for (i = 0; i <= p96_num; i++) {
-        ck_dat = (thnum_data >> (23 - i % 24)) & 1;
-        
+        ck_dat = (thnum_data >> (23 - (i % 24))) & 1;
+
         if (ck_bit < 0) {
             if (ck_dat == 0) {
                 ret_cnt = 1;
@@ -1337,7 +1330,7 @@ static int thnum_get(int p96_num, CK_TH_ENUM ckth) {
         } else if (ck_dat != ck_bit) {
             ret_cnt++;
         }
-        
+
         ck_bit = ck_dat;
     }
 
@@ -1461,7 +1454,27 @@ INCLUDE_ASM("asm/nonmatchings/main/scrctrl", manemane_check);
 
 INCLUDE_ASM("asm/nonmatchings/main/scrctrl", exh_mane);
 
-INCLUDE_ASM("asm/nonmatchings/main/scrctrl", exh_all_add);
+/* static */ int exh_all_add(EXAM_CHECK *ec_pp) {
+    int i;
+    int total;
+
+    total = 0;
+
+    for (i = 0; i < 12; i++) {
+        if (i != EXH_TOTAL) {
+            total += ec_pp->each_point[i];
+        }
+    }
+
+    if (ec_pp->each_point[EXH_ALLKEY_OUT] != 0) {
+        total = 0;
+    }
+    if (ec_pp->each_point[EXH_RENDA_OUT] != 0) {
+        total = -100;
+    }
+
+    return total;
+}
 
 INCLUDE_ASM("asm/nonmatchings/main/scrctrl", IndvGetTapSetAdrs);
 
@@ -2254,7 +2267,13 @@ int ScrEndWaitLoop(void) {
     return gameEndWaitLoop;
 }
 
-INCLUDE_ASM("asm/nonmatchings/main/scrctrl", bonusGameInit);
+static void bonusGameInit(void) {
+    WorkClear(&bng_str, sizeof(bng_str));
+
+    bng_str.st_time   = 0;
+    bng_str.end_time  = 18048;
+    bng_str.bonus_cnt = 0;
+}
 
 static int bonusGameCntPls(void) {
     bng_str.bonus_cnt++;

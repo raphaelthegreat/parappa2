@@ -467,39 +467,39 @@ PLAYER_INDEX Pcode2Pindex(PLAYER_CODE pc) {
 }
 
 int GetKeyCode2Index(int code) {
-    if (code & SCE_PADRup) {
-        return 1;
+    if (code & KcTR) {
+        return KiTR;
     }
-    if (code & SCE_PADRright) {
-        return 2;
+    if (code & KcCI) {
+        return KiCI;
     }
-    if (code & SCE_PADRdown) {
-        return 3;
+    if (code & KcXX) {
+        return KiXX;
     }
-    if (code & SCE_PADRleft) {
-        return 4;
-    }
-
-    if (code & SCE_PADL1) {
-        return 5;
-    }
-    if (code & SCE_PADR1) {
-        return 6;
+    if (code & KcSQ) {
+        return KiSQ;
     }
 
-    if (code & SCE_PADL2) {
-        return 5;
+    if (code & KcL1) {
+        return KiL1;
     }
-    if (code & SCE_PADR2) {
-        return 6;
+    if (code & KcR1) {
+        return KiR1;
     }
 
-    return 0;
+    if (code & KcL2) {
+        return KiL1;
+    }
+    if (code & KcR2) {
+        return KiR1;
+    }
+
+    return KiNO;
 }
 
 int GetIndex2KeyCode(int index) {
     static int KeyCode[7] = {
-        0, 16, 32, 64, 128, 4, 8,
+        0, KcTR, KcCI, KcXX, KcSQ, KcL1, KcR1,
     };
 
     if (index > 0 && index < PR_ARRAYSIZEU(KeyCode)) {
@@ -511,38 +511,38 @@ int GetIndex2KeyCode(int index) {
 
 int GetIndex2PressId(int index) {
     static int KeyPressNum[7] = {
-        -1, 4, 5, 6, 7, 8, 9,
+        PAD_PR_None, PAD_PR_Rup, PAD_PR_Rright, PAD_PR_Rdown, PAD_PR_Rleft, PAD_PR_L1, PAD_PR_R1,
     };
 
     if (index > PR_ARRAYSIZEU(KeyPressNum)) {
-        return -1;
+        return PAD_PR_None;
     }
 
     return KeyPressNum[index];
 }
 
 int GetKeyCode2PressId(int code) {
-    if (code & 0x10) {
-        return 4;
+    if (code & KcTR) {
+        return PAD_PR_Rup;
     }
-    if (code & 0x20) {
-        return 5;
+    if (code & KcCI) {
+        return PAD_PR_Rright;
     }
-    if (code & 0x40) {
-        return 6;
+    if (code & KcXX) {
+        return PAD_PR_Rdown;
     }
-    if (code & 0x80) {
-        return 7;
-    }
-
-    if (code & 4) {
-        return 8;
-    }
-    if (code & 8) {
-        return 9;
+    if (code & KcSQ) {
+        return PAD_PR_Rleft;
     }
 
-    return -1;
+    if (code & KcL1) {
+        return PAD_PR_L1;
+    }
+    if (code & KcR1) {
+        return PAD_PR_R1;
+    }
+
+    return PAD_PR_None;
 }
 
 TAP_LINE_LEVEL_ENUM ChangeTapLevel(TAP_LINE_LEVEL_ENUM now_lvl) {

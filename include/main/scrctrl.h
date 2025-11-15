@@ -79,6 +79,18 @@ typedef enum {
 } KEY_INDEX_ENUM;
 
 typedef enum {
+    KcTR = 16,
+    KcCI = 32,
+    KcXX = 64,
+    KcSQ = 128,
+    KcL1 = 4,
+    KcR1 = 8,
+    KcAll = 252,
+    KcL2 = 1,
+    KcR2 = 2
+} KEY_CODE_ENUM;
+
+typedef enum {
     SCRRJ_TITLE_JUMP = 0,
     SCRRJ_TITLE_START = 1,
     SCRRJ_TITLE_JUMP_DERA = 2
@@ -297,6 +309,22 @@ typedef enum {
     TAP_FOLLOW_LOAD,
     TAP_FOLLOW_MAX
 } TAP_FOLLOW_ENUM;
+
+typedef enum {
+    EXH_NORMAL_ADD = 0,
+    EXH_NORMAL_SUB = 1,
+    EXH_NOMBAR_SUB = 2,
+    EXH_MBAR_KEY_OUT = 3,
+    EXH_MBAR_TIME_OUT = 4,
+    EXH_MBAR_NUM_OUT = 5,
+    EXH_YAKU = 6,
+    EXH_ALLKEY_OUT = 7,
+    EXH_COMMAND = 8,
+    EXH_RENDA_OUT = 9,
+    EXH_MANE = 10,
+    EXH_TOTAL = 11,
+    EXH_MAX = 12
+} EXAM_HANTEI;
 
 typedef enum {
     CK_TH_NOCK = -1,
