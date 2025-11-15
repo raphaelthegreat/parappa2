@@ -4,6 +4,7 @@
 #include "os/syssub.h"
 #include "os/tim2.h"
 #include "os/cmngifpk.h"
+#include "os/system.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -16,7 +17,7 @@
 /* sdata 39955c */ extern int niko_chan_str_cnt; /* static */
 /* sdata 399560 */ extern int hook_use_flag; /* static */
 /* data 186b28 */ extern MBHOOK_STR mbhook_str[2]; /* static */
-/* data 186b38 */ extern u_int hook_fr_dat[];
+/* data 186b38 */ extern u_int hook_fr_dat[]; /* static */
 /* sdata 399564 */ extern int exam_disp_cursor_timer; /* static */
 /* sdata 399568 */ extern int scoreTentouFlag; /* static */
 /* data 186b78 */ extern u_char scr_tenmetu_col[4][3]; /* static */
@@ -25,18 +26,17 @@
 /* sdata 399574 */ extern int vs_mouse_disp_flag; /* static */
 /* data 186b88 */ extern METCOL_STR metcol_str[3]; /* static */
 /* data 186bb0 */ extern MBA_CHAR_DATA mba_char_data[]; /* static */
-/* sdata 399578 */ extern int mbar_pos_y_ofs;
-/* data 186d78 */ extern u_char colp[][3];
-/* data 17c2b8 */ extern GAME_STATUS game_status;
-/* data 186d90 */ static void (*marSetPrgTbl[])(MBAR_REQ_STR*);
-// /* data 186da0 */ static GUIMAP guimap[];
+/* sdata 399578 */ extern int mbar_pos_y_ofs; /* static */
+/* data 186d78 */ extern u_char colp[][3]; /* static */
+/* data 17c2b8 */ extern GAME_STATUS game_status; /* static */
+/* data 186d90 */ extern void (*marSetPrgTbl[])(MBAR_REQ_STR*); /* static */
+/* data 186da0 */ extern GUIMAP guimap[]; /* static */
 // /* data 186ee0 */ static int guimap_single[];
 // /* data 186ef0 */ static int guimap_vs[];
 // /* data 186f00 */ static int guimap_sr[];
 // /* data 186f08 */ static int guimap_hk[];
 /* bss 1c70030 */ extern GLOBAL_PLY *exam_global_ply[4]; /* static */
-/* sbss 399a80 */ extern GLOBAL_PLY *exam_global_ply_current;
-/* bss 1c6ffc0 */ extern sceGsLoadImage tp_tmp_72;      /* static */
+/* sbss 399a80 */ extern GLOBAL_PLY *exam_global_ply_current; /* static */
 /* bss 1c70040 */ extern int exam_global_ply_current_ply[4]; /* static */
 /* bss 1c70050 */ extern int metFrameCnt[3]; /* static */
 /* bss 1c70060 */ extern int metFrameCntLight[3]; /* static */
@@ -58,9 +58,9 @@
 /* sbss 399a84 */ extern int mbar_ctrl_time; /* static */
 /* sbss 399a88 */ extern int mbar_ctrl_stage; /* static */
 /* sbss 399a8c */ extern int mbar_ctrl_stage_selT; /* static */
-/* bss 1c701c8 */ extern sceGifPacket mbar_gif;
-// /* sbss 399a90 */ static PR_SCENEHANDLE guime_hdl;
-// /* sbss 399a94 */ static PR_CAMERAHANDLE guime_camera_hdl;
+/* bss 1c701c8 */ extern sceGifPacket mbar_gif; /* static */
+/* sbss 399a90 */ extern PR_SCENEHANDLE guime_hdl; /* static */
+/* sbss 399a94 */ extern PR_CAMERAHANDLE guime_camera_hdl; /* static */
 
 extern GLOBAL_DATA global_data;
 
@@ -123,14 +123,15 @@ void examCharSet(EX_CHAR_DISP *ecd_pp, sceGifPacket *gifpk_pp) {
 }
 
 static void clrColorBuffer(int id) {
+    extern sceGsLoadImage tp_tmp_72; /* static */
     TIM2_DAT *tim2_dat_pp;
     u_char *tr_adr;
     u_int cpsm, cbp;
 
     tim2_dat_pp = &tim2spr_tbl_tmp1[id];
     tr_adr = (u_char*)&tmpColor;
-    cpsm = (int)(PR_TEX0(tim2_dat_pp).CPSM << 32) >> 32;
-    cbp = (int)(PR_TEX0(tim2_dat_pp).CBP << 32) >> 32;
+    cpsm = PR_TEX0(tim2_dat_pp).CPSM;
+    cbp = PR_TEX0(tim2_dat_pp).CBP;
     sceGsSetDefLoadImage(&tp_tmp_72, cbp, 1, cpsm, 0, 0, 8, 2);
     FlushCache(0);
     sceGsExecLoadImage(&tp_tmp_72, (u_long128*)tr_adr);
@@ -355,10 +356,10 @@ static void MbarHookPoll(void) {
 
     for (i = 0; i < 2; i++) {
         if (mbhook_str[i].timer != 0) {
-            mbhook_str[i].timer += 1;
+            mbhook_str[i].timer++;
             moto_pp = cmnfGetFileAdrs(mbhook_str[i].moto);
             saki_pp = cmnfGetFileAdrs(mbhook_str[i].saki);
-            if (mbhook_str[i].timer >= 0x10u) {
+            if (mbhook_str[i].timer < 0 || mbhook_str[i].timer > 15) {
                 Tim2Trans(moto_pp);
                 mbhook_str[i].timer = 0;
             } else {
@@ -379,17 +380,17 @@ void vsAnimationInit(void) {
     WorkClear(vs_scr_ctrl, sizeof(vs_scr_ctrl));
 }
 
-void vsAnimationReq(int ply, long int scrMoto, long int scrSaki, VS_MV_TYPE vt) {
+void vsAnimationReq(int ply, long scrMoto, long scrSaki, VS_MV_TYPE vt) {
     VS_SCR_CTRL *vsc_pp;
 
     vsc_pp = &vs_scr_ctrl[ply];
     vsc_pp->motoScr = scrMoto;
     vsc_pp->sakiScr = scrSaki;
-    vsc_pp->animation_time = 0x3c;
+    vsc_pp->animation_time = 60;
     vsc_pp->vt = vt;
 }
 
-void vsAnimationReset(int ply, long int scr) {
+void vsAnimationReset(int ply, long scr) {
     VS_SCR_CTRL *vsc_pp;
 
     vsc_pp = &vs_scr_ctrl[ply];
@@ -423,7 +424,7 @@ static void vsAnimationPoll(void) {
             if (vs_scr_ctrl[i].vt == VSMT_DW) {
                 vsScoreAni[i] += 2;
             }
-            vs_scr_ctrl[i].animation_time -= 1;
+            vs_scr_ctrl[i].animation_time--;
             if (vs_scr_ctrl[i].animation_time == 0) {
                 vs_scr_ctrl[i].motoScr = vs_scr_ctrl[i].sakiScr;
             }
@@ -447,27 +448,27 @@ static void metColorSet(EXAM_TYPE exam_type, float per) {
 	u_char *saki_pp;
 	int sakiper;
 
-    if (per == 0.f) {
+    if (per == 0.0f) {
         return Tim2Trans(cmnfGetFileAdrs(metcol_str[exam_type].df_num));
     }
-    if (per == -1.f) {
+    if (per == -1.0f) {
         return Tim2Trans(cmnfGetFileAdrs(metcol_str[exam_type].ng_num));
     }
-    if (per == 1.f) {
+    if (per == 1.0f) {
         return Tim2Trans(cmnfGetFileAdrs(metcol_str[exam_type].ok_num));
     }
     sakiper = metcol_str[exam_type].df_num;
     moto_pp = cmnfGetFileAdrs(sakiper);
-    if (per < 0.f) {
+    if (per < 0.0f) {
         per = -per;
-        if (1.f < per) {
-            per = 1.f;
+        if (per > 1.0f) {
+            per = 1.0f;
         }
         saki_pp = cmnfGetFileAdrs(metcol_str[exam_type].ng_num);
         sakiper = per * 128;
     } else {
-        if (1.f < per) {
-            per = 1.f;
+        if (per > 1.0f) {
+            per = 1.0f;
         }
         saki_pp = cmnfGetFileAdrs(metcol_str[exam_type].ok_num);
         sakiper = per * 128;
@@ -531,7 +532,7 @@ void ExamDispPlySet(GLOBAL_PLY *ply, int pos) {
 void ExamDispReq(int ply, int plmi) {
     exam_disp_cursor_timer = 0;
     exam_global_ply_current = exam_global_ply[ply];
-    if (plmi != 0) {
+    if (plmi) {
         exam_global_ply_current_ply[ply] = 1;
     } else {
         exam_global_ply_current_ply[ply] = 0;
@@ -567,7 +568,7 @@ float examScore2Level(long score) {
 #ifndef NON_MATCHING
 INCLUDE_ASM("asm/nonmatchings/main/mbar", ExamDispOn);
 #else
-static void ExamDispOn() {
+static void ExamDispOn(void) {
 	int met_time;
 	int i;
 	float maxfr;
@@ -646,10 +647,10 @@ INCLUDE_ASM("asm/nonmatchings/main/mbar", hex2dec_mbar_tmp);
 #ifndef NON_MATCHING
 INCLUDE_ASM("asm/nonmatchings/main/mbar", hex2decPlMi);
 #else 
-static u_long hex2decPlMi(long int data) {
+static u_long hex2decPlMi(long data) {
 	u_long ret;
 	int i;
-	long int plmichar;
+	long plmichar;
 
     ret = 0;
     if (data == 0) {
@@ -864,7 +865,7 @@ void MbarCharSet(MBARR_CHR *mb_pp) {
     int x1, y1, x2, y2;
 
     mbcd_pp = &mba_char_data[mb_pp->mbc_enum];
-    if (mbcd_pp->tim2_dat_pp == 0) {
+    if (mbcd_pp->tim2_dat_pp == NULL) {
         return;
     }
     sceGifPkAddGsAD(&mbar_gif, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(mb_pp->r, mb_pp->g, mb_pp->b, mb_pp->a, 0x3f800000));
@@ -1465,7 +1466,35 @@ void MbarDispSceneVsDrawInit(void) {
     vs_mouse_disp_flag = 0;
 }
 
+#ifndef NON_MATCHING
 INCLUDE_ASM("asm/nonmatchings/main/mbar", guidisp_init_pr);
+#else
+static void guidisp_init_pr() {
+	/* s0 16 */ GUIMAP *guim_pp;
+	/* s1 17 */ int i;
+
+    PrSetFrameRate(60.0f);
+    guime_hdl = PrInitializeScene(&DBufDc.draw11, usrMemoryData + 0x2BC1E7, 0xFFFFFFFF);
+    guime_camera_hdl = PrInitializeCamera(cmnfGetFileAdrs(72));
+    PrSelectCamera(guime_camera_hdl, guime_hdl);
+    PrAnimateSceneCamera(guime_hdl, 0.0f);
+    for (i = 0; i < 10u; i++) {
+        guim_pp = &guimap[i];
+        guim_pp->spmHdl = PrInitializeModel(cmnfGetFileAdrs(guim_pp->spmmap), guime_hdl);
+        if (guim_pp->spamap >= 0) {
+            guim_pp->spaHdl = PrInitializeAnimation(cmnfGetFileAdrs(guim_pp->spamap));
+            PrLinkAnimation(guim_pp->spmHdl, guim_pp->spaHdl);
+            PrAnimateModel(guim_pp->spmHdl, *guim_pp->frame_pp);
+        }
+        if (guim_pp->spamapP >= 0) {
+            guim_pp->spaHdlP = PrInitializeAnimation(cmnfGetFileAdrs(guim_pp->spamapP));
+            PrLinkPositionAnimation(guim_pp->spmHdl, guim_pp->spaHdlP);
+            PrAnimateModelPosition(guim_pp->spmHdl, *guim_pp->frame_pp);
+        }
+    }
+    PrPreprocessSceneModel(guime_hdl);
+}
+#endif
 
 INCLUDE_ASM("asm/nonmatchings/main/mbar", guidisp_draw_quit);
 
