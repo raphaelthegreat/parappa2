@@ -1,15 +1,15 @@
 {
   "measures": {
-    "fuzzy_match_percent": 45.9519,
+    "fuzzy_match_percent": 46.679657,
     "total_code": "342284",
-    "matched_code": "155196",
-    "matched_code_percent": 45.341293,
-    "total_data": "26064848",
+    "matched_code": "156588",
+    "matched_code_percent": 45.747974,
+    "total_data": "26064868",
     "matched_data": "26015216",
-    "matched_data_percent": 99.80958,
+    "matched_data_percent": 99.8095,
     "total_functions": 1429,
-    "matched_functions": 960,
-    "matched_functions_percent": 67.17985,
+    "matched_functions": 963,
+    "matched_functions_percent": 67.38978,
     "total_units": 70
   },
   "units": [
@@ -8422,15 +8422,14 @@
     {
       "name": "menu/menufont",
       "measures": {
-        "fuzzy_match_percent": 38.86163,
+        "fuzzy_match_percent": 99.975464,
         "total_code": "4076",
-        "matched_code": "1584",
-        "matched_code_percent": 38.86163,
-        "matched_data_percent": 100.0,
+        "matched_code": "2976",
+        "matched_code_percent": 73.01276,
+        "total_data": "20",
         "total_functions": 16,
-        "matched_functions": 10,
-        "matched_functions_percent": 62.5,
-        "complete_data_percent": 100.0,
+        "matched_functions": 13,
+        "matched_functions_percent": 81.25,
         "total_units": 1
       },
       "sections": [
@@ -8445,9 +8444,14 @@
           "metadata": {}
         },
         {
+          "name": ".lit4",
+          "size": "20",
+          "metadata": {}
+        },
+        {
           "name": ".text",
           "size": "4096",
-          "fuzzy_match_percent": 38.86163,
+          "fuzzy_match_percent": 99.975464,
           "metadata": {}
         }
       ],
@@ -8455,6 +8459,7 @@
         {
           "name": "MenuFont_ASC2EUC",
           "size": "188",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "0"
         },
@@ -8489,6 +8494,7 @@
         {
           "name": "MENUSubtPut",
           "size": "384",
+          "fuzzy_match_percent": 99.947914,
           "metadata": {},
           "address": "408"
         },
@@ -8502,24 +8508,28 @@
         {
           "name": "MENUFontPutS",
           "size": "352",
+          "fuzzy_match_percent": 99.88636,
           "metadata": {},
           "address": "1136"
         },
         {
           "name": "MENUFontPutR",
           "size": "364",
+          "fuzzy_match_percent": 99.89011,
           "metadata": {},
           "address": "1488"
         },
         {
           "name": "_PKFontPut",
           "size": "900",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "1856"
         },
         {
           "name": "_PADArrow_Put",
           "size": "304",
+          "fuzzy_match_percent": 100.0,
           "metadata": {},
           "address": "2760"
         },
@@ -13175,16 +13185,16 @@
     {
       "id": "menu",
       "measures": {
-        "fuzzy_match_percent": 39.0163,
+        "fuzzy_match_percent": 41.185177,
         "total_code": "114852",
-        "matched_code": "43564",
-        "matched_code_percent": 37.930553,
-        "total_data": "15608",
+        "matched_code": "44956",
+        "matched_code_percent": 39.142548,
+        "total_data": "15628",
         "matched_data": "44",
-        "matched_data_percent": 0.28190672,
+        "matched_data_percent": 0.28154594,
         "total_functions": 374,
-        "matched_functions": 255,
-        "matched_functions_percent": 68.181816,
+        "matched_functions": 258,
+        "matched_functions_percent": 68.98396,
         "total_units": 9
       }
     },

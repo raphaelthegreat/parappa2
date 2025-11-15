@@ -5,12 +5,14 @@
 #include "menu/menu_mdl.h"
 #include "menu/mntm2hed.h"
 
+#include <string.h>
+
 /* data 18f580 */ extern u_long SubtGsTex0_TmpMenuFont[3]; /* static */
-/* data 18f598 */ extern MCODE_ASCII mcode_ascii_TmpMenuFont[0]; /* static */
+/* data 18f598 */ extern MCODE_ASCII mcode_ascii_TmpMenuFont[]; /* static */
 /* data 18fe58 */ extern MCODE_ASCII mcode_HalfSpace; /* static */
 /* data 18fe68 */ extern MCODE_KANJI_ANIME PadSymbolFontA[]; /* static */
-/* data 18ff70 */ MCODE_DAT ArowPat[0];
-/* data 18ffa8 */ extern MCODE_DAT TsFont[0]; /* static */
+/* data 18ff70 */ MCODE_DAT ArowPat[];
+/* data 18ffa8 */ extern MCODE_DAT TsFont[]; /* static */
 /* data 190360 */ extern char Tbl_ASC2EUC[193]; /* static */
 /* sdata 399890 */ extern int _PadFont_SW; /* static */
 /* sdata 399894 */ extern int _PadArrowState; /* static */
@@ -27,49 +29,23 @@ static MCODE_DAT* codeKanjiCheck(u_char dat0, u_char dat1, MCODE_KANJI *kcode_pp
 static MCODE_DAT* codeKanjiACheck(u_char dat0, u_char dat1, MCODE_KANJI_ANIME *kcode_pp, int kcode_max);
 static void euc2sjis(unsigned char *c1, unsigned char *c2);
 
-#if 1
-INCLUDE_ASM("asm/nonmatchings/menu/menufont", MenuFont_ASC2EUC);
-#else
-void MenuFont_ASC2EUC(/* s0 16 */ char *des, /* s1 17 */ char *src)
-{
-    /* a3 7 */ u_int  len;
-    /* v1 3 */ u_char c;
+void MenuFont_ASC2EUC(char *des, char *src) {
+    u_int len = strlen(Tbl_ASC2EUC) / 2;
+    u_char c;
 
-    len = strlen(Tbl_ASC2EUC);
-    c = *src;
-
-    while (1)
-    {
-        if (c == 0)
-        {
-            *des = '\0';
-            return;
+    for (; (c = *src) != '\0'; src++) {
+        if (c >= ' ' && (c - ' ') < len) {
+            c = (c - ' ') * 2;
+            *des++ = Tbl_ASC2EUC[c + 0];
+            *des++ = Tbl_ASC2EUC[c + 1];
+        } else {
+            *des++ = 0xa1; /* Full-width space */
+            *des++ = 0xa1;
         }
-
-        if (c > 0x20)
-        {
-            if ((len / 2) <= c - 0x20)
-            {
-                *des   = -0x5f;
-                *des++ = -0x5f;
-            }
-            else
-            {
-                *des   = Tbl_ASC2EUC[((c - 0x20 & 0x7f) * 2)];
-                *des++ = Tbl_ASC2EUC[((c - 0x20 & 0x7f) * 2) + 1];
-            }
-        }
-        else
-        {
-            *des   = -0x5f;
-            *des++ = -0x5f;
-        }
-
-        src++;
-        des++;
     }
+
+    *des = '\0';
 }
-#endif
 
 void MENUSubtSetKanji(void *kanji_data_top) {
     kanji_pp_TmpMenuFont = (MCODE_STR*)kanji_data_top;
@@ -109,45 +85,40 @@ int MENUSubtGetLine(u_char *str, int lflg) {
     return line;
 }
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("asm/nonmatchings/menu/menufont", MENUSubtPut);
-#else
-void MENUSubtPut(SPR_PKT pk, SPR_PRM *spr, int x, int y, u_int abgr, int flg, u_char *str, int lflg)
-{
+void MENUSubtPut(SPR_PKT pk, SPR_PRM *spr, int x, int y, u_int abgr, int flg, u_char *str, int lflg) {
     SUBT_CODE subt_code[16] = {};
     int       line;
     u_long    tex0;
 
     MnSubtFontInfo[0].tex0 = SubtGsTex0_TmpMenuFont[0];
-    MnSubtFontInfo[1].tex0 = SubtGsTex0_TmpMenuFont[1];
-
     MnSubtFontInfo[0].abgr = abgr;
+
+    MnSubtFontInfo[1].tex0 = SubtGsTex0_TmpMenuFont[1];
     MnSubtFontInfo[1].abgr = abgr;
 
     tex0 = TsGetTM2Hed(1)->GsTex0;
     tex0 |= SCE_GS_SET_TEX0(0, 0, 0, 0, 0, 1 /* RGBA */, 0, 0, 0, 0, 0, 0);
-
+    
     MnSubtFontInfo[2].tex0 = tex0;
     MnSubtFontInfo[2].abgr = SCE_GS_SET_RGBAQ(128, 128, 128, 128, 0);
 
-    if (lflg == LANG_JAPANESE)
+    if (lflg == LANG_JAPANESE) {
         line = _JPFont_GetSubtCode(str, subt_code);
-    else
+    } else {
         line = _EGFont_GetSubtCode(str, subt_code, mcode_ascii_TmpMenuFont);
+    }
 
-    if (line != 0)
-    {
+    if (line != 0) {
         spr->rgba0 = abgr;
 
-        _AnimeFontFlg = ((MNSceneGetMusicFitTimer() % 40) >= 21);
+        _AnimeFontFlg = ((MNSceneGetMusicFitTimer() % 40) > 20);
 
         spr->zx = 1.0f;
-        spr->zy = D_003990C8; /* Requires lit4 to be split to match */
-        
-        _PKFontPut(pk, spr, subt_code, line, x, y, flg, 26, spr->zx, spr->zy);
+        spr->zy = 0.47f;
+
+        _PKFontPut(pk, spr, subt_code, line, x, y, flg, 0x1a, spr->zx, spr->zy);
     }
 }
-#endif
 
 void MENUFontPutL(SPR_PKT pk, SPR_PRM *spr, int x, int y, u_int abgr, int flg, u_char *str) {
     SUBT_CODE subt_code[16] = {};
@@ -179,66 +150,199 @@ void MENUFontPutL(SPR_PKT pk, SPR_PRM *spr, int x, int y, u_int abgr, int flg, u
     _PKFontPut(pk, spr, subt_code, line, x, y, flg, 24, spr->zx, spr->zy);
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu/menufont", MENUFontPutS);
+void MENUFontPutS(SPR_PKT pk, SPR_PRM *spr, int x, int y, u_int abgr, int flg, u_char *str) {
+    SUBT_CODE subt_code[16] = {};
+    int       line;
+    u_long    tex0;
 
-INCLUDE_ASM("asm/nonmatchings/menu/menufont", MENUFontPutR);
-
-INCLUDE_ASM("asm/nonmatchings/menu/menufont", _PKFontPut);
-
-INCLUDE_ASM("asm/nonmatchings/menu/menufont", _PADArrow_Put);
-#if 0
-static void _PADArrow_Put(/* s6 22 */ SPR_PKT pk, /* s0 16 */ SPR_PRM *spr, /* a2 6 */ MCODE_DAT *pfnt, /* s5 21 */ int x, /* s4 20 */ int y)
-{
-    /* s3 19 */ int i;
-    /* s2 18 */ int aflg;
-    /* s1 17 */ MCODE_DAT *pat;
-    
-    if (pfnt->v & 0x10)
-    {
-        aflg = _PadArrowState;
+    line = _EGFont_GetSubtCode(str, subt_code, TsFont);
+    if (line == 0) {
+        return;
     }
-    else
-    {
+
+    tex0 = TsGetTM2Hed(0)->GsTex0;
+    tex0 |= SCE_GS_SET_TEX0(0, 0, 0, 0, 0, 1 /* RGBA */, 0, 0, 0, 0, 0, 0);
+
+    MnSubtFontInfo[0].tex0 = tex0;
+    MnSubtFontInfo[0].abgr = abgr;
+
+    MnSubtFontInfo[1].tex0 = SubtGsTex0_TmpMenuFont[1];
+    MnSubtFontInfo[1].abgr = abgr;
+
+    tex0 = TsGetTM2Hed(1)->GsTex0;
+    tex0 |= SCE_GS_SET_TEX0(0, 0, 0, 0, 0, 1 /* RGBA */, 0, 0, 0, 0, 0, 0);
+
+    MnSubtFontInfo[2].tex0 = tex0;
+    MnSubtFontInfo[2].abgr = SCE_GS_SET_RGBAQ(128, 128, 128, 128, 0);
+
+    _AnimeFontFlg = ((MNSceneGetMusicFitTimer() % 40) > 20);
+
+    spr->zx = 0.6f;
+    spr->zy = 0.44999999f;
+
+    _PKFontPut(pk, spr, subt_code, line, x, y, flg, 16, spr->zx, spr->zy);
+}
+
+void MENUFontPutR(SPR_PKT pk, SPR_PRM *spr, int x, int y, u_int abgr, int flg, u_char *str, float dw) {
+    SUBT_CODE subt_code[16] = {};
+    int       line;
+    u_long    tex0;
+
+    line = _EGFont_GetSubtCode(str, subt_code, TsFont);
+    if (line == 0) {
+        return;
+    }
+
+    tex0 = TsGetTM2Hed(0)->GsTex0;
+    tex0 |= SCE_GS_SET_TEX0(0, 0, 0, 0, 0, 1 /* RGBA */, 0, 0, 0, 0, 0, 0);
+
+    MnSubtFontInfo[0].tex0 = tex0;
+    MnSubtFontInfo[0].abgr = abgr;
+
+    MnSubtFontInfo[1].tex0 = SubtGsTex0_TmpMenuFont[1];
+    MnSubtFontInfo[1].abgr = abgr;
+
+    tex0 = TsGetTM2Hed(1)->GsTex0;
+    tex0 |= SCE_GS_SET_TEX0(0, 0, 0, 0, 0, 1 /* RGBA */, 0, 0, 0, 0, 0, 0);
+
+    MnSubtFontInfo[2].tex0 = tex0;
+    MnSubtFontInfo[2].abgr = SCE_GS_SET_RGBAQ(128, 128, 128, 128, 0);
+
+    _AnimeFontFlg = ((MNSceneGetMusicFitTimer() % 40) > 20);
+
+    spr->zx = 0.6f;
+    spr->zy = 0.38f;
+
+    _PKFontPut(pk, spr, subt_code, line, x, y, flg, 16, spr->zx * dw, spr->zy);
+}
+
+static void _PKFontPut(SPR_PKT pk, SPR_PRM *spr, SUBT_CODE *psubt, int line_num, int xp, int yp, int pflg, int hsize, float rtx, float rty) {
+    int         i, j;
+    MCODE_CHAR *ppMcode;
+    int         oflg = -1;
+
+    hsize = ((hsize * rty) + 0.5f);
+
+    switch (pflg & 0xf00) {
+    case 0x100:
+        yp = (yp - ((line_num * hsize) >> 1));
+        break;
+    case 0x200:
+        yp = (yp - (line_num * hsize) + 1);
+        break;
+    }
+
+    ppMcode = &mcode_dat_pp_TmpMenuFont;
+    for (i = 0; i < line_num; i++) {
+        int x;
+        int y;
+        int w;
+
+        switch (pflg & 0xf) {
+        case 1:
+            x = (xp - (((psubt[i].wsize * rtx) + 0.5f) * 0.5f));
+            break;
+        case 2:
+            x = (xp - ((psubt[i].wsize * rtx) + 0.5f)) + 1.0f;
+            break;
+        default:
+            x = xp;
+            break;
+        }
+
+        y = yp + (hsize * i);
+
+        for (j = 0; j < psubt[i].cnt; j++) {
+            int        adjx, adjy;
+            MCODE_DAT *pfnt = ppMcode->pmcode;
+            int        mflg = ppMcode->flg;
+            ppMcode++;
+
+            if (oflg != mflg) {
+                PkTEX0_Add(pk, MnSubtFontInfo[mflg].tex0);
+                spr->rgba0 = MnSubtFontInfo[mflg].abgr;
+                oflg = mflg;
+            }
+
+            if (mflg == 2) {
+                if ((pfnt + 1)->w != 0) {
+                    if (_AnimeFontFlg) {
+                        pfnt = pfnt + 1;
+                    }
+                }
+            }
+
+            adjx = (pfnt->adjx * rtx) + 0.5f;
+            adjy = (pfnt->adjy * rty) + 0.5f;
+
+            if (pfnt->u & 0x8000) {
+                _PADArrow_Put(pk, spr, pfnt, x + adjx, y + adjy);
+            } else {
+                spr->ux = pfnt->u;
+                spr->uy = pfnt->v;
+                spr->uw = pfnt->w;
+                spr->uh = pfnt->h;
+
+                spr->px = x + adjx;
+                spr->py = y + adjy;
+                spr->sw = pfnt->w;
+                spr->sh = pfnt->h;
+
+                PkNSprite_Add2(pk, spr, 3);
+            }
+
+            w = pfnt->w * rtx + 0.5f;
+            x += w;
+        }
+    }
+}
+
+static void _PADArrow_Put(SPR_PKT pk, SPR_PRM *spr, MCODE_DAT *pfnt, int x, int y) {
+    int        i;
+    int        aflg;
+    MCODE_DAT *pat;
+
+    if (pfnt->v & 0x10) {
+        aflg = _PadArrowState;
+    } else {
         aflg = pfnt->v;
     }
 
-    pat = ArowPat;
+    pat = &ArowPat;
 
     spr->px = x;
     spr->py = y;
-
+    
     spr->ux = pat->u;
     spr->uy = pat->v;
 
     spr->uw = pat->w;
     spr->uh = pat->h;
+
     spr->sw = pat->w;
     spr->sh = pat->h;
 
     PkNSprite_Add2(pk, spr, 3);
+    pat++;
 
-    for (i = 0; i < 3; i++)
-    {
-        if (aflg & 1)
-        {
+    for (i = 0; i < 4; i++, pat++, aflg >>= 1) {
+        if (aflg & 1) {
             spr->px = x;
             spr->py = y;
 
-            spr->ux = pat[i].u;
-            spr->uy = pat[i].v;
+            spr->ux = pat->u;
+            spr->uy = pat->v;
 
-            spr->uw = pat[i].w;
-            spr->uh = pat[i].h;
-            spr->sw = pat[i].w;
-            spr->sh = pat[i].h;
-    
+            spr->uw = pat->w;
+            spr->uh = pat->h;
+
+            spr->sw = pat->w;
+            spr->sh = pat->h;
+
             PkNSprite_Add2(pk, spr, 3);
         }
-
-        aflg >>= 1;
     }
 }
-#endif
 
 static int _JPFont_GetSubtCode(u_char *str, SUBT_CODE *subt_code) {
     int         line_num;

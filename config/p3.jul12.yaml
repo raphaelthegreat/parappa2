@@ -321,12 +321,24 @@ segments:
         # .lit4
         - [0x298F00, .lit4, main/cdctrl]
         - [0x298F10, .lit4, main/scrctrl]
-        - [0x298F14, lit4] # main/drawctrl
+        - [0x298F14, lit4, main/drawctrl]
         - [0x298F38, lit4, main/effect]
-        - [0x298F40, lit4] # main/mbar
+        - [0x298F40, lit4, main/mbar]
+        - [0x298F44, lit4, main/main]
 
         - [0x298F4C, .lit4, menu/menu_mdl]
-        - [0x298F60, lit4] # menu/menusub
+        - [0x298F60, lit4, menu/menusub]
+        - [0x2990C8, .lit4, menu/menufont]
+        - [0x2990DC, lit4, menu/pksprite]
+
+        - [0x2990E0, lit4, prlib/spram]
+        - [0x299110, lit4, prlib/scene]
+        - [0x299128, lit4, prlib/menderer]
+        - [0x29921C, lit4, prlib/menderercreate]
+        - [0x299240, lit4, prlib/mendererawful]
+        - [0x299260, lit4, prlib/mendereralpha]
+        - [0x299280, lit4, prlib/mendererdata]
+        - [0x2992C0, lit4, prlib/wave]
 
         # .sdata
         - [0x299300, sdata]

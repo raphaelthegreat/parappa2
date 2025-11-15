@@ -632,29 +632,27 @@ segments:
       - { path: src/main/sprite.c.o }
       - { path: src/main/fadectrl.c.o }
       - { path: src/main/subt.c.o }
-      - { path: src/main/drawctrl.c.o }
-      - { path: asm/data/298F14.lit4.s.o }
+      - { path: asm/data/main/drawctrl.lit4.s.o }
       - { path: asm/data/main/effect.lit4.s.o }
-      - { path: src/main/mbar.c.o }
+      - { path: asm/data/main/mbar.lit4.s.o }
       - { path: src/main/pack.c.o }
       - { path: src/main/etc.c.o }
       - { path: src/main/wipe.c.o }
       - { path: src/main/mcctrl.c.o }
-      - { path: src/main/main.c.o }
+      - { path: asm/data/main/main.lit4.s.o }
       - { path: src/main/cmnfile.c.o }
       - { path: src/main/p3str.c.o }
       - { path: src/main/commake.c.o }
 
       - { path: src/menu/menu.c.o }
       - { path: src/menu/menudata.c.o }
-      - { path: asm/data/298F40.lit4.s.o }
       - { path: src/menu/menu_mdl.c.o }
-      - { path: src/menu/menusub.c.o }
+      - { path: asm/data/menu/menusub.lit4.s.o }
       - { path: src/menu/p3mc.c.o }
       - { path: src/menu/memc.c.o }
       - { path: src/menu/mntm2hed.c.o }
       - { path: src/menu/menufont.c.o }
-      - { path: src/menu/pksprite.c.o }
+      - { path: asm/data/menu/pksprite.lit4.s.o }
 
       - { path: src/iop_mdl/wp2cd_rpc.c.o }
       - { path: src/iop_mdl/tapctrl_rpc.c.o }
@@ -669,22 +667,22 @@ segments:
       - { path: src/prlib/renderee.cpp.o }
       - { path: src/prlib/transition.cpp.o }
       - { path: src/prlib/microprogram.cpp.o }
-      - { path: src/prlib/spram.cpp.o }
+      - { path: asm/data/prlib/spram.lit4.s.o }
       - { path: src/prlib/mfifo.cpp.o }
       - { path: src/prlib/spadata.cpp.o }
-      - { path: src/prlib/scene.cpp.o }
+      - { path: asm/data/prlib/scene.lit4.s.o }
       - { path: src/prlib/cluster.cpp.o }
       - { path: src/prlib/shape.cpp.o }
       - { path: src/prlib/billboard.cpp.o }
       - { path: src/prlib/depthfield.cpp.o }
       - { path: src/prlib/vram.cpp.o }
       - { path: src/prlib/random.cpp.o }
-      - { path: src/prlib/menderer.cpp.o }
-      - { path: src/prlib/menderercreate.cpp.o }
-      - { path: src/prlib/mendererawful.cpp.o }
-      - { path: src/prlib/mendereralpha.cpp.o }
-      - { path: src/prlib/mendererdata.cpp.o }
-      - { path: src/prlib/wave.cpp.o }
+      - { path: asm/data/prlib/menderer.lit4.s.o }
+      - { path: asm/data/prlib/menderercreate.lit4.s.o }
+      - { path: asm/data/prlib/mendererawful.lit4.s.o }
+      - { path: asm/data/prlib/mendereralpha.lit4.s.o }
+      - { path: asm/data/prlib/mendererdata.lit4.s.o }
+      - { path: asm/data/prlib/wave.lit4.s.o }
       - { path: src/prlib/dmaqueue.cpp.o }
       - { path: src/prlib/utility.cpp.o }
       - { path: src/prlib/tim2.cpp.o }
@@ -721,9 +719,6 @@ segments:
       - { path: asm/sdk/libmc.s.o }
 
       - { path: asm/sdk/newlib.s.o }
-
-      # TODO: What's this?
-      - { path: asm/data/298F60.lit4.s.o }
   
   - name: sdata
     alloc_sections: [.sdata]
@@ -755,6 +750,7 @@ segments:
       - { path: src/main/pack.c.o }
       - { path: src/main/etc.c.o }
       - { path: asm/data/main/wipe.sdata.s.o }
+      #- { path: src/main/wipe.c.o }
       - { path: src/main/mcctrl.c.o }
       - { path: asm/data/main/main.sdata.s.o }
       - { path: src/main/cmnfile.c.o }
