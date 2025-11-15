@@ -217,78 +217,54 @@ u_short mccReqTapGet(u_int time, u_int useLine, u_int *time_pp, PLAYER_ENUM ply)
     return ret;
 }
 
-extern const char D_00393800[]; /* rodata - "TAP forward!!\n" */
-
-#ifndef NON_MATCIHNG
-INCLUDE_ASM("asm/nonmatchings/main/mcctrl", mccReqTapForward);
-#else
-void mccReqTapForward(/* s5 21 */ u_int time, /* s4 20 */ u_int useLine)
-{
-    /* v1 3 */ MC_REP_DAT *mcrd_pp;
-    /* s2 18 */ int i;
-    /* s1 17 */ u_int *rep_cnt;
+void mccReqTapForward(u_int time, u_int useLine) {
+    MC_REP_DAT *mcrd_pp;
+    int         i;
+    u_int      *rep_cnt;
 
     rep_cnt = mc_rep_ctrl.cl_mc_rep_dat_cnt;
 
-    for (i = 0; i < 4; i++, rep_cnt++)
-    {
-        if (*rep_cnt >= 2560 || *rep_cnt >= mc_rep_str_local.mc_rep_dat_cnt)
-            return;
-
-        mcrd_pp = &mc_rep_str_local.mc_rep_dat[*rep_cnt];
-
-        if ((mcrd_pp->timeP >= time) && (mcrd_pp->useL == useLine))
-        {
-            while (mcrd_pp->ply == i)
-            {
-                printf(D_00393800);
-
-                if (*rep_cnt >= 2560 || *rep_cnt >= mc_rep_str_local.mc_rep_dat_cnt)
-                    return;
-
-                if (mcrd_pp->timeP > time || mcrd_pp->useL != useLine)
-                    break;
+    for (i = 0; i < 4; i++, rep_cnt++) {
+        while (1) {
+            if (*rep_cnt >= 2560 || *rep_cnt >= mc_rep_str_local.mc_rep_dat_cnt) {
+                return;
             }
-        }
-    }
-}
-#endif
-
-#ifndef NON_MATCIHNG
-INCLUDE_ASM("asm/nonmatchings/main/mcctrl", mccReqTapForwardOwn);
-#else
-void mccReqTapForwardOwn(/* s3 19 */ u_int time, /* s2 18 */ u_int useLine, /* s4 20 */ int ply)
-{
-    /* v1 3 */ MC_REP_DAT *mcrd_pp;
-    /* s1 17 */ u_int *rep_cnt;
-
-    rep_cnt = &mc_rep_ctrl.cl_mc_rep_dat_cnt[ply];
-
-    if (*rep_cnt >= 2560 || *rep_cnt >= mc_rep_str_local.mc_rep_dat_cnt)
-        return;
-
-    mcrd_pp = &mc_rep_str_local.mc_rep_dat[*rep_cnt];
-
-    if ((mcrd_pp->timeP >= time) && (mcrd_pp->useL == useLine))
-    {
-        while (mcrd_pp->ply == ply)
-        {
-            
-            (*rep_cnt)++;
-
-            printf(D_00393800);
 
             mcrd_pp = &mc_rep_str_local.mc_rep_dat[*rep_cnt];
 
-            if (*rep_cnt >= 2560 || *rep_cnt >= mc_rep_str_local.mc_rep_dat_cnt)
-                break;
+            /* note: Single line conditions needed to match! */
+            if (mcrd_pp->timeP > time) break;
+            if (mcrd_pp->useL != useLine) break;
+            if (mcrd_pp->ply != i) break;
 
-            if (mcrd_pp->timeP > time || mcrd_pp->useL != useLine)
-                break; 
+            (*rep_cnt)++;
+            printf("TAP forward!!\n");
         }
     }
 }
-#endif
+
+void mccReqTapForwardOwn(u_int time, u_int useLine, int ply) {
+    MC_REP_DAT *mcrd_pp;
+    u_int      *rep_cnt;
+
+    rep_cnt = &mc_rep_ctrl.cl_mc_rep_dat_cnt[ply];
+
+    while (1) {
+        if (*rep_cnt >= 2560 || *rep_cnt >= mc_rep_str_local.mc_rep_dat_cnt) {
+            break;
+        }
+
+        mcrd_pp = &mc_rep_str_local.mc_rep_dat[*rep_cnt];
+
+        /* note: Single line conditions needed to match! */
+        if (mcrd_pp->timeP > time) break;
+        if (mcrd_pp->useL != useLine) break;
+        if (mcrd_pp->ply != ply) break;
+
+        (*rep_cnt)++;
+        printf("TAP forward!!\n");
+    }
+}
 
 void mccLocalGlobalCopy(void) {
     mc_rep_str = mc_rep_str_local;
@@ -303,5 +279,3 @@ void mccLocalGlobalCopy(void) {
 void mccGlobalLocalCopy(void) {
     mc_rep_str_local = mc_rep_str;
 }
-
-INCLUDE_RODATA("asm/nonmatchings/main/mcctrl", D_00393800);
