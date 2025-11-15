@@ -201,7 +201,7 @@ segments:
         - [0x86288,  data, main/mbar]
         - [0x86F10, .data, main/etc]
         - [0x87000, .data, main/wipe]
-        - [0x87340,  data, main/mcctrl]
+        - [0x87340, .data, main/mcctrl]
         - [0x87400,  data, main/main]
         - [0x874F0, .data, main/commake]
 
@@ -453,7 +453,7 @@ segments:
         - { type: bss,   vram: 0x01c6ffc0, name: main/mbar            }
         - { type: .bss,  vram: 0x01c72000, name: main/pack            }
         - { type: .bss,  vram: 0x01c73018, name: main/etc             }
-        - { type: bss,   vram: 0x01c730e8, name: main/mcctrl          }
+        - { type: .bss,  vram: 0x01c730e8, name: main/mcctrl          }
         - { type: bss,   vram: 0x01c77630, name: main/main            }
         - { type: bss,   vram: 0x01c77640, name: main/p3str           }
         - { type: bss,   vram: 0x01c77700, name: main/commake         }
