@@ -1339,8 +1339,8 @@ int MbarDispScene(void *para_pp, int frame, int first_f, int useDisp, int drDisp
     PrSetMendererRatio(0.0f);
 
     PR_SCOPE
-	VCLR_PARA vclr_para = {};
-    DrawVramClear(&vclr_para, 0, 0, 0, 0x10);
+    VCLR_PARA vclr_para = {};
+    DrawVramClear(&vclr_para, 0, 0, DNUM_NON, DNUM_VRAM2);
     PR_SCOPEEND
 
     ChangeDrawArea(DrawGetDrawEnvP(drDisp));
@@ -1415,23 +1415,23 @@ int MbarDispSceneDraw(void *para_pp, int frame, int first_f, int useDisp, int dr
 
     PR_SCOPE
     VCLR_PARA vclr_para = {};
-    DrawVramClear(&vclr_para, 0, 0, 0, 0x10);
+    DrawVramClear(&vclr_para, 0, 0, DNUM_NON, DNUM_VRAM2);
     PR_SCOPEEND
 
     ChangeDrawArea(DrawGetDrawEnvP(drDisp));
     MbarGifInit();
 
     for (i = 0; i < 5u; i++) {
-        if (mbar_req_str[i].mbar_req_enum == 0) {
+        if (mbar_req_str[i].mbar_req_enum == MBAR_NONE) {
             continue;
         }
-        if (mbar_req_str[i].tapset_pp == 0) {
+        if (mbar_req_str[i].tapset_pp == NULL) {
             continue;
         }
         if (mbar_req_str[i].tapset_pp->coolup == -1) {
             continue;
         }
-        if (global_data.play_step == 4 && i != 3) {
+        if (global_data.play_step == PSTEP_VS && i != 3) {
             continue;
         }
         for (j = 0; j < 4u; j++) {
