@@ -1472,7 +1472,7 @@ static void guidisp_init_pr() {
 	/* s1 17 */ int i;
 
     PrSetFrameRate(60.0f);
-    guime_hdl = PrInitializeScene(&DBufDc.draw11, "gui", 0xFFFFFFFF);
+    guime_hdl = PrInitializeScene(&DBufDc.draw01, "gui", 0xFFFFFFFF);
     guime_camera_hdl = PrInitializeCamera(cmnfGetFileAdrs(72));
     PrSelectCamera(guime_camera_hdl, guime_hdl);
     PrAnimateSceneCamera(guime_hdl, 0.0f);
