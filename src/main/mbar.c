@@ -940,26 +940,20 @@ static int MbarGetDispPosX(int tick) {
     return pos + 13;
 }
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarGetDispPosY);
-#else
-static int MbarGetDispPosY(/* v0 2 */ int tick) {
-	/* v1 3 */ int pos;
+static int MbarGetDispPosY(int tick) {
+    int v0, pos;
 
-    v0 = a0;
-    v1 = 0x1df;
-    if (v0 < 0) {
-        v0 = mbar_pos_y_ofs + 0x17;
-        return v0;
+    pos = 0x1df - 1;
+
+    if (tick < 0) {
+        return mbar_pos_y_ofs + 0x17;
     }
-    a0 = 0x19;
-    v1 = v1 < v0;
-    v1 = v1 * a0;
+    
+    pos = (pos + 1) < tick;
+    pos *= 0x19;
     v0 = mbar_pos_y_ofs + 0x17;
-    v0 = v1 + v0;
-    return v0;
+    return pos + v0;
 }
-#endif
 
 static int MbarGetTimeArea(MBAR_REQ_STR *mr_pp) {
 	int ret;
