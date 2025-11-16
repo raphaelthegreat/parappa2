@@ -10,7 +10,7 @@
 #include <string.h>
 
 /* data 186288 */ extern TIM2_DAT tim2spr_tbl_tmp1[]; /* static, tim2spr_tbl */
-/* data 186a68 */ extern u_int tmpColor[];
+/* data 186a68 */ extern u_int tmpColor[]; /* static */
 /* data 186aa8 */ extern NIKO_CHAN_STR niko_chan_str_hook[]; /* static */
 /* data 186af8 */ extern NIKO_CHAN_STR niko_chan_str_vs[]; /* static */
 /* sdata 399558 */ extern NIKO_CHAN_STR *niko_chan_str_pp; /* static */
@@ -61,8 +61,6 @@
 /* bss 1c701c8 */ extern sceGifPacket mbar_gif; /* static */
 /* sbss 399a90 */ extern PR_SCENEHANDLE guime_hdl; /* static */
 /* sbss 399a94 */ extern PR_CAMERAHANDLE guime_camera_hdl; /* static */
-
-extern GLOBAL_DATA global_data;
 
 static void   clrColorBuffer(int id);
 static void   NikoReset(void);
@@ -346,9 +344,9 @@ void MbarHookUseNG(void) {
 }
 
 static void MbarHookPoll(void) {
-	int i;
-	u_char *saki_pp;
-	u_char *moto_pp;
+    int i;
+    u_char *saki_pp;
+    u_char *moto_pp;
 
     if (!hook_use_flag) {
         return;
@@ -444,9 +442,9 @@ static void metColorInit(void) {
 }
 
 static void metColorSet(EXAM_TYPE exam_type, float per) {
-	u_char *moto_pp;
-	u_char *saki_pp;
-	int sakiper;
+    u_char *moto_pp;
+    u_char *saki_pp;
+    int sakiper;
 
     if (per == 0.0f) {
         return Tim2Trans(cmnfGetFileAdrs(metcol_str[exam_type].df_num));
@@ -569,12 +567,12 @@ float examScore2Level(long score) {
 INCLUDE_ASM("asm/nonmatchings/main/mbar", ExamDispOn);
 #else
 static void ExamDispOn(void) {
-	int met_time;
-	int i;
-	float maxfr;
-	float lev_tmp;
-	u_int perd;
-	u_char *moto_p;
+    int met_time;
+    int i;
+    float maxfr;
+    float lev_tmp;
+    u_int perd;
+    u_char *moto_p;
 
     if (exam_disp_cursor_timer < 0) {
         return metFrameInit();
@@ -645,9 +643,9 @@ static void ExamDispOn(void) {
 INCLUDE_ASM("asm/nonmatchings/main/mbar", hex2dec_mbar_tmp);
 
 static u_long hex2decPlMi(long data) {
-	u_long ret;
-	int i;
-	long plmichar;
+    u_long ret;
+    int i;
+    long plmichar;
 
     ret = 0;
     if (data == 0) {
@@ -675,10 +673,10 @@ static u_long hex2decPlMi(long data) {
 }
 
 void examNumDisp(sceGifPacket *ex_gif_pp, long score, short x, short y, int keta, u_char *coldat_pp, int plmi) {
-	int i;
-	u_char num;
-	int first_f;
-	EX_CHAR_DISP ex_ecd;
+    int i;
+    u_char num;
+    int first_f;
+    EX_CHAR_DISP ex_ecd;
 
     first_f = FALSE;
     examCharBasic(&ex_ecd, &tim2spr_tbl_tmp1[27]);
@@ -708,8 +706,8 @@ INCLUDE_ASM("asm/nonmatchings/main/mbar", examScoreSet);
 #else
 /* Needs .rodata match */
 static void examScoreSet(sceGifPacket *ex_gif_pp) {
-	int i;
-	int pos_dat[2][2] = {
+    int i;
+    int pos_dat[2][2] = {
         {530, 4},
         {530, 36},
     };
@@ -728,10 +726,10 @@ static void examScoreSet(sceGifPacket *ex_gif_pp) {
 #endif
 
 static void examLevelDisp(sceGifPacket *ex_gif_pp) {
-	GLOBAL_PLY *exg_p;
-	int old_fr, targ_fr;
-	EX_CHAR_DISP ex_ecd;
-	int plevel, i;
+    GLOBAL_PLY *exg_p;
+    int old_fr, targ_fr;
+    EX_CHAR_DISP ex_ecd;
+    int plevel, i;
 
     for (i = 0; i < 4; i++) {
         exg_p = exam_global_ply[i];
@@ -764,7 +762,7 @@ static void examLevelDisp(sceGifPacket *ex_gif_pp) {
 }
 
 void ExamDispSet() {
-	sceGifPacket ex_gif;
+    sceGifPacket ex_gif;
 
     ExamDispOn();
     CmnGifOpenCmnPk(&ex_gif);
@@ -864,8 +862,8 @@ void MbarGifTrans(int pri) {
 }
 
 void MbarCharSet(MBARR_CHR *mb_pp) {
-	MBA_CHAR_DATA *mbcd_pp;
-	float w, h;
+    MBA_CHAR_DATA *mbcd_pp;
+    float w, h;
     int x1, y1, x2, y2;
 
     mbcd_pp = &mba_char_data[mb_pp->mbc_enum];
@@ -891,7 +889,7 @@ void MbarCharSet(MBARR_CHR *mb_pp) {
 }
 
 void MbarCharSet2(MBARR_CHR2 *mb_pp) {
-	MBA_CHAR_DATA *mbcd_pp;
+    MBA_CHAR_DATA *mbcd_pp;
     int x1, y1, x2, y2;
     
     mbcd_pp = &mba_char_data[mb_pp->mbc_enum];
@@ -927,7 +925,7 @@ void MbarWindowSet(MBWINDOW_ENUM wenum) {
 }
 
 static int MbarGetDispPosX(int tick) {
-	int pos;
+    int pos;
 
     if (tick < 0) {
         return 13;
@@ -956,7 +954,7 @@ static int MbarGetDispPosY(int tick) {
 }
 
 static int MbarGetTimeArea(MBAR_REQ_STR *mr_pp) {
-	int ret;
+    int ret;
 
     ret = 0;
     if (mr_pp->mbar_req_enum == MBAR_NONE) {
@@ -978,7 +976,7 @@ static int MbarGetTimeArea(MBAR_REQ_STR *mr_pp) {
 }
 
 static int MbarGetTimeArea2(MBAR_REQ_STR *mr_pp) {
-	int ret;
+    int ret;
 
     ret = 0;
     if (mr_pp->mbar_req_enum == 0) {
@@ -1005,7 +1003,7 @@ int MbarGetEndTime(MBAR_REQ_STR *mr_pp) {
 }
 
 static int MbarGetStartTap(MBAR_REQ_STR *mr_pp) {
-	int ret;
+    int ret;
 
     ret = mr_pp->current_time + mr_pp->tapset_pp->taptimeStart;
     ret = (ret / 0x18 - 1) * 0x18;
@@ -1017,7 +1015,7 @@ INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarSclRotMake);
 #else
 /* Needs .rodata match */
 void MbarSclRotMake(MBARR_CHR *mbarr_pp, int mbtime) {
-	float tmp_rate;
+    float tmp_rate;
 
     mbarr_pp->sclx = 1.0f;
     mbarr_pp->scly = 1.0f;
@@ -1047,8 +1045,8 @@ void MbarGuideLightMake(MBARR_CHR *mbarr_pp, int mbtime) {
 }
 
 int MbarFlashMake(MBARR_CHR *mbarr_pp, MBARR_CHR *mbarr_moto_pp, int mbtime, int fltype) {
-	float fsize;
-	u_char *colpp;
+    float fsize;
+    u_char *colpp;
     u_char scale;
 
     if (mbtime < 0) {
@@ -1082,10 +1080,10 @@ INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarBackSet);
 #else
 /* Needs .rodata match */
 void MbarBackSet(MBAR_REQ_STR *mr_pp) {
-	int i, stt, endt, sttap, curtime;
-	MBARR_CHR mbarr;
-	MBARR_CHR2 mbarr_chr2;
-	int sttime, endtime;
+    int i, stt, endt, sttap, curtime;
+    MBARR_CHR mbarr;
+    MBARR_CHR2 mbarr_chr2;
+    int sttime, endtime;
 
     mbarr = (MBARR_CHR) {
         .mbc_enum = MBC_BALL,
@@ -1197,8 +1195,8 @@ INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarCurSet);
 #else
 /* Needs .rodata match */
 static void MbarCurSet(MBAR_REQ_STR *mr_pp) {
-	MBARR_CHR mbarr;
-	int curtime, gbalTapTime, sttime;
+    MBARR_CHR mbarr;
+    int curtime, gbalTapTime, sttime;
 
     mbarr = (MBARR_CHR) {
         .mbc_enum = 0,
@@ -1300,7 +1298,7 @@ void mbar_othon_frame_set(MBAR_REQ_STR* mr_pp) {
 }
 
 void MbarDisp(void) {
-	int i, j;
+    int i, j;
 
     MbarGifInit();
     for (i = 0; i < 4u; i++) {
@@ -1334,8 +1332,8 @@ void MbarDisp(void) {
 }
 
 int MbarDispScene(void *para_pp, int frame, int first_f, int useDisp, int drDisp) {
-	int i, j;
-	float men_tmp;
+    int i, j;
+    float men_tmp;
 
     men_tmp = PrGetMendererRatio();
     PrSetMendererRatio(0.0f);
@@ -1403,8 +1401,8 @@ int MbarDispScene(void *para_pp, int frame, int first_f, int useDisp, int drDisp
 }
 
 int MbarDispSceneDraw(void *para_pp, int frame, int first_f, int useDisp, int drDisp) {
-	int i, j;
-	float men_tmp;
+    int i, j;
+    float men_tmp;
 
     if (first_f == -2) {
         return 0;
@@ -1466,8 +1464,8 @@ void MbarDispSceneVsDrawInit(void) {
 INCLUDE_ASM("asm/nonmatchings/main/mbar", guidisp_init_pr);
 #else
 static void guidisp_init_pr() {
-	/* s0 16 */ GUIMAP *guim_pp;
-	/* s1 17 */ int i;
+    GUIMAP *guim_pp;
+    int i;
 
     PrSetFrameRate(60.0f);
     guime_hdl = PrInitializeScene(&DBufDc.draw01, "gui", 0xFFFFFFFF);
@@ -1529,8 +1527,8 @@ INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarDemoCharDisp);
 #else
 /* Needs .rodata match */
 void MbarDemoCharDisp() {
-	TIM2_DAT *tim2_dat_pp;
-	SPR_PRIM spr_prim;
+    TIM2_DAT *tim2_dat_pp;
+    SPR_PRIM spr_prim;
 
     spr_prim = (SPR_PRIM) {
         .x = 2298,
