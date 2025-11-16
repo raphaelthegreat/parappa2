@@ -1333,18 +1333,18 @@ void MbarDisp(void) {
     }
 }
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarDispScene);
-#else
 int MbarDispScene(void *para_pp, int frame, int first_f, int useDisp, int drDisp) {
 	int i, j;
 	float men_tmp;
-	VCLR_PARA vclr_para;
 
     men_tmp = PrGetMendererRatio();
     PrSetMendererRatio(0.0f);
-    memset(&vclr_para, 0, 4);
+
+    PR_SCOPE
+	VCLR_PARA vclr_para = {};
     DrawVramClear(&vclr_para, 0, 0, 0, 0x10);
+    PR_SCOPEEND
+
     ChangeDrawArea(DrawGetDrawEnvP(drDisp));
     MbarGifInit();
 
@@ -1401,15 +1401,10 @@ int MbarDispScene(void *para_pp, int frame, int first_f, int useDisp, int drDisp
 
     return 0;
 }
-#endif
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarDispSceneDraw);
-#else
 int MbarDispSceneDraw(void *para_pp, int frame, int first_f, int useDisp, int drDisp) {
 	int i, j;
 	float men_tmp;
-	VCLR_PARA vclr_para;
 
     if (first_f == -2) {
         return 0;
@@ -1419,8 +1414,12 @@ int MbarDispSceneDraw(void *para_pp, int frame, int first_f, int useDisp, int dr
     }
     men_tmp = PrGetMendererRatio();
     PrSetMendererRatio(0.0f);
-    memset(&vclr_para, 0, 4);
+
+    PR_SCOPE
+    VCLR_PARA vclr_para = {};
     DrawVramClear(&vclr_para, 0, 0, 0, 0x10);
+    PR_SCOPEEND
+
     ChangeDrawArea(DrawGetDrawEnvP(drDisp));
     MbarGifInit();
 
@@ -1447,7 +1446,6 @@ int MbarDispSceneDraw(void *para_pp, int frame, int first_f, int useDisp, int dr
     PrSetMendererRatio(men_tmp);
     return 0;
 }
-#endif
 
 int MbarDispSceneVsDraw(void *para_pp, int frame, int first_f, int useDisp, int drDisp) {
     if (first_f == -2) {
