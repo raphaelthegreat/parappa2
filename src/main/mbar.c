@@ -761,7 +761,7 @@ static void examLevelDisp(sceGifPacket *ex_gif_pp) {
     examCharSet(&ex_ecd, ex_gif_pp);
 }
 
-void ExamDispSet() {
+void ExamDispSet(void) {
     sceGifPacket ex_gif;
 
     ExamDispOn();
@@ -848,7 +848,7 @@ static void MbarCharSetSub(void) {
     }
 }
 
-void MbarGifInit() {
+void MbarGifInit(void) {
     CmnGifADPacketMake(&mbar_gif, 0);
     sceGifPkAddGsAD(&mbar_gif, SCE_GS_TEXFLUSH, 0);
     sceGifPkAddGsAD(&mbar_gif, SCE_GS_TEST_1, SCE_GS_SET_TEST_1(1, 6, 0, 0, 0, 0, 1, 1));
@@ -1463,7 +1463,7 @@ void MbarDispSceneVsDrawInit(void) {
 #ifndef NON_MATCHING
 INCLUDE_ASM("asm/nonmatchings/main/mbar", guidisp_init_pr);
 #else
-static void guidisp_init_pr() {
+static void guidisp_init_pr(void) {
     GUIMAP *guim_pp;
     int i;
 
@@ -1526,7 +1526,7 @@ TIM2_DAT* lessonCl2InfoGet(SCRRJ_LESSON_ROUND_ENUM type) {
 INCLUDE_ASM("asm/nonmatchings/main/mbar", MbarDemoCharDisp);
 #else
 /* Needs .rodata match */
-void MbarDemoCharDisp() {
+void MbarDemoCharDisp(void) {
     TIM2_DAT *tim2_dat_pp;
     SPR_PRIM spr_prim;
 
