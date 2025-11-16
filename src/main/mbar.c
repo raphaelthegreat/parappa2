@@ -644,9 +644,6 @@ static void ExamDispOn(void) {
 
 INCLUDE_ASM("asm/nonmatchings/main/mbar", hex2dec_mbar_tmp);
 
-#ifndef NON_MATCHING
-INCLUDE_ASM("asm/nonmatchings/main/mbar", hex2decPlMi);
-#else 
 static u_long hex2decPlMi(long data) {
 	u_long ret;
 	int i;
@@ -658,17 +655,24 @@ static u_long hex2decPlMi(long data) {
     }
     plmichar = data < 1 ? 0 : 10;
     if (data < 0) {
-        plmichar = 11;
         data *= -1;
+        plmichar = 11;
     }
-    for (i = 0; i < 16u && data; i++) {
-        ret |= (data % 10) << (i * 4);
-        data /= 10;
+    i = 0;
+    if (data == 0) {
+        ret = plmichar;
+    } else {
+        while (data) {
+            ret |= (data % 10) << (i * 4);
+            data /= 10;
+            if (++i >= 16u) {
+                return ret;
+            }
+        }
+        ret |= plmichar << (i * 4);
     }
-    ret |= plmichar << (i * 4);
     return ret;
 }
-#endif
 
 void examNumDisp(sceGifPacket *ex_gif_pp, long score, short x, short y, int keta, u_char *coldat_pp, int plmi) {
 	int i;

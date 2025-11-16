@@ -2402,6 +2402,7 @@ exit                                = 0x00169730; // type:func
 __fixsfdi                           = 0x00169760; // type:func
 __floatdisf                         = 0x00169a20; // type:func
 __muldi3                            = 0x0016a168; // type:func
+__moddi3                            = 0x00169b00; // type:func
 __udivdi3                           = 0x0016a1c8; // type:func
 __umoddi3                           = 0x0016a798; // type:func
 
