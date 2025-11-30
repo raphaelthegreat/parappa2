@@ -570,13 +570,44 @@ static void TsBGMStop(int time) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsBGMMute);
+static void TsBGMMute(int time) {
+	BGMSTATE *pbgm;
+
+    pbgm = &TsBGMState;
+    if (pbgm->state != 0) {
+        pbgm->chgReq = 0;
+        pbgm->cstate = 0;
+        pbgm->ctim = 0;
+        if (time > 0) {
+            pbgm->state = 11;
+            pbgm->ttim0 = time;
+            pbgm->vol = 0x100;
+            pbgm->ttim = 0;
+        } else {
+            pbgm->state = 9;
+            pbgm->ttim0 = 0;
+            pbgm->vol = 0;
+            pbgm->ttim = 0;
+        }
+        tsBGMONEVol(pbgm->sndno, pbgm->vol);
+    }
+}
 
 static int TsBGMLoadCheck(void) {
     return MenuVoiceBankSet(-1);
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsBGMPause);
+static void TsBGMPause(int flg) {
+	BGMSTATE *pbgm;
+
+    pbgm = &TsBGMState;
+    if (pbgm->state != 0) {
+        pbgm->chgReq = 0;
+        pbgm->cstate = 0;
+        pbgm->ctim = 0;
+        tsBGMONEPause(flg);
+    }
+}
 
 void TsBGMChangePos(int no) {
     BGMSTATE *pbgm = &TsBGMState;
