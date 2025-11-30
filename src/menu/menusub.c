@@ -445,7 +445,28 @@ static void tsBGMONETop(int no, int vol) {
     MenuVoicePlayVol(mpbgm->chan, mpbgm->tapNo, vol);
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", tsBGMONEflow);
+static void tsBGMONEflow() {
+    BGMONE *wbgm;
+    int i;
+
+    wbgm = TsBGMState.wbgm;
+    for (i = 0; i < 11; i++, wbgm++) {
+        if (wbgm->bPause) {
+            continue;
+        }
+        if (wbgm->pbgm == 0) {
+            continue;
+        }
+        if (--wbgm->tim > 0) {
+            continue;
+        }
+        if (wbgm->pbgm->lpTime == 0) {
+            continue;
+        }
+        wbgm->tim = wbgm->pbgm->lpTime;
+        MenuVoicePlayVol(wbgm->pbgm->chan, wbgm->pbgm->tapNo, wbgm->vol);
+    }
+}
 
 static void tsBGMONEPause(int flg) {
     BGMONE *wbgm = TsBGMState.wbgm;
@@ -460,7 +481,62 @@ void TsBGMInit(void) {
     memset(&TsBGMState, 0, sizeof(TsBGMState));
 }
 
-INCLUDE_ASM("asm/nonmatchings/menu/menusub", TsBGMPlay);
+
+static void TsBGMPlay(int no, int time) {
+	BGMSTATE *pbgm = &TsBGMState;
+	int i, isCurPlay = FALSE;
+
+    if (no > 10)
+        return;
+
+    if (MenuVoiceBankSet(-1)) {
+        pbgm->state = 1;
+        pbgm->wtLoad = 1;
+        pbgm->wtNo = no;
+        pbgm->wtTim = time;
+        pbgm->chgReq = 0;
+        pbgm->cstate = 0;
+        pbgm->ctim = 0;
+        return;
+    }
+
+    if ((pbgm->state & 1) && pbgm->wtLoad == 0) {
+        if (pbgm->sndno == no && pbgm->vol == 0x100) {
+            pbgm->vol = 0x100;
+            pbgm->state = 1;
+            pbgm->ttim = pbgm->ttim0 = 0;
+            pbgm->sndno = no;
+            tsBGMONEVol(pbgm->sndno, 0x100);
+            return;
+        }
+        isCurPlay = TRUE;
+    }
+
+    pbgm->chgReq = 0;
+    pbgm->cstate = 0;
+    pbgm->ctim = 0;
+    pbgm->wtLoad = 0;
+    if (time > 0) {
+        pbgm->ttim0 = time;
+        pbgm->state = 7;
+        pbgm->sndno = no;
+        pbgm->vol = 0;
+    } else {
+        pbgm->vol = 0x100;
+        pbgm->ttim0 = 0;
+        pbgm->state = 1;
+        pbgm->sndno = no;
+    }
+
+    pbgm->ttim = 0;
+    if (!isCurPlay) {
+        MNSceneMusicFitTimerClear();
+        for (i = 0; i < 11; i++)
+            tsBGMONEPlay(i);
+    }
+
+    tsBGMONEVol(pbgm->sndno, pbgm->vol);
+}
 
 static void TsBGMStop(int time) {
     BGMSTATE *pbgm = &TsBGMState;
